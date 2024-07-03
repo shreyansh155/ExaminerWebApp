@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Application Type Template";
+}
+<div id="grid"></div>
+<div id="displayModal"></div>
+<button id="refreshButton" type="button" hidden></button>
+<script src="~/js/application-type-template/grid.js"></script>
+
+ <link rel="stylesheet" src="~/css/applicant-type-modal/style.css"/>
+
+<script>
+    function onClose() {
+        $("#undo").show();
+    }
+
+    $("#undo").bind("click", function () {
+        $("#application-type-template").data("kendoWindow").open();
+        $("#undo").hide();
+    });
+</script>
+ 

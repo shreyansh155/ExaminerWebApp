@@ -1,4 +1,5 @@
-﻿using ExaminerWebApp.ViewModels;
+﻿using ExaminerWebApp.Entities.Entities;
+using ExaminerWebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -22,8 +23,25 @@ namespace ExaminerWebApp.Controllers
         }
 
         #endregion
+        protected IQueryable<ApplicantViewModel> GetApplicantViewModels(IQueryable<Applicant> entities)
+        {
+            return entities.Select(entity => new ApplicantViewModel
+            {
+                Id = entity.Id,
+                Firstname = entity.FirstName,
+                Lastname = entity.LastName,
+                Dateofbirth = entity.DateOfBirth,
+                Phone = entity.Phone,
+                Email = entity.Email,
+                Settingid = entity.ApplicantTypeId,
+                ApplicantTypeName = entity.ApplicantType,
+                Filepath = entity.FilePath,
+                FormFile = entity.FormFile,
+                Isdeleted = entity.IsDeleted
+            });
+        }
 
-        public IQueryable<ExaminerModel> GetExaminerModels(IQueryable<Entities.Entities.Examiner> entities)
+        protected IQueryable<ExaminerModel> GetExaminerModels(IQueryable<Examiner> entities)
         {
             return entities.Select(entity => new ExaminerModel
             {
@@ -40,6 +58,14 @@ namespace ExaminerWebApp.Controllers
                 Status = entity.Status,
             });
         }
-
+        protected IQueryable<ApplicationTypeTemplateModel> GetApplicationTemplates(IQueryable<ApplicationTypeTemplate> entities)
+        {
+            return entities.Select(entity => new ApplicationTypeTemplateModel
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                Description = entity.Description,
+            });
+        }
     }
 }

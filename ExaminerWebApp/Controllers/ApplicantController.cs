@@ -31,28 +31,12 @@ namespace ExaminerWebApp.Controllers
         public async Task<ActionResult> GetAll(int pageSize, int pageNumber)
         {
             IQueryable<Applicant> data = await Task.Run(() => _applicantService.GetAllApplicants());
-            var result = GetApplicantViewModels(data);
+            IQueryable<ApplicantViewModel> result = GetApplicantViewModels(data);
 
             return Json(await Pagination<ApplicantViewModel>.CreateAsync(result, pageNumber, pageSize));
         }
         #endregion
-        public IQueryable<ApplicantViewModel> GetApplicantViewModels(IQueryable<Applicant> entities)
-        {
-            return entities.Select(entity => new ApplicantViewModel
-            {
-                Id = entity.Id,
-                Firstname = entity.FirstName,
-                Lastname = entity.LastName,
-                Dateofbirth = entity.DateOfBirth,
-                Phone = entity.Phone,
-                Email = entity.Email,
-                Settingid = entity.ApplicantTypeId,
-                ApplicantTypeName = entity.ApplicantType,
-                Filepath = entity.FilePath,
-                FormFile = entity.FormFile,
-                Isdeleted = entity.IsDeleted
-            });
-        }
+
         #region OPEN MODAL
         public IActionResult ApplicantForm()
         {

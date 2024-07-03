@@ -26,13 +26,14 @@ builder.Services.AddTransient<IExaminerRepository, ExaminerRepository>();
 builder.Services.AddTransient<IExaminerTypeRepository, ExaminerTypeRepository>();
 builder.Services.AddTransient<IApplicantRepository, ApplicantRepository>();
 builder.Services.AddTransient<IApplicantTypeRepository, ApplicantTypeRepository>();
+builder.Services.AddTransient<IApplicationTypeTemplateRepository, ApplicationTypeTemplateRepository>();
 
 // Register services
 builder.Services.AddScoped<IApplicantService, ApplicantService>();
 builder.Services.AddScoped<IApplicantTypeService, ApplicantTypeService>();
-// Register services
 builder.Services.AddScoped<IExaminerService, ExaminerService>();
 builder.Services.AddScoped<IExaminerTypeService, ExaminerTypeService>();
+builder.Services.AddScoped<IApplicationTypeService, ApplicationTypeService>();
 
 builder.Services.AddDataProtection();
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; config.HasRippleEffect = true; });

@@ -10,9 +10,7 @@ public partial class ApplicationDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
-
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration)
-      : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration) : base(options)
     {
         _configuration = configuration;
     }
@@ -21,11 +19,19 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<ApplicantType> ApplicantTypes { get; set; }
 
+    public virtual DbSet<ApplicationTypeTemplate> ApplicationTypeTemplates { get; set; }
+
     public virtual DbSet<Examiner> Examiners { get; set; }
 
     public virtual DbSet<ExaminerType> ExaminerTypes { get; set; }
 
+    public virtual DbSet<Phase> Phases { get; set; }
+
     public virtual DbSet<Status> Statuses { get; set; }
+
+    public virtual DbSet<Step> Steps { get; set; }
+
+    public virtual DbSet<StepType> StepTypes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -35,7 +41,6 @@ public partial class ApplicationDbContext : DbContext
             optionsBuilder.UseNpgsql(connectionString);
         }
     }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Applicant>(entity =>
@@ -85,6 +90,35 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.ApplicantTypeName)
                 .HasColumnType("character varying")
                 .HasColumnName("applicant_type_name");
+        });
+
+        modelBuilder.Entity<ApplicationTypeTemplate>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("application_type_template_pkey");
+
+            entity.ToTable("application_type_template");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedBy)
+                .HasColumnType("character varying")
+                .HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate).HasColumnName("created_date");
+            entity.Property(e => e.Description)
+                .HasColumnType("character varying")
+                .HasColumnName("description");
+            entity.Property(e => e.Instruction)
+                .HasColumnType("character varying")
+                .HasColumnName("instruction");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_deleted");
+            entity.Property(e => e.ModifiedBy)
+                .HasColumnType("character varying")
+                .HasColumnName("modified_by");
+            entity.Property(e => e.ModifiedDate).HasColumnName("modified_date");
+            entity.Property(e => e.Name)
+                .HasColumnType("character varying")
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<Examiner>(entity =>
@@ -160,6 +194,41 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("name");
         });
 
+        modelBuilder.Entity<Phase>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("phase_pkey");
+
+            entity.ToTable("phase");
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.ApplicationTypeTemplateId).HasColumnName("application_type_template_id");
+            entity.Property(e => e.CreatedBy)
+                .HasColumnType("character varying")
+                .HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate).HasColumnName("created_date");
+            entity.Property(e => e.Description)
+                .HasColumnType("character varying")
+                .HasColumnName("description");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_deleted");
+            entity.Property(e => e.ModifiedBy)
+                .HasColumnType("character varying")
+                .HasColumnName("modified_by");
+            entity.Property(e => e.ModifiedDate).HasColumnName("modified_date");
+            entity.Property(e => e.Name)
+                .HasColumnType("character varying")
+                .HasColumnName("name");
+            entity.Property(e => e.Ordinal).HasColumnName("ordinal");
+
+            entity.HasOne(d => d.ApplicationTypeTemplate).WithMany(p => p.Phases)
+                .HasForeignKey(d => d.ApplicationTypeTemplateId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkey_application_type_template_id");
+        });
+
         modelBuilder.Entity<Status>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("status_pkey");
@@ -172,6 +241,56 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.StatusName)
                 .HasColumnType("character varying")
                 .HasColumnName("status_name");
+        });
+
+        modelBuilder.Entity<Step>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("step_pkey");
+
+            entity.ToTable("step");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.CreatedBy)
+                .HasColumnType("character varying")
+                .HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate).HasColumnName("created_date");
+            entity.Property(e => e.Description)
+                .HasColumnType("character varying")
+                .HasColumnName("description");
+            entity.Property(e => e.Instruction)
+                .HasColumnType("character varying")
+                .HasColumnName("instruction");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_deleted");
+            entity.Property(e => e.ModifiedBy)
+                .HasColumnType("character varying")
+                .HasColumnName("modified_by");
+            entity.Property(e => e.ModifiedDate).HasColumnName("modified_date");
+            entity.Property(e => e.Name)
+                .HasColumnType("character varying")
+                .HasColumnName("name");
+            entity.Property(e => e.PhaseId).HasColumnName("phase_id");
+            entity.Property(e => e.StepTypeId).HasColumnName("step_type_id");
+
+            entity.HasOne(d => d.IdNavigation).WithOne(p => p.Step)
+                .HasForeignKey<Step>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkey_phase_id");
+        });
+
+        modelBuilder.Entity<StepType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("step_type_pkey");
+
+            entity.ToTable("step_type");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(128)
+                .HasColumnName("name");
         });
 
         OnModelCreatingPartial(modelBuilder);

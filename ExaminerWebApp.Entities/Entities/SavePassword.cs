@@ -1,7 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-
-namespace ExaminerWebApp.Entities.Entities
+﻿namespace ExaminerWebApp.Entities.Entities
 {
     public class Savepassword
     {

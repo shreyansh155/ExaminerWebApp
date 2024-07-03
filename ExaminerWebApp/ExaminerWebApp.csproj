@@ -27,4 +27,8 @@
     <ProjectReference Include="..\ExaminerWebApp.Service\ExaminerWebApp.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Phase\" />
+  </ItemGroup>
+
 </Project>

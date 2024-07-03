@@ -43,7 +43,7 @@
 
     @* KENDO UI SCRIPTS *@
     @* <link rel="stylesheet" href="~/lib/kendo-ui/dist/css/kendo.bootstrap.min.css"> *@
-   
+
 
     <script src="https://kendo.cdn.telerik.com/2024.2.514/js/kendo.all.min.js"></script>
     <script src="https://kendo.cdn.telerik.com/2024.2.514/js/kendo.aspnetmvc.min.js"></script>
@@ -67,7 +67,30 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" role="button">Application Type Template</a>
+                    <span class="nav-link"><strong>RECAP</strong></span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" role="button">Application</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="applicationDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Administration
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="applicationDropdown">
+                        <a class="dropdown-item" href="@Url.Action("Index","ApplicationTypeTemplate")">Application Type Template</a>
+                        <a class="dropdown-item" href="#">Phase</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Help
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">FAQ</a>
+                        <a class="dropdown-item" href="#">Support</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Contact</a>
+                    </div>
                 </li>
             </ul>
 
@@ -126,6 +149,7 @@
                         <li class="nav-item d-none d-sm-inline-block">
                             <a href="@Url.Action("ApplicantIndex","Applicant")" class="nav-link">Applicant</a>
                         </li>
+
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

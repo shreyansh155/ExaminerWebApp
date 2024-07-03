@@ -40,5 +40,4 @@ namespace ExaminerWebApp.Entities.Entities
 
         public bool? IsDeleted { get; set; }
     }
-
 }

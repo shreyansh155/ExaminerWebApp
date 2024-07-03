@@ -1,0 +1,117 @@
+﻿@model ApplicantViewModel;
+@{
+    var serializedData = Json.Serialize(Model);
+}
+
+<script type="text/javascript">
+    window.initialData = @Html.Raw(serializedData);
+</script>
+
+<div class="modal fade" id="applicationForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered draggable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Applicant Form</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form id="addApplicant" data-bind="submit: submitForm" enctype="multipart/form-data">
+                        <div id="errorBody" class="text-danger"></div>
+                        <div class="row m-2">
+                            <div class="col-md-6" data-bind="css: { 'has-error': firstName.hasError }">
+                                <kendo-floating-label for="firstName">First Name</kendo-floating-label>
+                                <kendo-textbox name="firstname"
+                                               required="required"
+                                               data-bind="value: firstName, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                                </kendo-textbox>
+                                <span class="text-danger" data-bind="visible: firstName.hasError, text: firstName.validationMessage"> </span>
+                            </div>
+                            <div class="col-md-6" data-bind="css: { 'has-error': lastName.hasError }">
+                                <kendo-floating-label for="lastName">Last Name</kendo-floating-label>
+                                <kendo-textbox name="lastName"
+                                               required="required"
+                                               data-bind="value: lastName, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                                </kendo-textbox>
+                                <span class="text-danger" data-bind="visible: lastName.hasError, text: lastName.validationMessage"> </span>
+                            </div>
+                        </div>
+                        <div class="row m-2">
+                            <div class="col-md-6" data-bind="css: { 'has-error': dateOfBirth.hasError }">
+                                <kendo-floating-label for="dateOfBirth">Date Of Birth</kendo-floating-label>
+                                <kendo-datepicker name="dateOfBirth"
+                                                  format="dd-MM-yyyy"
+                                                  max="@DateTime.Today"
+                                                  data-bind="value: dateOfBirth, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                                </kendo-datepicker>
+                                <span class="text-danger" data-bind="visible: dateOfBirth.hasError, text: dateOfBirth.validationMessage"> </span>
+                            </div>
+                            <div class="col-md-6" data-bind="css: { 'has-error': phoneNumber.hasError }">
+                                <kendo-floating-label for="phoneNumber">Phone Number</kendo-floating-label>
+                                <kendo-textbox name="phoneNumber"
+                                               data-bind="value: phoneNumber, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                                </kendo-textbox>
+                                <span class="text-danger" data-bind="visible: phoneNumber.hasError, text: phoneNumber.validationMessage"> </span>
+                            </div>
+                        </div>
+                        <div class="row m-2">
+                            <div class="col-md-6" data-bind="css: { 'has-error': email.hasError }">
+                                <kendo-floating-label for="email">Email</kendo-floating-label>
+                                <kendo-textbox name="email"
+                                               data-bind="textInput: email, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                                </kendo-textbox>
+                                <span class="text-danger" data-bind="visible: email.hasError, text: email.validationMessage"> </span>
+                            </div>
+                            <div class="col-md-6">
+                                <kendo-floating-label for="applicantid">Applicant Type</kendo-floating-label>
+                                <kendo-dropdownlist name="applicationid"
+                                                    dataTextField="applicantTypeName"
+                                                    dataValueField="id"
+                                                    value="@(Model == null ? null : Model.Settingid)"
+                                                    option-label="Select application type"
+                                                    data-bind="value: settingid">
+                                    <datasource>
+                                        <transport>
+                                            <read url="/Applicant/ApplicantTypeList" />
+                                        </transport>
+                                    </datasource>
+                                </kendo-dropdownlist>
+                                @* <span class="text-danger" data-bind="visible: apptypeid.hasError, text: apptypeid.validationMessage"> </span> *@
+                            </div>
+                        </div>
+                        <div class="row m-2">
+                            <div class="col-md-6">
+                                <kendo-floating-label for="formFile">Upload File</kendo-floating-label>
+                                <kendo-upload name="formFile"
+                                              data-bind="value: formFile"
+                                              placeholder="Upload File">
+                                    <validation allowed-extensions='@new string[] { ".pdf", ".jpg", ".jpeg", ".png" }' max-file-size="10485760" />
+                                </kendo-upload>
+                            </div>
+                            <div class="col-md-6">
+                                @if (Model?.Filepath != null)
+                                {
+                                    <div class="mt-4">
+                                        <kendo-button name="viewFileButton"
+                                                      data-bind="click: viewFile"
+                                                      theme-color="ThemeColor.Primary">
+                                            View File
+                                        </kendo-button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" data-bind="click: submitForm" class="btn btn-outline-info">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* JS FILE *@
+<script src="~/js/applicant-kendo-grid/modal.js"></script>

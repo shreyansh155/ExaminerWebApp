@@ -1,0 +1,12 @@
+* {
+    align-content: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.k-grid .k-cell-inner > .k-link {
+    text-align: left;
+    width:fit-content;
+    justify-content:start !important;
+}
+ 

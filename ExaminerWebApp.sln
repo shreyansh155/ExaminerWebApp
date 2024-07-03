@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExaminerWebApp", "ExaminerWebApp\ExaminerWebApp.csproj", "{67BEF48E-E6BC-423A-AD7F-A554E9702373}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4ED8E935-47F6-4F07-929B-5A45F35A5089} = {4ED8E935-47F6-4F07-929B-5A45F35A5089}
+		{4F9BA5E1-3465-4DFD-B057-93B92A7C27E0} = {4F9BA5E1-3465-4DFD-B057-93B92A7C27E0}
+		{6A0D9F6E-A699-408C-A058-FC87BD903756} = {6A0D9F6E-A699-408C-A058-FC87BD903756}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExaminerWebApp.Service", "ExaminerWebApp.Service\ExaminerWebApp.Service.csproj", "{4F9BA5E1-3465-4DFD-B057-93B92A7C27E0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1ED39CAD-1326-4AD1-B816-45F5850F6BCD} = {1ED39CAD-1326-4AD1-B816-45F5850F6BCD}
+		{4ED8E935-47F6-4F07-929B-5A45F35A5089} = {4ED8E935-47F6-4F07-929B-5A45F35A5089}
+		{6A0D9F6E-A699-408C-A058-FC87BD903756} = {6A0D9F6E-A699-408C-A058-FC87BD903756}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExaminerWebApp.Entities", "ExaminerWebApp.Entities\ExaminerWebApp.Entities.csproj", "{4ED8E935-47F6-4F07-929B-5A45F35A5089}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExaminerWebApp.Repository", "ExaminerWebApp.Repository\ExaminerWebApp.Repository.csproj", "{1ED39CAD-1326-4AD1-B816-45F5850F6BCD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExaminerWebApp.Composition", "ExaminerWebApp.Composition\ExaminerWebApp.Composition.csproj", "{6A0D9F6E-A699-408C-A058-FC87BD903756}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1ED39CAD-1326-4AD1-B816-45F5850F6BCD} = {1ED39CAD-1326-4AD1-B816-45F5850F6BCD}
+		{4ED8E935-47F6-4F07-929B-5A45F35A5089} = {4ED8E935-47F6-4F07-929B-5A45F35A5089}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67BEF48E-E6BC-423A-AD7F-A554E9702373}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67BEF48E-E6BC-423A-AD7F-A554E9702373}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67BEF48E-E6BC-423A-AD7F-A554E9702373}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67BEF48E-E6BC-423A-AD7F-A554E9702373}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F9BA5E1-3465-4DFD-B057-93B92A7C27E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F9BA5E1-3465-4DFD-B057-93B92A7C27E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F9BA5E1-3465-4DFD-B057-93B92A7C27E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F9BA5E1-3465-4DFD-B057-93B92A7C27E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ED8E935-47F6-4F07-929B-5A45F35A5089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ED8E935-47F6-4F07-929B-5A45F35A5089}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ED8E935-47F6-4F07-929B-5A45F35A5089}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ED8E935-47F6-4F07-929B-5A45F35A5089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ED39CAD-1326-4AD1-B816-45F5850F6BCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ED39CAD-1326-4AD1-B816-45F5850F6BCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ED39CAD-1326-4AD1-B816-45F5850F6BCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ED39CAD-1326-4AD1-B816-45F5850F6BCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A0D9F6E-A699-408C-A058-FC87BD903756}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A0D9F6E-A699-408C-A058-FC87BD903756}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A0D9F6E-A699-408C-A058-FC87BD903756}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A0D9F6E-A699-408C-A058-FC87BD903756}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6AF554FD-B902-462B-9655-84FE9E0336EC}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Telerik.Reporting</id>
+    <version>13.2.19.1030</version>
+    <title>Telerik Reporting</title>
+    <authors>Progress</authors>
+    <owners>Progress</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.telerik.com/purchase/license-agreement/reporting-dlw-s</licenseUrl>
+    <projectUrl>http://www.telerik.com/reporting</projectUrl>
+    <iconUrl>http://www.telerik.com/sfimages/default-source/logos/progress-64x64.png</iconUrl>
+    <description>This package contains the report definition APIs and the runtime report generation engine which are the core of the Progress® Telerik® Reporting solution. 
+The package can be used to programmatically export or print a report into multiple document formats like PDF, Word, Excel, PowerPoint. 
+To author report definitions you need the Standalone Report Designer tool or the alternative Visual Studio integrated Report Designer. These tools come with the full product installer found at https://www.telerik.com/account/product-download?product=REPORTING 
+Upgrading the project to a newer NuGet package version will upgrade the runtime libraries but for type report definitions (definitions created with the Visual Studio integrated Report Designer) you must run the Telerik Reporting Upgrade Wizard tool. The tool is part of the full product installer as well.</description>
+    <summary>Progress Telerik Reporting reports generation.</summary>
+    <copyright>Copyright c 2006-2019 Progress Software Corporation and/or one of its subsidiaries or affiliates. All rights reserved.</copyright>
+    <dependencies>
+      <group targetFramework=".NETCoreApp2.0">
+        <dependency id="Microsoft.Extensions.Configuration" version="2.1.1" />
+        <dependency id="Microsoft.Extensions.Configuration.Binder" version="2.1.1" />
+        <dependency id="Microsoft.Extensions.Configuration.Json" version="2.1.1" />
+        <dependency id="System.Configuration.ConfigurationManager" version="4.5.0" />
+        <dependency id="System.Data.Common" version="4.3.0" />
+        <dependency id="System.Data.SqlClient" version="4.6.0" />
+        <dependency id="System.Drawing.Common" version="4.5.1" />
+        <dependency id="System.IO.Packaging" version="4.5.0" />
+        <dependency id="System.Reflection.Emit" version="4.3.0" />
+        <dependency id="System.Reflection.Emit.Lightweight" version="4.3.0" />
+        <dependency id="System.Runtime.Loader" version="4.3.0" />
+        <dependency id="System.Security.Cryptography.Pkcs" version="4.5.1" />
+        <dependency id="System.Security.Permissions" version="4.5.0" />
+        <dependency id="System.Text.Encoding.CodePages" version="4.5.0" />
+        <dependency id="System.Threading.AccessControl" version="4.5.0" />
+        <dependency id="sqlite-net-pcl" version="1.5.231" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Configuration" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Design" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Drawing" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Web" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Xaml" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="WindowsBase" targetFramework=".NETFramework4.0" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

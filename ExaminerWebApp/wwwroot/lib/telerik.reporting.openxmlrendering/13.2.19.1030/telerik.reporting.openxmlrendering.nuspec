@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Telerik.Reporting.OpenXmlRendering</id>
+    <version>13.2.19.1030</version>
+    <title>Telerik Reporting OpenXmlRendering</title>
+    <authors>Progress EAD</authors>
+    <owners>Progress EAD</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.telerik.com/purchase/license-agreement/reporting-dlw-s</licenseUrl>
+    <projectUrl>http://www.telerik.com/reporting</projectUrl>
+    <iconUrl>http://www.telerik.com/sfimages/default-source/logos/progress-64x64.png</iconUrl>
+    <description>Contains the Telerik Reporting rendering extensions to export a Telerik Report defintion into Open XML document formats like Excel, Word and PowerPoint.</description>
+    <summary>Progress Telerik Reporting Open XML rendering extensions for .NET Core.</summary>
+    <copyright>Copyright © 2006-2019 Progress Software Corporation and/or one of its subsidiaries or affiliates. All rights reserved.</copyright>
+    <dependencies>
+      <group targetFramework=".NETCoreApp2.0">
+        <dependency id="Telerik.Reporting" version="13.2.19.1030" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

@@ -2,8 +2,9 @@
 
 namespace ExaminerWebApp.Repository.Interface
 {
-    public interface IApplicationTypeTemplateRepository /*: IBaseRepository<ApplicationTypeTemplate>*/
+    public interface IApplicationTypeTemplateRepository : IBaseRepository<ApplicationTypeTemplate>
     {
-        public IQueryable<ApplicationTypeTemplate> GetAll();
+        public bool ApplicationTemplateExists(string name);
+        public IQueryable<ApplicationTypeTemplate> GetAll(string s);
     }
 }

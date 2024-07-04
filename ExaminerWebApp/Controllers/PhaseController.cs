@@ -1,15 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ExaminerWebApp.Composition.Helpers;
+using ExaminerWebApp.Entities.Entities;
+using ExaminerWebApp.Service.Interface;
+using ExaminerWebApp.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ExaminerWebApp.Controllers
 {
     public class PhaseController : Controller
     {
+        private readonly IPhaseService _phaseService;
+        public PhaseController(IPhaseService phaseService)
+        {
+            _phaseService = phaseService;
+        }
         // GET: PhaseController
         public ActionResult Index()
         {
             return View();
         }
-
+        public async Task<ActionResult> GetAll(int pageSize, int pageNumber)
+        {
+            IQueryable<Phase> data = await Task.Run(() => _phaseService.GetAll());
+            //IQueryable<ApplicantViewModel> result = _phaseService.(data);
+           return Json(await Pagination<Phase>.CreateAsync(data, pageNumber, pageSize));
+        }
         // GET: PhaseController/Details/5
         public ActionResult Details(int id)
         {

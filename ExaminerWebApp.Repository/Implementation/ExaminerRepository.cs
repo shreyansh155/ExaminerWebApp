@@ -46,17 +46,17 @@ namespace ExaminerWebApp.Repository.Implementation
 
         public void Update(Examiner model)
         {
-            var examiner = _context.Examiners.First(x => x.Id == model.Id);
+            //var examiner = _context.Examiners.First(x => x.Id == model.Id);
 
-            examiner.FirstName = model.FirstName;
-            examiner.LastName = model.LastName;
-            examiner.Email = model.Email;
-            examiner.Phone = model.Phone;
-            examiner.DateOfBirth = model.DateOfBirth;
-            examiner.FilePath = model.FilePath ?? examiner.FilePath;
-            examiner.ExaminerId = model.ExaminerId;
+            //examiner.FirstName = model.FirstName;
+            //examiner.LastName = model.LastName;
+            //examiner.Email = model.Email;
+            //examiner.Phone = model.Phone;
+            //examiner.DateOfBirth = model.DateOfBirth;
+            //examiner.FilePath = model.FilePath ?? examiner.FilePath;
+            //examiner.ExaminerId = model.ExaminerId;
 
-            _context.Examiners.Update(examiner);
+            _context.Examiners.Update(model);
             _context.SaveChanges();
         }
         public bool CheckEmail(string email)

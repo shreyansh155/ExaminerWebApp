@@ -10,9 +10,13 @@ namespace ExaminerWebApp.Composition.MappingProfile
                .ForMember(dest => dest.FilePath, opt => opt.MapFrom(src => src.FormFile != null && src.FormFile.Length > 0 ? src.FormFile.FileName : null))
                .ForMember(dest => dest.StatusId, opt => opt.MapFrom(src => 1))
                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => "System"))
-               .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now))
-               .ForMember(dest => dest.ModifiedBy, opt => opt.Ignore())
-               .ForMember(dest => dest.ModifiedDate, opt => opt.Ignore())
+               .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate))
+               .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => src.ModifiedBy))
+               .ForMember(dest => dest.ModifiedDate, opt =>
+                {
+                    opt.PreCondition(src => src.ModifiedDate > DateTime.MinValue);
+                    opt.MapFrom(src => src.ModifiedDate);
+                })
                .ForMember(dest => dest.ExaminerNavigation, opt => opt.Ignore())
                .ForMember(dest => dest.Status, opt => opt.Ignore());
 

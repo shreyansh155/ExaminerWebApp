@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace ExaminerWebApp.Repository.Interface
 {
-    public interface IExaminerRepository : IBaseRepository<Examiner>
+    public interface IPhaseRepository : IBaseRepository<Phase>
     {
-        public bool CheckEmail(string email);
-        public IQueryable<Examiner> GetAll();
+        IQueryable<Phase> GetAll();
     }
 }

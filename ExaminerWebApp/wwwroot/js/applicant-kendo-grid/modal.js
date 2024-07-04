@@ -89,7 +89,7 @@
             }
         });
 
-       // this.applicanttypeid = ko.observable(data.applicanttypeid || "").extend({ required: "Please select application type" });
+        // this.applicanttypeid = ko.observable(data.applicanttypeid || "").extend({ required: "Please select application type" });
 
         this.formFile = ko.observable(null);
 
@@ -111,7 +111,7 @@
             this.email.validate();
             this.settingid.validate();
 
-           
+
 
             if (this.isValid()) {
                 var formData = new FormData($("#addApplicant")[0]);
@@ -128,7 +128,7 @@
                 if (data.id) {
                     formData.append("Id", data.id);
                 }
-                console.log(formData);
+
                 var link = data && data.id ? '/Applicant/EditApplicant' : '/Applicant/AddApplicant';
 
                 $.ajax({

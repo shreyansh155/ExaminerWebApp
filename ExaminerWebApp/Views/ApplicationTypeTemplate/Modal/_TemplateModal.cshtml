@@ -1,13 +1,33 @@
-﻿<div>
+﻿@model ApplicationTypeTemplateModel;
+
+@{
+    var serializedData = Json.Serialize(Model);
+}
+
+<script type="text/javascript">
+    window.initialData = @Html.Raw(serializedData);
+</script>
+<div>
     <form id="templateForm">
+        <div id="errorBody" class="text-danger"></div>
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" id="name" name="name" class="form-control" />
+            <input id="name" name="name" data-bind="kendoMaskedTextBox: { value: name }" />
         </div>
         <div class="form-group">
             <label for="description">Description</label>
-            <input type="text" id="description" name="description" class="form-control" />
+            <input id="description" name="description" data-bind="kendoMaskedTextBox: { value: description }" />
         </div>
-        <button type="submit" class="btn btn-primary">Save</button>
+        <div class="form-group">
+            <label for="description">Instruction</label>
+            <textarea rows="3" id="description" name="description" data-bind="kendoEditor: { value: instruction }"></textarea>
+        </div>
+        <kendo-button name="primaryTextButton"
+                      data-bind="click: submitForm"
+                      theme-color="ThemeColor.Primary">
+            Save
+        </kendo-button>
     </form>
 </div>
+
+<script src="~/js/application-type-template/window/window.js"></script>

@@ -124,7 +124,6 @@ namespace ExaminerWebApp.Controllers
                     FormFile = model.FormFile,
                     ModifiedBy = "1",
                     ModifiedDate = DateTime.Now,
-
                 };
                 _examinerService.UpdateExaminer(obj);
                 _notyf.Success("Examiner has been updated successfully");

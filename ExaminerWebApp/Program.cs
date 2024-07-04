@@ -22,11 +22,13 @@ builder.Services.AddKendo();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//Register Repositories
 builder.Services.AddTransient<IExaminerRepository, ExaminerRepository>();
 builder.Services.AddTransient<IExaminerTypeRepository, ExaminerTypeRepository>();
 builder.Services.AddTransient<IApplicantRepository, ApplicantRepository>();
 builder.Services.AddTransient<IApplicantTypeRepository, ApplicantTypeRepository>();
 builder.Services.AddTransient<IApplicationTypeTemplateRepository, ApplicationTypeTemplateRepository>();
+builder.Services.AddTransient<IPhaseRepository, PhaseRepository>();
 
 // Register services
 builder.Services.AddScoped<IApplicantService, ApplicantService>();
@@ -34,6 +36,7 @@ builder.Services.AddScoped<IApplicantTypeService, ApplicantTypeService>();
 builder.Services.AddScoped<IExaminerService, ExaminerService>();
 builder.Services.AddScoped<IExaminerTypeService, ExaminerTypeService>();
 builder.Services.AddScoped<IApplicationTypeService, ApplicationTypeService>();
+builder.Services.AddScoped<IPhaseService, PhaseService>();
 
 builder.Services.AddDataProtection();
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; config.HasRippleEffect = true; });

@@ -126,7 +126,7 @@ namespace ExaminerWebApp.Service.Implementation
             return uniqueFileName;
         }
 
-        private T ExecuteWithTryCatch<T>(Func<T> func)
+        private static T ExecuteWithTryCatch<T>(Func<T> func)
         {
             try
             {

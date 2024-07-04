@@ -1,4 +1,13 @@
-﻿$(function () {
+﻿var kendoWindow;
+
+$(function () {
+    kendoWindow = $("#window").kendoWindow({
+        width: "600px",
+        title: "Add Application Type",
+        visible: false,
+        modal: true
+    }).data("kendoWindow");
+
     var grid = $("#grid").kendoGrid({
         dataSource: {
             transport: {
@@ -12,7 +21,8 @@
                         dataType: "json",
                         data: {
                             pageNumber: page,
-                            pageSize: pageSize
+                            pageSize: pageSize,
+                            search: $("#searchBox").val()
                         },
                         success: function (data) {
                             options.success(data);
@@ -32,6 +42,8 @@
             },
             pageSize: 10,
             serverPaging: true,
+            serverFiltering: true,
+            serverSorting: true,
             schema: {
                 total: "totalItems",
                 data: "items",
@@ -48,7 +60,6 @@
             pageSize: 10,
             pageSizes: [10, 15, 20]
         },
-        sortable: true,
         editable: false,
         toolbar: ["Create"],
         columns: [
@@ -57,8 +68,22 @@
             { field: "description", title: "Description", width: "130px" },
             {
                 command: [
-                    { text: "Edit", click: EditEntry },
-                    { text: "Delete", click: DeleteEntry }
+                    {
+                        text: "Edit",
+                        click: EditEntry,
+                        iconClass: ".k-i-pencil",
+                        attributes: {
+                            "class": "k-button k-primary"
+                        },
+                    },
+                    {
+                        text: "Delete",
+                        click: DeleteEntry,
+                        iconClass: ".k-i-trash",
+                        attributes: {
+                            "class": "k-button k-primary"
+                        },
+                    }
                 ],
                 title: "Actions",
                 width: "220px",
@@ -68,40 +93,46 @@
             $('.k-grid-add').off("click");
             $('.k-grid-add').on("click", function () {
                 $.ajax({
-                    url: "/ApplicationTypeTemplate/AddTemplate",
+                    url: "/ApplicationTypeTemplate/ShowTemplateModal",
                     type: 'GET',
                     success: function (result) {
-                        $('#displayModal').html(result);
-                        $('#application-type-template').data("kendoWindow").open();
+                        kendoWindow.content(result);
+                        kendoWindow.center().open();
                     },
-                    error: function (error) {
-                        console.log(error);
-                        alert('error fetching details');
-                    },
+                    error: function () {
+                        alert("An error occurred while loading the content.");
+                    }
                 });
             });
         },
     }).data("kendoGrid");
+    $("#searchButton").click(function () {
+        grid.dataSource.read();
 
+    });
     function EditEntry(e) {
         e.preventDefault();
         var tr = $(e.target).closest("tr");
         var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
 
         $.ajax({
-            url: "/Applicant/GetApplicant",
+            url: "/ApplicationTypeTemplate/GetApplicationTemplate",
             type: 'GET',
-            data: { Id: dataItem.id },
+            data: { id: dataItem.id },
             success: function (result) {
-                $('#displayModal').html(result);
-                $('#application-type-template').data("kendoWindow").open();
+                if (result.redirectUrl) {
+                    window.location.href = result.redirectUrl;
+                } else {
+                    console.log('No redirect URL found in response.');
+                }
             },
             error: function (error) {
                 console.log(error);
-                alert('error fetching details');
+                alert('Error fetching details.');
             },
         });
     }
+
 
     function DeleteEntry(e) {
         e.preventDefault();
@@ -109,9 +140,9 @@
         var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
         if (confirm("Are you sure you want to delete this entry?")) {
             $.ajax({
-                url: "/Applicant/DeleteApplicant",
+                url: "/ApplicationTypeTemplate/DeleteTemplate",
                 type: 'POST',
-                data: { Id: dataItem.id },
+                data: { id: dataItem.id },
                 success: function (result) {
                     $("#refreshButton").trigger("click");
                     alert("Applicant has been deleted successfully");
@@ -129,23 +160,14 @@
     });
 
     // Initialize Kendo Window
-    $("#application-type-template").kendoWindow({
-        title: "Ram's Ten Principles of Good Design",
-        draggable: true,
-        resizable: true,
-        width: "600px",
-        modal: true,
-        visible: false,
-        actions: ["Close"],
-        close: onClose
-    });
-
-    function onClose() {
-        $("#undo").show();
-    }
 
     $("#undo").bind("click", function () {
         $("#application-type-template").data("kendoWindow").open();
         $("#undo").hide();
     });
 });
+
+$("#clearButton").on("click", function () {
+    $("#searchBox").val("");
+    $("#refreshButton").trigger("click");
+})

@@ -7,8 +7,6 @@ public partial class Step
 {
     public int Id { get; set; }
 
-    public int PhaseId { get; set; }
-
     public string Name { get; set; } = null!;
 
     public string? Description { get; set; }
@@ -27,5 +25,7 @@ public partial class Step
 
     public DateTime? ModifiedDate { get; set; }
 
-    public virtual Phase IdNavigation { get; set; } = null!;
+    public int? PhaseId { get; set; }
+
+    public virtual Phase? Phase { get; set; }
 }

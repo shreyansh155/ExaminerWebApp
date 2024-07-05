@@ -4,7 +4,6 @@ using ExaminerWebApp.Repository.Interface;
 
 namespace ExaminerWebApp.Repository.Implementation
 {
-
     public class PhaseRepository : IPhaseRepository
     {
         private readonly ApplicationDbContext _context;
@@ -14,7 +13,7 @@ namespace ExaminerWebApp.Repository.Implementation
         }
         public IQueryable<Phase> GetAll()
         {
-            return _context.Phases.Where(x => x.IsDeleted != true).AsQueryable();
+            return _context.Phases.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
         }
         public async Task<Phase> Create(Phase model)
         {

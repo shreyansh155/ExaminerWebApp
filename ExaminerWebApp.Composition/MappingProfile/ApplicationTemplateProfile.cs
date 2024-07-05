@@ -14,9 +14,7 @@ namespace ExaminerWebApp.Composition.MappingProfile
                 {
                     opt.PreCondition(src => src.CreatedDate > DateTime.MinValue);
                     opt.MapFrom(src => src.CreatedDate);
-                })
-                .ForMember(dest => dest.Phases, opt => opt.Ignore());
-
+                });
         }
     }
 }

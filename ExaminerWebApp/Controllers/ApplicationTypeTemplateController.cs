@@ -67,9 +67,6 @@ namespace ExaminerWebApp.Controllers
 
         public IActionResult GetApplicationTemplate(int id)
         {
-            // Perform your logic here to get the application template
-
-            // Return the redirect URL
             return Json(new { redirectUrl = Url.Action("EditPage", "ApplicationTypeTemplate", new { id }) });
         }
 

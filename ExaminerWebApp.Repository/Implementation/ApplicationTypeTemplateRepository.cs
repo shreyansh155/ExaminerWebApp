@@ -43,7 +43,7 @@ namespace ExaminerWebApp.Repository.Implementation
             _context.SaveChanges();
         }
 
-        public ApplicationTypeTemplate GetById(int id)
+        public ApplicationTypeTemplate GetById(int id)        
         {
             return _context.ApplicationTypeTemplates.Where(x => x.Id == id).First();
         }

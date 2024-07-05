@@ -67,5 +67,24 @@ namespace ExaminerWebApp.Controllers
                 Description = entity.Description,
             });
         }
+        protected IQueryable<PhaseViewModel> GetPhase(IQueryable<Phase> entities)
+        {
+            return entities.Select(entity => new PhaseViewModel
+            {
+                PhaseId = entity.Id,
+                Name = entity.Name,
+                Description = entity.Description ?? "",
+                Ordinal = entity.Ordinal,
+            });
+        }
+        protected IQueryable<StepViewModel> GetSteps(IQueryable<Step> entities)
+        {
+            return entities.Select(entity => new StepViewModel
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                Description = entity.Description,
+            });
+        }
     }
 }

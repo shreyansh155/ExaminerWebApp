@@ -3,49 +3,46 @@ using ExaminerWebApp.Composition.Helpers;
 using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.Service.Interface;
 using ExaminerWebApp.ViewModels;
+using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExaminerWebApp.Controllers
 {
-    public class PhaseController : BaseController
+    public class StepController : BaseController
     {
-        private readonly IPhaseService _phaseService;
+        private readonly IStepService _stepService;
         private readonly INotyfService _notyf;
-        public PhaseController(IPhaseService phaseService, INotyfService notyf)
+        public StepController(IStepService stepService, INotyfService notyf)
         {
             _notyf = notyf;
-            _phaseService = phaseService;
+            _stepService = stepService;
         }
-        // GET: PhaseController
+
+        // GET: StepController
         public ActionResult Index()
         {
             return View();
         }
-        public async Task<ActionResult> GetAll(int pageSize, int pageNumber)
+
+        public async Task<ActionResult> GetAll(int phaseId)
         {
-            IQueryable<Phase> data = _phaseService.GetAll();
-            IQueryable<PhaseViewModel> result = GetPhase(data);
-            return Json(await Pagination<PhaseViewModel>.CreateAsync(result, pageNumber, pageSize));
+            IQueryable<Step> data = _stepService.GetAll(phaseId);
+            IQueryable<StepViewModel> result = await Task.Run(() => GetSteps(data));
+            return Json(await Pagination<StepViewModel>.CreateAsync(result, 10, 1));
         }
+        // GET: PhaseController/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
+        // GET: PhaseController/Create
         public ActionResult Create()
         {
             return View();
         }
-        public IActionResult AddPhase()
-        {
-            return PartialView("Modal/_CreatePhase");
-        }
-        public IActionResult AddPhaseSteps(int phaseId)
-        { 
-            ViewBag.ShowGrid = true;
-            return PartialView("Modal/_CreatePhase");
-        }
-
+ 
+        // POST: PhaseController/Create
         [HttpPost]
         public ActionResult CreatePhase(CreatePhaseModel model)
         {
@@ -53,12 +50,8 @@ namespace ExaminerWebApp.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    Phase phase = new()
-                    {
-                        Name = model.Name,
-                        Description = model.Description,
-                    };
-                    _phaseService.CreatePhase(phase);
+                    Step step = new();
+                    _stepService.CreateStep(step);
                 }
                 else
                 {
@@ -74,11 +67,13 @@ namespace ExaminerWebApp.Controllers
             }
         }
 
+        // GET: PhaseController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
+        // POST: PhaseController/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, IFormCollection collection)
         {
@@ -92,6 +87,7 @@ namespace ExaminerWebApp.Controllers
             }
         }
 
+        // GET: PhaseController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();

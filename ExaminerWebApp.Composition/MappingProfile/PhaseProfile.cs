@@ -6,9 +6,11 @@ namespace ExaminerWebApp.Composition.MappingProfile
     {
         public PhaseProfile()
         {
-            CreateMap<Entities.Entities.Phase, Repository.DataModels.Phase>();
+            CreateMap<Entities.Entities.Phase, Repository.DataModels.Phase>()
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(x => "1"))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(x => DateTime.UtcNow));
 
-            CreateMap<Repository.DataModels.Applicant, Entities.Entities.Applicant>();
+            CreateMap<Repository.DataModels.Phase, Entities.Entities.Phase>();
         }
     }
 }

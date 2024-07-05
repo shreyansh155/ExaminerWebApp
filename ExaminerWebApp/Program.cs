@@ -29,6 +29,7 @@ builder.Services.AddTransient<IApplicantRepository, ApplicantRepository>();
 builder.Services.AddTransient<IApplicantTypeRepository, ApplicantTypeRepository>();
 builder.Services.AddTransient<IApplicationTypeTemplateRepository, ApplicationTypeTemplateRepository>();
 builder.Services.AddTransient<IPhaseRepository, PhaseRepository>();
+builder.Services.AddTransient<IStepRepository, StepRepository>();
 
 // Register services
 builder.Services.AddScoped<IApplicantService, ApplicantService>();
@@ -37,6 +38,7 @@ builder.Services.AddScoped<IExaminerService, ExaminerService>();
 builder.Services.AddScoped<IExaminerTypeService, ExaminerTypeService>();
 builder.Services.AddScoped<IApplicationTypeService, ApplicationTypeService>();
 builder.Services.AddScoped<IPhaseService, PhaseService>();
+builder.Services.AddScoped<IStepService, StepService>();
 
 builder.Services.AddDataProtection();
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; config.HasRippleEffect = true; });

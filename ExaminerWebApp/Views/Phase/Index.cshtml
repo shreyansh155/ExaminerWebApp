@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Phase";
+}
+<h3>Phases</h3>
+<div id="grid"></div>
+<div id="window"></div>
+<div id="stepwindow"></div>
+
+<button id="refreshButton" type="button" hidden></button>
+<script id="custom-toolbar-template" type="text/x-kendo-template">
+    <div>
+      <button id="expand" class='k-button k-button-md k-rounded-md k-button-solid k-button-primary k-button-solid-base'>
+          <span class='k-button-text'>
+              Expand All
+          </span>
+      </button>
+      <button id="collapse" class='k-button k-button-md k-rounded-md k-button-solid k-button-primary k-button-solid-base'>
+          <span class='k-button-text'>
+              Collapse All
+          </span>
+      </button>
+    </div>
+</script>
+<script src="~/js/phase/grid.js"></script>

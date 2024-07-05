@@ -1,14 +1,13 @@
 ﻿using ExaminerWebApp.Entities.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExaminerWebApp.Service.Interface
 {
     public interface IPhaseService
     {
         IQueryable<Phase> GetAll();
+        Phase GetPhaseById(int id);
+        Task<Phase> CreatePhase(Phase model);
+        bool DeletePhase(int id);
+        bool UpdatePhase(Phase model);
     }
 }

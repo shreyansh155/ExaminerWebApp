@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ExaminerWebApp.Repository.DataModels;
+﻿using ExaminerWebApp.Repository.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -10,7 +8,8 @@ public partial class ApplicationDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration) : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IConfiguration configuration)
+        : base(options)
     {
         _configuration = configuration;
     }
@@ -41,6 +40,7 @@ public partial class ApplicationDbContext : DbContext
             optionsBuilder.UseNpgsql(connectionString);
         }
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Applicant>(entity =>
@@ -203,7 +203,6 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
-            entity.Property(e => e.ApplicationTypeTemplateId).HasColumnName("application_type_template_id");
             entity.Property(e => e.CreatedBy)
                 .HasColumnType("character varying")
                 .HasColumnName("created_by");
@@ -221,12 +220,6 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Name)
                 .HasColumnType("character varying")
                 .HasColumnName("name");
-            entity.Property(e => e.Ordinal).HasColumnName("ordinal");
-
-            entity.HasOne(d => d.ApplicationTypeTemplate).WithMany(p => p.Phases)
-                .HasForeignKey(d => d.ApplicationTypeTemplateId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fkey_application_type_template_id");
         });
 
         modelBuilder.Entity<Status>(entity =>
@@ -275,9 +268,8 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.PhaseId).HasColumnName("phase_id");
             entity.Property(e => e.StepTypeId).HasColumnName("step_type_id");
 
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.Step)
-                .HasForeignKey<Step>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+            entity.HasOne(d => d.Phase).WithMany(p => p.Steps)
+                .HasForeignKey(d => d.PhaseId)
                 .HasConstraintName("fkey_phase_id");
         });
 

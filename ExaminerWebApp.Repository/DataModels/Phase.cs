@@ -7,13 +7,9 @@ public partial class Phase
 {
     public int Id { get; set; }
 
-    public int ApplicationTypeTemplateId { get; set; }
-
     public string Name { get; set; } = null!;
 
     public string? Description { get; set; }
-
-    public int Ordinal { get; set; }
 
     public string CreatedBy { get; set; } = null!;
 
@@ -25,7 +21,5 @@ public partial class Phase
 
     public bool? IsDeleted { get; set; }
 
-    public virtual ApplicationTypeTemplate ApplicationTypeTemplate { get; set; } = null!;
-
-    public virtual Step? Step { get; set; }
+    public virtual ICollection<Step> Steps { get; set; } = new List<Step>();
 }

@@ -9,5 +9,8 @@ namespace ExaminerWebApp.Service.Interface
         Task<Step> CreateStep(Step model);
         bool DeleteStep(int id);
         bool UpdateStep(Step model);
+        List<StepType> GetStepTypeList();
+        IQueryable<Step> GetStepByPhaseId(int phaseId);
+        bool CheckIfStepExists(int phaseId, string stepName);
     }
 }

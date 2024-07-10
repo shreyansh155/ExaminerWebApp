@@ -1,6 +1,11 @@
 ﻿var kendoWindow;
 $((function () {
-  
+    kendoWindow = $("#window").kendoWindow({
+        width: "600px",
+        title: "Add Phase",
+        visible: false,
+        modal: true
+    }).data("kendoWindow");
     ko.extenders.required = function (target, overrideMessage) {
         target.hasError = ko.observable(false);
         target.validationMessage = ko.observable();
@@ -74,167 +79,193 @@ $((function () {
             return !this.name.hasError();
         };
     }
-
     var viewModel = new ApplicationTypeTemplateModel(window.initialData);
     ko.applyBindings(viewModel, document.getElementById("templateForm"));
 
+    var templateId = window.initialData.id;
+
     //Phase Grid
-    //var element = $("#grid").kendoGrid({
-    //    dataSource: {
-    //        transport: {
-    //            read: function (options) {
-    //                var page = options.data.page || 1;
-    //                var pageSize = options.data.pageSize || 10;
+    var grid = $("#grid").kendoGrid({
+        dataSource: {
+            transport: {
+                read: function (options) {
+                    $.ajax({
+                        url: "/ApplicationTypeTemplate/GetPhase",
+                        type: "GET",
+                        dataType: "json",
+                        data: {
+                            templateId: templateId,
+                        },
+                        success: function (data) {
+                            options.success(data);
+                        },
+                        error: function (error) {
+                            console.log(error);
+                            alert('Error fetching data.');
+                        }
+                    });
+                },
+                parameterMap: function (data, type) {
+                    if (type === "read") {
+                        return kendo.stringify(data);
+                    }
+                    return data;
+                }
+            },
+            pageSize: 10,
+            serverPaging: true,
+            schema: {
+                data: function (response) {
+                    return response.map(function (item) {
+                        return {
+                            id: item.phase.id,
+                            ordinal: item.ordinal,
+                            phase: item.phase.name,
+                            steps: item.stepCount,
+                        };
+                    });
+                },
+                total: function (response) {
+                    return response.length;
+                },
+                model: {
+                    fields: {
+                        id: { type: "number" },
+                        ordinal: { type: "number" },
+                        phase: { type: "string" },
+                        steps: { type: "number" },
+                    },
+                },
+            },
+        },
+       // detailInit: PhaseRow,
+        pageable: {
+            pageSize: 10,
+            pageSizes: [10, 15, 20]
+        },
+        sortable: true,
+        editable: false,
+        toolbar: [
+            {
+                name: "create",
+                text: "Add Phase",
+                attributes: {
+                    "class": "k-button k-primary"
+                }
+            },
+            {
+                name: "expand",
+                text: "Expand All",
+                attributes: {
+                    "class": "k-button k-primary"
+                }
+            },
+            {
+                name: "collapse",
+                text: "Collapse All",
+                attributes: {
+                    "class": "k-button k-primary"
+                }
+            },
 
-    //                $.ajax({
-    //                    url: "/Phase/GetAll",
-    //                    type: "GET",
-    //                    dataType: "json",
-    //                    data: {
-    //                        pageNumber: page,
-    //                        pageSize: pageSize
-    //                    },
-    //                    success: function (data) {
+        ],
 
-    //                        options.success(data);
-    //                    },
-    //                    error: function (error) {
-    //                        console.log(error);
-    //                        alert('Error fetching data.');
-    //                    }
-    //                });
-    //            },
-    //            parameterMap: function (data, type) {
-    //                if (type === "read") {
-    //                    return kendo.stringify(data);
-    //                }
-    //                return data;
-    //            }
-    //        },
-    //        pageSize: 10,
-    //        serverPaging: true,
-    //        schema: {
-    //            total: "totalItems",
-    //            data: "items",
-    //            model: {
-    //                fields: {
-    //                    ordinal: { editable: false },
-    //                    phase: { type: "string" },
-    //                    steps: { type: "string" },
-    //                }
-    //            }
-    //        },
-    //    },
-    //    pageable: {
-    //        pageSize: 10,
-    //        pageSizes: [10, 15, 20]
-    //    },
-    //    sortable: true,
-    //    editable: false,
-    //    toolbar: [
-    //        {
-    //            name: "create",
-    //            text: "Add Phase",
-    //            attributes: {
-    //                "class": "k-button k-primary"
-    //            }
-    //        },
-    //        {
-    //            template: kendo.template($("#custom-toolbar-template").html())
-    //        }
-    //    ],
-    //    columns: [
+        dataBound: function () {
+            this.expandRow(this.tbody.find("tr.k-master-row").first());
+            $('.k-grid-add').off("click");
+            $('.k-grid-add').on("click", function () {
+                $.ajax({
+                    url: "/ApplicationTypeTemplate/OpenTemplatePhase",
+                    type: 'GET',
+                    data: {
+                        templateId: templateId
+                    },
+                    success: function (result) {
+                        kendoWindow.content(result);
+                        kendoWindow.center().open();
+                    },
+                    error: function (error) {
+                        console.log(error);
+                        alert('error fetching details');
+                    },
+                });
+            });
+        },
+        columns: [
+            { field: "ordinal", title: "Ordinal", width: "110px" },
+            { field: "phase", title: "Phase", width: "110px" },
+            { field: "steps", title: "Steps", width: "110px" }
+        ]
+    }).data("kendoGrid");
+    $("#refreshButton").on("click", function () {
+        grid.dataSource.read();
+    });
 
-    //        { field: "ordinal", title: "Ordinal", width: "125px", hidden: true },
+    //Steps Grid    
+    function PhaseRow(e) {
+        var dataItem = e.data;
 
-    //        { field: "phase", title: "Phase", width: "130px" },
+        $("<div/>").appendTo(e.detailCell).kendoGrid({
+            dataSource: {
+                transport: {
+                    read: function (options) {
+                        $.ajax({
+                            url: "Step/GetAll",
+                            type: "GET",
+                            dataType: "json",
+                            data: {
+                                phaseId: dataItem.phaseId,
+                            },
+                            success: function (data) {
+                                options.success(data);
+                            },
+                            error: function (error) {
+                                console.log(error);
+                                alert('Error fetching data.');
+                            }
+                        });
+                    },
+                },
+                schema: {
+                    model: {
+                        id: "id",
+                        fields: {
+                            id: { editable: false, nullable: true },
+                            name: { type: "string" },
+                            description: { type: "string" },
+                            instruction: { type: "string" },
+                            typeId: { type: "number" },
+                            stepType: { type: "string" }
+                        }
+                    }
+                },
+                pageSize: 10,
+            },
+            scrollable: true,
+            sortable: false,
+            pageable: false,
+            editable: false,
+            columns: [
+                { field: "id", title: "Step Id", width: "125px", hidden: true },
+                { field: "name", title: "Step Name", width: "130px" },
+                { field: "description", title: "Description", width: "130px" },
+                { field: "instruction", title: "Instruction", width: "130px" },
+                { field: "stepType", title: "Step Type", width: "150px" },
+            ],
+        });
+    }
+    // Event handlers for custom toolbar buttons
+    $(document).on("click", "#expand", function () {
+        var grid = $("#grid").data("kendoGrid");
+        $(".k-master-row").each(function (index) {
+            grid.expandRow(this);
+        });
+    });
 
-    //        { field: "steps", title: "Steps", width: "130px" },
-    //        {
-    //            command: [
-    //                { text: "Add Steps" },
-    //                { text: "Edit" },
-    //                { text: "Delete" }
-    //            ],
-    //            title: "Actions",
-    //            width: "220px",
-    //        }
-    //    ],
-    //    dataBound: function () {
-    //        this.expandRow(this.tbody.find("tr.k-master-row").first());
-    //        $('.k-grid-add').off("click");
-    //        $('.k-grid-add').on("click", function () {
-    //            $.ajax({
-    //                url: "/Phase/AddPhase",
-    //                type: 'GET',
-    //                success: function (result) {
-    //                    kendoWindow.content(result);
-    //                    kendoWindow.center().open();
-    //                },
-    //                error: function (error) {
-    //                    console.log(error);
-    //                    alert('error fetching details');
-    //                },
-    //            });
-    //        });
-    //    },
-    //    columns: [
-    //        {
-    //            field: "ordinal",
-    //            title: "Ordinal",
-    //            width: "110px"
-    //        },
-    //        {
-    //            field: "phase",
-    //            title: "Phase",
-    //            width: "110px"
-    //        },
-    //        {
-    //            field: "steps",
-    //            title: "Steps",
-    //            width: "110px"
-    //        }
-    //    ]
-    //}).data("kendoGrid");
-
-
-    ////Steps Grid
-    //function detailInit(e) {
-    //    $("<div/>").appendTo(e.detailCell).kendoGrid({
-    //        dataSource: {
-    //            type: "odata",
-    //            transport: {
-    //                read: "Steps/GetAll"
-    //            },
-    //            serverPaging: true,
-    //            serverSorting: true,
-    //            serverFiltering: true,
-    //            pageSize: 10,
-    //            //filter: { field: "EmployeeID", operator: "eq", value: e.data.EmployeeID }
-    //        },
-    //        scrollable: false,
-    //        sortable: true,
-    //        pageable: true,
-    //        columns: [
-    //            { field: "ordinal", width: "110px" },
-    //            { field: "stepname", title: "Ship Country", width: "110px" },
-    //            { field: "actions", title: "Ship Name", width: "300px" }
-    //        ]
-    //    });
-    //}
-
-    //// Event handlers for custom toolbar buttons
-    //$(document).on("click", "#expand", function () {
-    //    var grid = $("#grid").data("kendoGrid");
-    //    $(".k-master-row").each(function (index) {
-    //        grid.expandRow(this);
-    //    });
-    //});
-
-    //$(document).on("click", "#collapse", function () {
-    //    var grid = $("#grid").data("kendoGrid");
-    //    $(".k-master-row").each(function (index) {
-    //        grid.collapseRow(this);
-    //    });
-    //});
+    $(document).on("click", "#collapse", function () {
+        var grid = $("#grid").data("kendoGrid");
+        $(".k-master-row").each(function (index) {
+            grid.collapseRow(this);
+        });
+    });
 }))

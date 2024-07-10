@@ -145,7 +145,7 @@
                 url: "/Applicant/DeleteApplicant",
                 type: 'POST',
                 data: {
-                    Id: dataItem.id
+                    id: dataItem.id
                 },
                 success: function (result) {
                     $("#refreshButton").trigger("click");

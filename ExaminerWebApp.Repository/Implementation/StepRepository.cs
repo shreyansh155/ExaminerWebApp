@@ -19,23 +19,33 @@ namespace ExaminerWebApp.Repository.Implementation
         public async Task<Step> Create(Step _object)
         {
             await _context.Steps.AddAsync(_object);
+            _context.SaveChanges();
             return _object;
         }
         public void Update(Step _object)
         {
-            _context.Steps.Update(_object);
-            _context.SaveChanges();
+            var a = _context.Steps.Update(_object);
+            var obj = _context.SaveChanges();
         }
         public void Delete(int id)
         {
             Step step = _context.Steps.Where(x => x.Id == id).First();
             step.IsDeleted = true;
-            _context.Update(id);
+            _context.Steps.Update(step);
             _context.SaveChanges();
         }
         public Step GetById(int id)
         {
             return _context.Steps.First(x => x.Id == id);
+        }
+        public List<StepType> GetStepTypeList()
+        {
+            return _context.StepTypes.OrderBy(x => x.Id).ToList();
+        }
+
+        public bool CheckIfStepExists(int phaseId, string stepName)
+        {
+            return _context.Steps.Where(x => x.PhaseId == phaseId && x.Name.ToLower() == stepName.ToLower()).Any();
         }
     }
 }

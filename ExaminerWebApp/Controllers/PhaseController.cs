@@ -1,5 +1,4 @@
-﻿using AspNetCoreHero.ToastNotification.Abstractions;
-using ExaminerWebApp.Composition.Helpers;
+﻿using ExaminerWebApp.Composition.Helpers;
 using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.Service.Interface;
 using ExaminerWebApp.ViewModels;
@@ -10,40 +9,40 @@ namespace ExaminerWebApp.Controllers
     public class PhaseController : BaseController
     {
         private readonly IPhaseService _phaseService;
-        private readonly INotyfService _notyf;
-        public PhaseController(IPhaseService phaseService, INotyfService notyf)
+
+        public PhaseController(IPhaseService phaseService)
         {
-            _notyf = notyf;
             _phaseService = phaseService;
         }
-        // GET: PhaseController
+
         public ActionResult Index()
         {
             return View();
         }
+
         public async Task<ActionResult> GetAll(int pageSize, int pageNumber)
         {
             IQueryable<Phase> data = _phaseService.GetAll();
             IQueryable<PhaseViewModel> result = GetPhase(data);
             return Json(await Pagination<PhaseViewModel>.CreateAsync(result, pageNumber, pageSize));
         }
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
 
-        public ActionResult Create()
-        {
-            return View();
-        }
         public IActionResult AddPhase()
         {
             return PartialView("Modal/_CreatePhase");
         }
+
         public IActionResult AddPhaseSteps(int phaseId)
-        { 
+        {
+            Phase phase = _phaseService.GetPhaseById(phaseId);
+            CreatePhaseModel model = new()
+            {
+                Name = phase.Name,
+                Description = phase.Description ?? "",
+                PhaseId = phaseId,
+            };
             ViewBag.ShowGrid = true;
-            return PartialView("Modal/_CreatePhase");
+            return PartialView("Modal/_CreatePhase", model);
         }
 
         [HttpPost]
@@ -53,20 +52,26 @@ namespace ExaminerWebApp.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    Phase phase = new()
+                    if (!_phaseService.CheckIfPhaseExists(model.Name))
                     {
-                        Name = model.Name,
-                        Description = model.Description,
-                    };
-                    _phaseService.CreatePhase(phase);
+                        Phase phase = new()
+                        {
+                            Name = model.Name,
+                            Description = model.Description,
+                        };
+                        _phaseService.CreatePhase(phase);
+                        return Json(new { success = true });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, errors = "Entered phase name already exists." });
+                    }
                 }
                 else
                 {
                     var errors = ModelStateErrorSerializer(ModelState);
-                    _notyf.Error("Error occurred while adding applicant");
                     return Json(new { success = false, errors });
                 }
-                return RedirectToAction(nameof(Index));
             }
             catch
             {
@@ -76,15 +81,16 @@ namespace ExaminerWebApp.Controllers
 
         public ActionResult Edit(int id)
         {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
             try
             {
-                return RedirectToAction(nameof(Index));
+                Phase phase = _phaseService.GetPhaseById(id);
+                CreatePhaseModel model = new()
+                {
+                    PhaseId = phase.Id,
+                    Name = phase.Name,
+                    Description = phase.Description,
+                };
+                return PartialView("Modal/_CreatePhase", model);
             }
             catch
             {
@@ -92,22 +98,39 @@ namespace ExaminerWebApp.Controllers
             }
         }
 
-        public ActionResult Delete(int id)
+        [HttpPost]
+        public ActionResult EditPhase(CreatePhaseModel model)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                Phase phase = new()
+                {
+                    Id = (int)model.PhaseId,
+                    Name = model.Name,
+                    Description = model.Description,
+                    ModifiedBy = "2",
+                    ModifiedDate = DateTime.UtcNow,
+                };
+                _phaseService.UpdatePhase(phase);
+                return Json(new { success = true });
+            }
+            else
+            {
+                var errors = ModelStateErrorSerializer(ModelState);
+                return Json(new { success = false, errors });
+            }
         }
 
-        // POST: PhaseController/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await Task.Run(() => _phaseService.DeletePhase(id));
+                return Json(new { success = true });
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return Json(new { success = false, error = ex });
             }
         }
     }

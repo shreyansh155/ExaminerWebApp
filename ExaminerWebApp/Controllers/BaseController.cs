@@ -84,6 +84,18 @@ namespace ExaminerWebApp.Controllers
                 Id = entity.Id,
                 Name = entity.Name,
                 Description = entity.Description,
+                Instruction = entity.Instruction,
+                TypeId = entity.StepTypeId,
+                PhaseId = entity.PhaseId,
+                StepType = entity.StepType,
+            });
+        }
+        protected IQueryable<StepsList> GetAllSteps(IQueryable<Step> entities)
+        {
+            return entities.Select(entity => new StepsList
+            {
+                StepTypeId = entity.Id,
+                Name = entity.Name,
             });
         }
     }

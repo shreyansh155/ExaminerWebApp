@@ -64,7 +64,7 @@
         data = data || {};
 
         // Define observables for each form field with validation
-        this.settingid = ko.observable(data.settingid || "").extend({ required: "Please select Application Type" });
+        this.settingid = ko.observable(data.settingid || "").extend({ required: "Please select application type" });
         this.firstName = ko.observable(data.firstname || "").extend({
             required: "First name is required",
             noNumbers: true

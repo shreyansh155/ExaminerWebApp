@@ -27,7 +27,7 @@
                                                required="required"
                                                data-bind="value: firstName, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
                                 </kendo-textbox>
-                                <span class="text-danger" data-bind="visible: firstName.hasError, text: firstName.validationMessage"> </span>
+                                <span class="text-danger" data-bind="visible: firstName.hasError, text: firstName.validationMessage"></span>
                             </div>
                             <div class="col-md-6" data-bind="css: { 'has-error': lastName.hasError }">
                                 <kendo-floating-label for="lastName">Last Name</kendo-floating-label>
@@ -78,7 +78,7 @@
                                         </transport>
                                     </datasource>
                                 </kendo-dropdownlist>
-                                @* <span class="text-danger" data-bind="visible: apptypeid.hasError, text: apptypeid.validationMessage"> </span> *@
+                               
                             </div>
                         </div>
                         <div class="row m-2">

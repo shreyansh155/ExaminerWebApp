@@ -29,16 +29,23 @@ namespace ExaminerWebApp.Service.Implementation
         public async Task<Phase> CreatePhase(Phase model)
         {
             Repository.DataModels.Phase phase = _mapper.Map<Repository.DataModels.Phase>(model);
-            var obj = _phaseRepository.Create(phase);
+            await _phaseRepository.Create(phase);
             return model;
         }
         public bool DeletePhase(int id)
         {
+            _phaseRepository.Delete(id);
             return true;
         }
         public bool UpdatePhase(Phase model)
         {
+            Repository.DataModels.Phase phase = _mapper.Map<Repository.DataModels.Phase>(model);
+            _phaseRepository.Update(phase);
             return true;
+        }
+        public bool CheckIfPhaseExists(string phaseName)
+        {
+            return _phaseRepository.CheckIfPhaseExists(phaseName);
         }
     }
 }

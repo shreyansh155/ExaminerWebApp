@@ -11,8 +11,9 @@
     <form id="templateForm">
         <div id="errorBody" class="text-danger"></div>
         <div class="form-group">
-            <label for="name">Phase Name</label>
+            <label for="name">Template Name</label>
             <input id="name" name="name" data-bind="kendoMaskedTextBox: { value: name }" />
+            <span class="text-danger" data-bind="visible: name.hasError, text: name.validationMessage"> </span>
         </div>
         <div class="form-group">
             <label for="description">Description</label>
@@ -29,3 +30,4 @@
         </kendo-button>
     </form>
 </div>
+<script src="~/js/application-type-template/window/window.js"></script>

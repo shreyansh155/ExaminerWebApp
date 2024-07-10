@@ -9,38 +9,51 @@ namespace ExaminerWebApp.Service.Implementation
     {
         private readonly IMapper _mapper;
         private readonly IApplicationTypeTemplateRepository _applicationTypeRepository;
-        public ApplicationTypeService(IMapper mapper, IApplicationTypeTemplateRepository applicationTypeRepository)
+        private readonly IPhaseRepository _phaseRepository;
+        private readonly ITemplatePhaseRepository _templatePhaseRepository;
+        private readonly IPhaseStepRepository _phaseStepRepository;
+
+        public ApplicationTypeService(IMapper mapper, IApplicationTypeTemplateRepository applicationTypeRepository, IPhaseRepository phaseRepository, ITemplatePhaseRepository templatePhaseRepository, IPhaseStepRepository phaseStepRepository)
         {
+            _phaseRepository = phaseRepository;
             _applicationTypeRepository = applicationTypeRepository;
             _mapper = mapper;
+            _phaseStepRepository = phaseStepRepository;
+            _templatePhaseRepository = templatePhaseRepository;
         }
+      
         public IQueryable<ApplicationTypeTemplate> GetAll(string s)
         {
             var list = _applicationTypeRepository.GetAll(s).AsQueryable();
             var obj = _mapper.ProjectTo<ApplicationTypeTemplate>(list);
             return obj;
         }
+        
         public ApplicationTypeTemplate GetById(int id)
         {
             Repository.DataModels.ApplicationTypeTemplate obj = _applicationTypeRepository.GetById(id);
             var result = _mapper.Map<ApplicationTypeTemplate>(obj);
             return result;
         }
+        
         public async Task<ApplicationTypeTemplate> Add(ApplicationTypeTemplate model)
         {
             Repository.DataModels.ApplicationTypeTemplate obj = _mapper.Map<Repository.DataModels.ApplicationTypeTemplate>(model);
             await _applicationTypeRepository.Create(obj);
             return model;
         }
+        
         public bool ApplicationTemplateExists(string applicationName)
         {
             return _applicationTypeRepository.ApplicationTemplateExists(applicationName);
         }
+        
         public bool Delete(int id)
         {
             _applicationTypeRepository.Delete(id);
             return true;
         }
+        
         public bool Update(ApplicationTypeTemplate model)
         {
             Repository.DataModels.ApplicationTypeTemplate obj = _mapper.Map<Repository.DataModels.ApplicationTypeTemplate>(model);
@@ -49,10 +62,39 @@ namespace ExaminerWebApp.Service.Implementation
                 _applicationTypeRepository.Update(obj);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
         }
+
+        public IQueryable<Phase> PhaseList(int templateId)
+        {
+            IQueryable<int> templatePhaseIds = _templatePhaseRepository
+                .GetAllTemplates(templateId)
+                .Select(tp => tp.PhaseId);
+
+            IQueryable<Repository.DataModels.Phase> filteredPhases = _phaseRepository
+                .GetAll()
+                .Where(p => !templatePhaseIds.Contains(p.Id));
+
+            IQueryable<Phase> list = _mapper.ProjectTo<Phase>(filteredPhases);
+
+            return list;
+        }
+        
+        public object GetPhaseByTemplate(int templateId)
+        {
+            object templatePhases = _templatePhaseRepository.TemplatePhases(templateId);
+            return templatePhases;
+        }
+
+        public object GetPhaseStepsByTemplate(int templateId, int phaseId)
+        {
+            object templatePhases = _templatePhaseRepository.PhaseSteps(templateId, phaseId);
+            object phaseSteps = _phaseStepRepository.PhaseStep(templatePhases);
+            return phaseSteps;
+        }
+
     }
 }

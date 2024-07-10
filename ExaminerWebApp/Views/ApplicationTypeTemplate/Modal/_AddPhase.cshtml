@@ -1,0 +1,58 @@
+﻿@model PhaseViewModel;
+
+@{
+    var serializedData = Json.Serialize(Model);
+}
+
+<script type="text/javascript">
+    window.initialData = @Html.Raw(serializedData);
+</script>
+<div>
+    <form id="addPhase">
+        <div id="errorBody" class="text-danger"></div>
+        <div class="form-group">
+            <label for="name">Phase</label>
+            <kendo-dropdownlist name="phaseid"
+                                dataTextField="name"
+                                dataValueField="id"
+                                option-label="Select phase"
+                                change="GetPhaseSteps"
+                                data-bind="value: phaseid">
+                <datasource>
+                    <transport>
+                        <read url="/ApplicationTypeTemplate/PhaseList?templateId=@Model.TemplateId" />
+                    </transport>
+                </datasource>
+            </kendo-dropdownlist>
+
+            <span class="text-danger" data-bind="visible: phaseid.hasError, text: phaseid.validationMessage"></span>
+        </div>
+        <div class="form-group">
+            <label for="description">Ordinal</label>
+            <kendo-numerictextbox name="ordinal"
+                                  min="1"
+                                  required="required"
+                                  format="n0"
+                                  decimals="0"
+                                  data-bind="value: ordinal, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+            </kendo-numerictextbox>
+            <span class="text-danger" data-bind="visible: ordinal.hasError, text: ordinal.validationMessage"></span>
+        </div>
+
+        <div class="mt-2" id="phaseGrid"></div>
+        <div class="footer">
+            <kendo-button name="submitBtn"
+                          data-bind="click: submitForm"
+                          theme-color="ThemeColor.Primary">
+                Save
+            </kendo-button>
+            <kendo-button name="closeBtn"
+                          data-bind="click: submitForm"
+                          theme-color="ThemeColor.Light">
+                Close
+            </kendo-button>
+        </div>
+    </form>
+
+</div>
+<script src="~/js/application-type-template/window/add-phase.js"></script>

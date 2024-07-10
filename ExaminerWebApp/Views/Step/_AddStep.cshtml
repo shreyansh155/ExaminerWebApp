@@ -1,4 +1,4 @@
-﻿@model CreatePhaseModel
+﻿@model AddStepModel
 @{
     var serializedData = Json.Serialize(Model);
 }
@@ -7,16 +7,34 @@
     window.initialData = @Html.Raw(serializedData);
 </script>
 <div>
-    <form id="stepForm">
+    <form id="addStep">
         <div id="errorBody" class="text-danger"></div>
-        <div class="form-group">
-            <label for="phasename">Name</label>
-            <input id="phasename" name="phasename" data-bind="kendoMaskedTextBox: { value: phasename }" />
+        <div class="row">
+            <div class="col-12 form-group">
+                <label for="phasename">Phase</label>
+                <kendo-dropdownlist id="steptypeid" name="steptype"
+                                    dataTextField="name"
+                                    dataValueField="id"
+                                    option-label="Select phase"
+                                    data-bind="value: steptypeid">
+                    <datasource>
+                        <transport>
+                            <read url="/Step/StepTypeList" />
+                        </transport>
+                    </datasource>
+                </kendo-dropdownlist>
+            </div>
+            <div class="col-12 form-group k-w-300">
+                <kendo-numerictextbox name="phaseordinal"
+                                      min="0"
+                                      step="1"
+                                      value="1"
+                                      data-bind="value: phaseordinal">
+                    <numerictextbox-label content="Ordinal" />
+                </kendo-numerictextbox>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="phasedescription">Description</label>
-            <input id="phasedescription" name="phasedescription" data-bind="kendoMaskedTextBox: { value: phasedescription }" />
-        </div>
+        <div id="ordinalGrid"></div>
         <kendo-button name="primaryTextButton"
                       data-bind="click: submitForm"
                       theme-color="ThemeColor.Primary">
@@ -26,10 +44,8 @@
                       theme-color="ThemeColor.Secondary">
             Cancel
         </kendo-button>
+
     </form>
-
-    <div id="stepGrid"></div>
-
 </div>
 
-<script src="~/js/step/step.js"></script>
+<script src="~/js/step/addstep.js"></script>

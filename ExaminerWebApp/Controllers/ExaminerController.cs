@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.ViewModels;
 using ExaminerWebApp.Service.Interface;
-using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace ExaminerWebApp.Controllers
 {
@@ -11,10 +10,8 @@ namespace ExaminerWebApp.Controllers
     {
         private readonly IExaminerService _examinerService;
         private readonly IExaminerTypeService _examinerTypeService;
-        private readonly INotyfService _notyf;
-        public ExaminerController(IExaminerService examinerService, IExaminerTypeService examinerTypeService,INotyfService notyf)
+        public ExaminerController(IExaminerService examinerService, IExaminerTypeService examinerTypeService)
         {
-            _notyf = notyf;
             _examinerService = examinerService;
             _examinerTypeService = examinerTypeService;
         }
@@ -57,8 +54,6 @@ namespace ExaminerWebApp.Controllers
                     return Json(new { success = false, errors = "Email already exists!" });
                 }
 
-
-
                 Examiner applicant = new()
                 {
                     FirstName = model.Firstname,
@@ -71,13 +66,11 @@ namespace ExaminerWebApp.Controllers
                     FormFile = model.FormFile,
                 };
                 await _examinerService.AddExaminer(applicant);
-                _notyf.Success("Examiner has been added successfully");
                 ModelState.Clear();
                 return Json(new { success = true });
             }
             else
             {
-                // Return the partial view with the model to show validation errors
                 var errors = ModelStateErrorSerializer(ModelState);
                 return Json(new { success = false, errors });
             }
@@ -121,13 +114,13 @@ namespace ExaminerWebApp.Controllers
                     Phone = model.Phone,
                     ExaminerTypeName = model.ExaminerTypeName ?? "",
                     FilePath = model.Filepath,
-                    FormFile = model.FormFile,
+                    FormFile = model.FormFile ,
                     ModifiedBy = "1",
                     ModifiedDate = DateTime.Now,
                 };
                 _examinerService.UpdateExaminer(obj);
-                _notyf.Success("Examiner has been updated successfully");
-                return Json(new { success = true});
+                // _notyf.Success("Examiner has been updated successfully");
+                return Json(new { success = true });
             }
             else
             {
@@ -143,7 +136,6 @@ namespace ExaminerWebApp.Controllers
             try
             {
                 await Task.Run(() => _examinerService.DeleteExaminer(id));
-                _notyf.Error("Examiner has been deleted successfully");
                 return Json(new { success = true });
             }
             catch (Exception ex)

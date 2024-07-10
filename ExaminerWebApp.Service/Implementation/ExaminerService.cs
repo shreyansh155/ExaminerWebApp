@@ -4,11 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using ExaminerWebApp.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using System.Net.Mail;
 using System.Net;
 using Microsoft.Extensions.Configuration;
-using ExaminerWebApp.Repository.Implementation;
 
 namespace PracticeWebApp.Service.Implementation
 {

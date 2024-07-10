@@ -28,4 +28,8 @@ public partial class Step
     public int? PhaseId { get; set; }
 
     public virtual Phase? Phase { get; set; }
+
+    public virtual StepType StepType { get; set; } = null!;
+
+    public virtual ICollection<TemplatePhaseStep> TemplatePhaseSteps { get; set; } = new List<TemplatePhaseStep>();
 }

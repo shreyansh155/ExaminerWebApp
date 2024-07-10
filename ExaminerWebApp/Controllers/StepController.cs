@@ -1,9 +1,6 @@
-﻿using AspNetCoreHero.ToastNotification.Abstractions;
-using ExaminerWebApp.Composition.Helpers;
-using ExaminerWebApp.Entities.Entities;
+﻿using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.Service.Interface;
 using ExaminerWebApp.ViewModels;
-using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExaminerWebApp.Controllers
@@ -11,99 +8,101 @@ namespace ExaminerWebApp.Controllers
     public class StepController : BaseController
     {
         private readonly IStepService _stepService;
-        private readonly INotyfService _notyf;
-        public StepController(IStepService stepService, INotyfService notyf)
+        public StepController(IStepService stepService)
         {
-            _notyf = notyf;
             _stepService = stepService;
-        }
-
-        // GET: StepController
-        public ActionResult Index()
-        {
-            return View();
         }
 
         public async Task<ActionResult> GetAll(int phaseId)
         {
             IQueryable<Step> data = _stepService.GetAll(phaseId);
             IQueryable<StepViewModel> result = await Task.Run(() => GetSteps(data));
-            return Json(await Pagination<StepViewModel>.CreateAsync(result, 10, 1));
-        }
-        // GET: PhaseController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
+            return Json(result);
         }
 
-        // GET: PhaseController/Create
-        public ActionResult Create()
+        public async Task<ActionResult> GetAllSteps(int phaseId)
         {
-            return View();
+            IQueryable<Step> data = _stepService.GetAll(phaseId);
+            IQueryable<StepsList> result = await Task.Run(() => GetAllSteps(data));
+            return Json(result);
         }
- 
-        // POST: PhaseController/Create
+
         [HttpPost]
-        public ActionResult CreatePhase(CreatePhaseModel model)
+        public IActionResult CreateStep([FromBody] StepViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                if (!_stepService.CheckIfStepExists(model.PhaseId, model.Name))
                 {
-                    Step step = new();
+                    Step step = new()
+                    {
+                        PhaseId = model.PhaseId,
+                        Name = model.Name,
+                        Description = model.Description,
+                        Instruction = model.Instruction,
+                        StepTypeId = model.TypeId,
+                        CreatedDate = DateTime.UtcNow,
+                        CreatedBy = "1",
+                    };
                     _stepService.CreateStep(step);
+
+                    return Json(new { success = true });
                 }
                 else
                 {
-                    var errors = ModelStateErrorSerializer(ModelState);
-                    _notyf.Error("Error occurred while adding applicant");
-                    return Json(new { success = false, errors });
+                    return Json(new { success = false, errors = "This phase already contains the entered step." });
                 }
-                return RedirectToAction(nameof(Index));
             }
-            catch
+            else
             {
-                return View();
+                return BadRequest(ModelState);
             }
         }
 
-        // GET: PhaseController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: PhaseController/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public IActionResult EditStep([FromBody] StepViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                Step step = new()
+                {
+                    Id = (int)model.Id,
+                    PhaseId = model.PhaseId,
+                    Name = model.Name,
+                    Description = model.Description,
+                    Instruction = model.Instruction,
+                    StepTypeId = model.TypeId,
+                    ModifiedDate = DateTime.UtcNow,
+                    ModifiedBy = "2",
+                    CreatedDate = DateTime.UtcNow,
+                    CreatedBy = "1",
+                };
+                _stepService.UpdateStep(step);
+
+                return Json(new { success = true });
             }
-            catch
+            else
             {
-                return View();
+                return BadRequest(ModelState);
             }
         }
 
-        // GET: PhaseController/Delete/5
+        public List<StepType> StepTypeList()
+        {
+            return _stepService.GetStepTypeList();
+        }
+
+        [HttpPost]
         public ActionResult Delete(int id)
         {
-            return View();
-        }
-
-        // POST: PhaseController/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _stepService.DeleteStep(id);
+                return Json(new { success = true });
             }
             catch
             {
-                return View();
+                return Json(new { success = false });
             }
         }
     }

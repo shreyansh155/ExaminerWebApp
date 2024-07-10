@@ -22,4 +22,6 @@ public partial class ApplicationTypeTemplate
     public DateTime? ModifiedDate { get; set; }
 
     public bool? IsDeleted { get; set; }
+
+    public virtual ICollection<ApplicationTypeTemplatePhase> ApplicationTypeTemplatePhases { get; set; } = new List<ApplicationTypeTemplatePhase>();
 }

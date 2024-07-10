@@ -18,7 +18,7 @@ namespace ExaminerWebApp.Service.Implementation
         public List<ApplicantType> GetApplicantTypeList()
         {
             List<Repository.DataModels.ApplicantType> applicantTypes = _dropdown.GetList();
-            var obj = _mapper.Map<List<ApplicantType>>(applicantTypes);
+            List<ApplicantType> obj = _mapper.Map<List<ApplicantType>>(applicantTypes);
             return obj;
         }
     }

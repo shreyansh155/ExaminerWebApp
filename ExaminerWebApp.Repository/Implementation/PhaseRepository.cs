@@ -21,7 +21,11 @@ namespace ExaminerWebApp.Repository.Implementation
             await _context.SaveChangesAsync();
             return model;
         }
-        public void Update(Phase model) { }
+        public void Update(Phase model)
+        {
+            _context.Phases.Update(model);
+            _context.SaveChanges();
+        }
         public void Delete(int id)
         {
             Phase phase = _context.Phases.First(x => x.Id == id);
@@ -33,5 +37,10 @@ namespace ExaminerWebApp.Repository.Implementation
         {
             return _context.Phases.First(x => x.Id == id); ;
         }
+        public bool CheckIfPhaseExists(string phaseName)
+        {
+            return _context.Phases.Where(x => x.Name.ToLower() == phaseName.ToLower()).Any();
+        }
+        
     }
 }

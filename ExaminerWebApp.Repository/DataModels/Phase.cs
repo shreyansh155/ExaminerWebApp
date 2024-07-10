@@ -21,5 +21,7 @@ public partial class Phase
 
     public bool? IsDeleted { get; set; }
 
+    public virtual ICollection<ApplicationTypeTemplatePhase> ApplicationTypeTemplatePhases { get; set; } = new List<ApplicationTypeTemplatePhase>();
+
     public virtual ICollection<Step> Steps { get; set; } = new List<Step>();
 }

@@ -4,12 +4,17 @@
 }
 <h3>Phases</h3>
 <div id="grid"></div>
-<div id="window"></div>
+<div class="justify-content-center align-items-center" id="window"></div>
 <div id="stepwindow"></div>
 
 <button id="refreshButton" type="button" hidden></button>
 <script id="custom-toolbar-template" type="text/x-kendo-template">
     <div>
+      <button id="add" class='k-button k-button-md k-rounded-md k-button-solid k-button-primary k-button-solid-base'>
+          <span class='k-button-text'>
+              Add Phase
+          </span>
+      </button>
       <button id="expand" class='k-button k-button-md k-rounded-md k-button-solid k-button-primary k-button-solid-base'>
           <span class='k-button-text'>
               Expand All

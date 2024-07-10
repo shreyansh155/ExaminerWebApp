@@ -9,5 +9,6 @@ namespace ExaminerWebApp.Service.Interface
         Task<Phase> CreatePhase(Phase model);
         bool DeletePhase(int id);
         bool UpdatePhase(Phase model);
+        bool CheckIfPhaseExists(string phaseName);
     }
 }

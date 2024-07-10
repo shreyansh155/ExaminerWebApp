@@ -1,19 +1,20 @@
 ﻿var kendoWindow;
 var stepWindow;
+
 $(function () {
     kendoWindow = $("#window").kendoWindow({
-        width: "600px",
+        position: {
+            top: "50%",  
+            left: "50%",
+        },
         title: "Phase",
         visible: false,
         modal: true
     }).data("kendoWindow");
-
-    stepwindow = $("#stepwindow").kendoWindow({
-        title: "Step",
-        visible: false,
-        modal: true
-    }).data("kendoWindow");
-
+    function textBox(container, options) {
+        $('<textarea rows="3" id="decription" name="decription" data-bind="value:' + options.field + '"></textarea>')
+            .appendTo(container);
+    }
     var grid = $("#grid").kendoGrid({
         dataSource: {
             transport: {
@@ -69,13 +70,6 @@ $(function () {
         editable: false,
         toolbar: [
             {
-                name: "create",
-                text: "Add Phase",
-                attributes: {
-                    "class": "k-button k-primary"
-                }
-            },
-            {
                 template: kendo.template($("#custom-toolbar-template").html())
             }
         ],
@@ -83,36 +77,17 @@ $(function () {
             { field: "phaseId", title: "Phase ID", width: "125px", hidden: true },
             { field: "ordinal", title: "Ordinal", width: "125px", hidden: true },
             { field: "name", title: "Phase", width: "130px" },
-            { field: "description", title: "Description", width: "130px" },
+            { field: "description", title: "Description", width: "130px", editor: textBox },
             {
                 command: [
                     { text: "Add Steps", click: AddSteps },
-                    { text: "Edit" },
-                    { text: "Delete" }
+                    { text: "Edit", click: EditPhase },
+                    { text: "Delete", click: DeletePhase }
                 ],
                 title: "Actions",
                 width: "220px",
             }
         ],
-        dataBound: function () {
-            this.expandRow(this.tbody.find("tr.k-master-row").first());
-            $('.k-grid-add').off("click");
-            $('.k-grid-add').on("click", function () {
-                $.ajax({
-                    url: "/Phase/AddPhase",
-                    type: 'GET',
-                    success: function (result) {
-                        kendoWindow.content(result);
-                        kendoWindow.center().open();
-                    },
-                    error: function (error) {
-                        console.log(error);
-                        alert('error fetching details');
-                    },
-                });
-            });
-        },
-
     }).data("kendoGrid");
 
     function AddSteps(e) {
@@ -121,15 +96,49 @@ $(function () {
         $.ajax({
             url: "/Phase/AddPhaseSteps",
             type: "GET",
-         
             data: {
                 phaseId: dataItem.phaseId,
             },
             success: function (result) {
-                debugger;
-                console.log(result);
-                stepwindow.content(result);
-                stepwindow.center().open();
+
+                kendoWindow.content(result);
+                kendoWindow.center().open();
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+    function EditPhase(e) {
+        var tr = $(e.target).closest("tr");
+        var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
+        $.ajax({
+            url: "/Phase/Edit",
+            type: "GET",
+            data: {
+                id: dataItem.phaseId,
+            },
+            success: function (result) {
+                kendoWindow.content(result);
+                kendoWindow.center().open();
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+    function DeletePhase(e) {
+        var tr = $(e.target).closest("tr");
+        var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
+        $.ajax({
+            url: "/Phase/Delete",
+            type: "POST",
+            data: {
+                id: dataItem.phaseId,
+            },
+            success: function (result) {
+                $("#refreshButton").trigger("click");
+                alert("Phase has been deleted successfully");
             },
             error: function (error) {
                 console.log(error);
@@ -138,7 +147,7 @@ $(function () {
     }
     //Steps Grid
     function PhaseRow(e) {
-        var dataItem = e.data; // Use the e.data to get the current data item
+        var dataItem = e.data; 
 
         $("<div/>").appendTo(e.detailCell).kendoGrid({
             dataSource: {
@@ -152,11 +161,7 @@ $(function () {
                                 phaseId: dataItem.phaseId,
                             },
                             success: function (data) {
-                                if (data && data.items && data.totalItems !== undefined) {
-                                    options.success(data);
-                                } else {
-                                    options.error(new Error("Invalid data structure"));
-                                }
+                                options.success(data);
                             },
                             error: function (error) {
                                 console.log(error);
@@ -166,36 +171,50 @@ $(function () {
                     },
                 },
                 schema: {
-                    total: "totalItems",
-                    data: "items",
                     model: {
+                        id: "id",
                         fields: {
-                            stepId: { editable: false },
-                            ordinal: { editable: false },
+                            id: { editable: false, nullable: true },
                             name: { type: "string" },
                             description: { type: "string" },
+                            instruction: { type: "string" },
+                            typeId: { type: "number" },
+                            stepType: { type: "string" }
                         }
                     }
                 },
-                serverPaging: true,
-                serverSorting: true,
-                serverFiltering: true,
                 pageSize: 10,
             },
-            scrollable: false,
+            scrollable: true,
             sortable: false,
             pageable: false,
             editable: false,
             columns: [
-                { field: "stepId", title: "Step ID", width: "125px", hidden: true },
-                { field: "ordinal", title: "Ordinal", width: "125px", hidden: true },
-                { field: "name", title: "Name", width: "130px" },
+                { field: "id", title: "Step Id", width: "125px", hidden: true },
+                { field: "name", title: "Step Name", width: "130px" },
                 { field: "description", title: "Description", width: "130px" },
+                { field: "instruction", title: "Instruction", width: "130px" },
+                { field: "stepType", title: "Step Type", width: "150px" },
             ],
         });
     }
 
     // Event handlers for custom toolbar buttons
+    $(document).on("click", "#add", function () {
+        $.ajax({
+            url: "/Phase/AddPhase",
+            type: 'GET',
+            success: function (result) {
+                kendoWindow.content(result);
+                kendoWindow.center().open();
+            },
+            error: function (error) {
+                console.log(error);
+                alert('error fetching details');
+            },
+        });
+    });
+
     $(document).on("click", "#expand", function () {
         var grid = $("#grid").data("kendoGrid");
         $(".k-master-row").each(function (index) {
@@ -208,5 +227,8 @@ $(function () {
         $(".k-master-row").each(function (index) {
             grid.collapseRow(this);
         });
+    });
+    $("#refreshButton").on("click", function () {
+        grid.dataSource.read();
     });
 });

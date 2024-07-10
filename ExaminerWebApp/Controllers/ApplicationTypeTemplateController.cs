@@ -1,5 +1,4 @@
-﻿using AspNetCoreHero.ToastNotification.Abstractions;
-using ExaminerWebApp.Composition.Helpers;
+﻿using ExaminerWebApp.Composition.Helpers;
 using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.Service.Interface;
 using ExaminerWebApp.ViewModels;
@@ -10,28 +9,30 @@ namespace ExaminerWebApp.Controllers
     public class ApplicationTypeTemplateController : BaseController
     {
         private readonly IApplicationTypeService _applicationTypeService;
-        private readonly INotyfService _notyf;
-
-        public ApplicationTypeTemplateController(IApplicationTypeService applicationTypeService, INotyfService notyf)
+        private readonly ITemplatePhaseService _templatePhaseService;
+        public ApplicationTypeTemplateController(IApplicationTypeService applicationTypeService, ITemplatePhaseService templatePhaseService)
         {
-            _notyf = notyf;
             _applicationTypeService = applicationTypeService;
+            _templatePhaseService = templatePhaseService;
         }
 
         public IActionResult Index()
         {
             return View();
         }
+
         public async Task<ActionResult> GetAll(int pageSize, int pageNumber, string search)
         {
             IQueryable<ApplicationTypeTemplate> data = await Task.Run(() => _applicationTypeService.GetAll(search));
             IQueryable<ApplicationTypeTemplateModel> result = GetApplicationTemplates(data);
             return Json(await Pagination<ApplicationTypeTemplate>.CreateAsync(data, pageNumber, pageSize));
         }
+
         public IActionResult ShowTemplateModal()
         {
             return PartialView("Modal/_TemplateModal");
         }
+
         public IActionResult AddTemplate(ApplicationTypeTemplateModel model)
         {
             if (ModelState.IsValid)
@@ -53,7 +54,6 @@ namespace ExaminerWebApp.Controllers
                     try
                     {
                         var obj = _applicationTypeService.Add(applicationType);
-                        _notyf.Success("Application Template has been successfully added!");
                     }
                     catch (Exception ex)
                     {
@@ -69,8 +69,6 @@ namespace ExaminerWebApp.Controllers
         {
             return Json(new { redirectUrl = Url.Action("EditPage", "ApplicationTypeTemplate", new { id }) });
         }
-
-
 
         public IActionResult EditPage(int id)
         {
@@ -90,7 +88,6 @@ namespace ExaminerWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                // if (_applicationTypeService.ApplicationTemplateExists(model.Name)) { }
                 ApplicationTypeTemplate applicationType = new()
                 {
                     Id = model.Id,
@@ -101,7 +98,6 @@ namespace ExaminerWebApp.Controllers
                     ModifiedDate = DateTime.UtcNow,
                 };
                 _applicationTypeService.Update(applicationType);
-                _notyf.Success("Application Template has been successfully updated!");
             }
             return View(model);
         }
@@ -118,5 +114,58 @@ namespace ExaminerWebApp.Controllers
                 return false;
             }
         }
+
+        public async Task<ActionResult> GetPhaseSteps(int templateId, int phaseId)
+        {
+            Object phases = await Task.Run(() => _applicationTypeService.GetPhaseStepsByTemplate(templateId, phaseId));
+            return Json(phases);
+        }
+
+        public async Task<ActionResult> GetPhase(int templateId)
+        {
+            Object phases = await Task.Run(() => _applicationTypeService.GetPhaseByTemplate(templateId));
+            return Json(phases);
+        }
+
+        public IActionResult OpenTemplatePhase(int templateId)
+        {
+            PhaseViewModel model = new()
+            {
+                TemplateId = templateId
+            };
+            return PartialView("Modal/_AddPhase", model);
+        }
+
+        public IQueryable<Phase> PhaseList(int templateId)
+        {
+            return _applicationTypeService.PhaseList(templateId);
+        }
+
+        [HttpPost]
+        public IActionResult AddTemplatePhase([FromBody] PhaseViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                ApplicationTypeTemplatePhase obj = new()
+                {
+                    TemplateId = model.TemplateId,
+                    Ordinal = model.Ordinal,
+                    PhaseId = model.PhaseId,
+                };
+                _templatePhaseService.AddTemplatePhase(obj);
+                return Json(new { success = true });
+            }
+            else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { success = false, errors });
+            }
+        }
+        public ActionResult UpdateOrdinal(int phaseId, int templateId, int ordinal)
+        {
+            _templatePhaseService.UpdateOrdinal(templateId, phaseId, ordinal);
+            return Json(new { success = true });
+        }
+
     }
 }

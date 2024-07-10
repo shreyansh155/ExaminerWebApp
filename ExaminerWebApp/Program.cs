@@ -30,6 +30,8 @@ builder.Services.AddTransient<IApplicantTypeRepository, ApplicantTypeRepository>
 builder.Services.AddTransient<IApplicationTypeTemplateRepository, ApplicationTypeTemplateRepository>();
 builder.Services.AddTransient<IPhaseRepository, PhaseRepository>();
 builder.Services.AddTransient<IStepRepository, StepRepository>();
+builder.Services.AddTransient<ITemplatePhaseRepository, TemplatePhaseRepository>();
+builder.Services.AddTransient<IPhaseStepRepository, PhaseStepRepository>();
 
 // Register services
 builder.Services.AddScoped<IApplicantService, ApplicantService>();
@@ -39,9 +41,10 @@ builder.Services.AddScoped<IExaminerTypeService, ExaminerTypeService>();
 builder.Services.AddScoped<IApplicationTypeService, ApplicationTypeService>();
 builder.Services.AddScoped<IPhaseService, PhaseService>();
 builder.Services.AddScoped<IStepService, StepService>();
+builder.Services.AddScoped<ITemplatePhaseService, TemplatePhaseService>();
 
 builder.Services.AddDataProtection();
-builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; config.HasRippleEffect = true; });
+//builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; config.HasRippleEffect = true; });
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -54,7 +57,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseNotyf();
+//app.UseNotyf();
 
 app.UseRouting();
 

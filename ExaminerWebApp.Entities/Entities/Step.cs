@@ -17,6 +17,7 @@
         public DateTime CreatedDate { get; set; }
 
         public int StepTypeId { get; set; }
+        public string? StepType { get; set; }
 
         public bool? IsDeleted { get; set; }
 

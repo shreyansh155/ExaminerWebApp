@@ -15,5 +15,10 @@ namespace ExaminerWebApp.Service.Interface
         bool Delete(int id);
 
         bool Update(ApplicationTypeTemplate model);
+        object GetPhaseStepsByTemplate(int templateId, int phaseId);
+
+        object GetPhaseByTemplate(int templateId);
+
+        IQueryable<Phase> PhaseList(int templateId);
     }
 }

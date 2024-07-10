@@ -11,12 +11,10 @@ namespace ExaminerWebApp.Controllers
     {
         private readonly IApplicantService _applicantService;
         private readonly IApplicantTypeService _applicantTypeService;
-        private readonly INotyfService _notyf;
 
         #region CONSTRUCTOR
-        public ApplicantController(IApplicantService applicantService, IApplicantTypeService applicantTypeService, INotyfService notyf)
+        public ApplicantController(IApplicantService applicantService, IApplicantTypeService applicantTypeService)
         {
-            _notyf = notyf;
             _applicantService = applicantService;
             _applicantTypeService = applicantTypeService;
         }
@@ -75,14 +73,11 @@ namespace ExaminerWebApp.Controllers
 
                 await _applicantService.AddApplicant(applicant);
                 ModelState.Clear();
-                _notyf.Success("Applicant has been added successfully!");
                 return Json(new { success = true });
             }
             else
             {
-                // Return the partial view with the model to show validation errors
                 var errors = ModelStateErrorSerializer(ModelState);
-                _notyf.Error("Error occurred while adding applicant");
                 return Json(new { success = false, errors });
             }
         }
@@ -130,7 +125,6 @@ namespace ExaminerWebApp.Controllers
                 };
 
                 _applicantService.UpdateApplicant(obj);
-                _notyf.Success("Applicant updated successfully!");
                 return Json(new { success = true });
             }
             else

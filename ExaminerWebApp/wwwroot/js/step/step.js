@@ -1,183 +1,319 @@
 ﻿$(function () {
+    var phaseId = window.initialData.phaseId;
 
-    ko.extenders.required = function (target, overrideMessage) {
-        target.hasError = ko.observable(false);
-        target.validationMessage = ko.observable();
-        target.validationTriggered = ko.observable(false); // Track if validation should be triggered
-
-        function validate(newValue) {
-            if (target.validationTriggered()) {
-                target.hasError(!newValue);
-                target.validationMessage(!newValue ? overrideMessage || "This field is required" : "");
+    var stepTypeDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: "/Step/StepTypeList",
+                type: "GET",
+                dataType: "json"
             }
         }
+    });
 
-        target.subscribe(validate);
-
-        target.validate = function () {
-            target.validationTriggered(true);
-            validate(target());
-        };
-
-        return target;
-    };
-    function PhaseViewModel(data) {
-
-        data = data || {};
-
-        this.phasename = ko.observable(data.phasename || "").extend({ required: "Please enter application name" });
-        this.phasedescription = ko.observable(data.phasedescription || "");
-        this.submitForm = function () {
-            this.phasename.validate();
-
-            if (this.isValid()) {
-                var formData = new FormData($("#phaseForm")[0]);
-                formData.append("Name", this.phasename());
-                formData.append("Description", this.phasedescription());
-                if (data.id) {
-                    formData.append("Id", data.id);
-                }
-
-                var link = data && data.id ? '/Phase/EditPhase' : '/Phase/CreatePhase';
-
-                $.ajax({
-                    url: link,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        if (response.success) {
-                            $("#refreshButton").trigger("click");
-                            kendoWindow.close();
-                        } else {
-                            var errorsHtml = '<ul>';
-                            if (typeof (response.errors) === "string") {
-                                errorsHtml += '<li>' + response.errors + '</li>'
-                            }
-                            else {
-                                $.each(response.errors, function (key, value) {
-                                    errorsHtml += '<li>' + value + '</li>'; // Create list of errors
-                                });
-                            }
-                            errorsHtml += '</ul>';
-                            $('#errorBody').html(errorsHtml);
-                        }
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    }
-                });
-            }
-        }
-        this.isValid = function () {
-            return !this.phasename.hasError();
-        };
+    function textBox(container, options) {
+        $('<textarea rows="1" name="' + options.field + '" class="k-textbox form-control" data-bind="value:' + options.field + '"></textarea>')
+            .appendTo(container);
     }
-    var viewModel = new PhaseViewModel(window.initialData);
-    ko.applyBindings(viewModel, document.getElementById("phaseForm"));
+
+    function stepTypeDropDownEditor(container, options) {
+        $('<input required name="' + options.field + '"/>')
+            .appendTo(container)
+            .kendoDropDownList({
+                autoBind: false,
+                optionLabel: "Select Step Type",
+                dataTextField: "name",
+                dataValueField: "id",
+                dataSource: stepTypeDataSource,
+                value: options.model[options.field]
+            });
+    }
+
+    function kendoEditor(container, options) {
+        $('<textarea name="' + options.field + '"></textarea>')
+            .appendTo(container)
+            .kendoEditor({
+                tools: [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "strikethrough",
+                    "justifyLeft",
+                    "justifyCenter",
+                    "justifyRight",
+                    "justifyFull",
+                    "insertUnorderedList",
+                    "insertOrderedList",
+                    "indent",
+                    "outdent",
+                    "createLink",
+                    "unlink",
+                    "insertImage",
+                    "insertFile",
+                    "subscript",
+                    "superscript",
+                    "createTable",
+                    "addRowAbove",
+                    "addRowBelow",
+                    "addColumnLeft",
+                    "addColumnRight",
+                    "deleteRow",
+                    "deleteColumn",
+                    "viewHtml"
+                ]
+            });
+    }
 
     var grid = $("#stepGrid").kendoGrid({
         dataSource: {
             transport: {
-                read: function (options) {
-                    $.ajax({
-                        url: "/Step/GetAll",
-                        type: "GET",
-                        dataType: "json",
-                        data: {
-
-                        },
-                        success: function (data) {
-                            options.success(data);
-                        },
-                        error: function (error) {
-                            console.log(error);
-                            alert('Error fetching data.');
-                        }
-                    });
+                read: {
+                    url: "/Step/GetAll",
+                    type: "GET",
+                    dataType: "json",
+                    data: {
+                        phaseId: phaseId
+                    }
                 },
-                parameterMap: function (data, type) {
-                    if (type === "read") {
-                        return kendo.stringify(data);
-                    }
-                    return data;
-                }
+                update: {
+                    url: function (data) {
+                        return "/Step/Update/" + data.id;
+                    },
+                    type: "POST",
+                    dataType: "json"
+                },
+                destroy: {
+                    url: function (data) {
+                        return "/Step/Delete/" + data.id;
+                    },
+                    type: "POST",
+                    dataType: "json"
+                },
             },
             pageSize: 10,
-            serverPaging: true,
             schema: {
-                total: "totalItems",
-                data: "items",
                 model: {
+                    id: "id",
                     fields: {
-                        id: { editable: false },
-                        firstname: { type: "string" },
-                        lastname: { type: "string" },
-                        dateofbirth: { type: "date" },
-                        phone: { type: "string" },
-                        email: { type: "string" },
-                        examinerTypeName: { type: "string" },
-                        status: { type: "string" }
+                        id: { editable: false, nullable: true },
+                        name: {
+                            type: "string",
+                            validation: {
+                                required: true,
+                                nameValidation: function (input) {
+                                    if (input.is("[name='name']") && input.val() == "") {
+                                        input.attr("data-nameValidation-msg", "Name is required.");
+                                        return false;
+                                    }
+                                    return true;
+                                }
+                            }
+                        },
+                        description: { type: "string" },
+                        instruction: { type: "string" },
+                        typeId: {
+                            type: "number",
+                            validation: {
+                                required: true,
+                                typeIdValidation: function (input) {
+                                    if (input.is("[name='typeId']") && input.val() == "") {
+                                        input.attr("data-typeIdValidation-msg", "Step Type is required.");
+                                        return false;
+                                    }
+                                    return true;
+                                }
+                            }
+                        },
+                        stepType: { type: "string" }
                     }
                 }
-            },
-        },
-        pageable: {
-            pageSize: 10,
-            pageSizes: [10, 15, 20]
-        },
-        sortable: true,
-        editable: false,
-        toolbar: ["Create"],
-        columns: [
-
-            { field: "id", title: "Examiner ID", width: "125px", hidden: true },
-
-            { field: "firstname", title: "First Name", width: "130px" },
-
-            { field: "lastname", title: "Last Name", width: "130px" },
-
-            { field: "dateofbirth", title: "Date Of Birth", width: "130px", format: "{0:dd/MM/yyyy}" },
-
-            { field: "phone", title: "Phone Number", width: "150px" },
-
-            { field: "email", title: "Email", width: "250px" },
-
-            { field: "examinerTypeName", title: "Examiner Type", width: "200px" },
-
-            { field: "status", title: "Status", width: "100px" },
-            {
-                command: [
-                    { text: "View", click: OpenFile },
-                    { text: "Edit", click: EditEntry },
-                    { text: "Delete", click: DeleteEntry }
-                ],
-                title: "Actions",
-                width: "220px",
             }
+        },
+        width: "1200px",
+        margin: "50px",
+        pageable: true,
+        sortable: false,
+        editable: "inline",
+        toolbar: [{ name: "create", text: "Add Steps" }],
+        columns: [
+            { field: "id", title: "Step Id", width: "150px", hidden: true },
+            { field: "name", title: "Name", width: "150px" },
+            { field: "description", title: "Description", editor: textBox },
+            {
+                field: "instruction", title: "Instruction", editor: kendoEditor,
+                template: function (dataItem) {
+                    return '<div class="instruction-cell" data-instruction="' + kendo.htmlEncode(dataItem.instruction) + '">' + dataItem.instruction + '</div>';
+                }
+            },
+            {
+                field: "typeId",
+                title: "Step Type",
+                width: "200px",
+                editor: stepTypeDropDownEditor,
+                template: "#= stepType #",
+            },
+            {
+                command: ["edit", "destroy"],
+                title: "Actions",
+                width: "220px"
+            },
         ],
-        dataBound: function (e) {
-            $('.k-grid-add').off("click");
-            $('.k-grid-add').on("click", function () {
-                $.ajax({
-                    url: "/Examiner/ExaminerForm",
-                    type: 'GET',
-                    success: function (result) {
-                        $('#displayModal').html(result);
-                        $('#examiner-form').modal('show');
-                    },
-                    error: function (error) {
-                        console.log(error);
-                        alert('error fetching details');
-                    },
-                });
-            });
+        save: function (e) {
+            if (e.model.isNew()) {
+                e.preventDefault();
+                CreateStep(e.model);
+                console.log("Creating new record");
+            } else {
+                EditStep(e.model);
+                console.log("Updating record with id: " + e.model.id);
+            }
         },
 
+        dataBound: function () {
+            $('.k-grid-add').off("click").on("click", function () {
+                grid.addRow();
+            });
+            $("#grid").on("click", ".k-grid-myDelete", function (e) {
+                e.preventDefault();
+
+                var command = $(this);
+                var cell = command.closest("td");
+
+            });
+        }
     }).data("kendoGrid");
- 
+
+    $("#grid").kendoValidator({
+        rules: {
+            typeIdValidation: function (input) {
+                if (input.is("[name='typeId']")) {
+                    return input.val() != "";
+                }
+                return true;
+            },
+            nameValidation: function (input) {
+                if (input.is("[name='name']")) {
+                    return input.val() != "";
+                }
+                return true;
+            }
+        },
+        messages: {
+            typeIdValidation: "Step Type is required.",
+            nameValidation: "Name is required."
+        }
+    });
+
+    function CreateStep(data) {
+        var validator = $("#grid").data("kendoValidator");
+        if (!validator.validate()) {
+            return;
+        }
+        var formData = {
+            PhaseId: phaseId,
+            Name: data.name,
+            Description: data.description,
+            Instruction: data.instruction,
+            TypeId: data.typeId,
+        };
+        $.ajax({
+            url: "/Step/CreateStep",
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(formData),
+            success: function (response) {
+                if (response.success) {
+                    $("#refreshButton").trigger("click");
+                    kendoWindow.close();
+                } else {
+                    var errorsHtml = '<ul>';
+                    if (typeof (response.errors) === "string") {
+                        errorsHtml += '<li>' + response.errors + '</li>'
+                    }
+                    else {
+                        $.each(response.errors, function (key, value) {
+                            errorsHtml += '<li>' + value + '</li>';  
+                        });
+                    }
+                    errorsHtml += '</ul>';
+                    $('#errorBody').html(errorsHtml);
+                }
+            },
+            error: function (error) {
+                console.log(error);
+                alert('Error fetching data.');
+            }
+        });
+    }
+
+    function EditStep(data) {
+        var formData = {
+            PhaseId: phaseId,
+            Name: data.name,
+            Description: data.description,
+            Instruction: data.instruction,
+            TypeId: data.typeId,
+            Id: data.id
+        };
+        $.ajax({
+            url: "/Step/EditStep",
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(formData),
+            success: function (response) {
+                $("#refreshButton").trigger("click");
+            },
+            error: function (error) {
+                console.log(error);
+                alert('Error fetching data.');
+            }
+        });
+    }
+
     $("#refreshButton").on("click", function () {
         grid.dataSource.read();
+    });
+
+    $("#stepGrid").kendoTooltip({
+        filter: ".instruction-cell",
+        content: function (e) {
+            var dataItem = $("#stepGrid").data("kendoGrid").dataItem(e.target.closest("tr"));
+            $("#tooltipEditor").val(dataItem.instruction);
+            $("#tooltipEditor").kendoEditor({
+                tools: [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "strikethrough",
+                    "justifyLeft",
+                    "justifyCenter",
+                    "justifyRight",
+                    "justifyFull",
+                    "insertUnorderedList",
+                    "insertOrderedList",
+                    "indent",
+                    "outdent",
+                    "createLink",
+                    "unlink",
+                    "insertImage",
+                    "insertFile",
+                    "subscript",
+                    "superscript",
+                    "createTable",
+                    "addRowAbove",
+                    "addRowBelow",
+                    "addColumnLeft",
+                    "addColumnRight",
+                    "deleteRow",
+                    "deleteColumn",
+                    "viewHtml"
+                ]
+            });
+            return $("#tooltipTemplate").html();
+        },
+        width: 300,
+        position: "top"
     });
 });

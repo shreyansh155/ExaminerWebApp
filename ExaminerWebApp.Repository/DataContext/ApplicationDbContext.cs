@@ -1,4 +1,6 @@
-﻿using ExaminerWebApp.Repository.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using ExaminerWebApp.Repository.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -8,10 +10,18 @@ public partial class ApplicationDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IConfiguration configuration)
-        : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration)
+      : base(options)
     {
         _configuration = configuration;
+    }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+            optionsBuilder.UseNpgsql(connectionString);
+        }
     }
 
     public virtual DbSet<Applicant> Applicants { get; set; }
@@ -19,6 +29,8 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<ApplicantType> ApplicantTypes { get; set; }
 
     public virtual DbSet<ApplicationTypeTemplate> ApplicationTypeTemplates { get; set; }
+
+    public virtual DbSet<ApplicationTypeTemplatePhase> ApplicationTypeTemplatePhases { get; set; }
 
     public virtual DbSet<Examiner> Examiners { get; set; }
 
@@ -32,14 +44,7 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<StepType> StepTypes { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
-            optionsBuilder.UseNpgsql(connectionString);
-        }
-    }
+    public virtual DbSet<TemplatePhaseStep> TemplatePhaseSteps { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -119,6 +124,31 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Name)
                 .HasColumnType("character varying")
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<ApplicationTypeTemplatePhase>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("application_type_template_phase_pkey");
+
+            entity.ToTable("application_type_template_phase");
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
+            entity.Property(e => e.Ordinal).HasColumnName("ordinal");
+            entity.Property(e => e.PhaseId).HasColumnName("phase_id");
+            entity.Property(e => e.TemplateId).HasColumnName("template_id");
+
+            entity.HasOne(d => d.Phase).WithMany(p => p.ApplicationTypeTemplatePhases)
+                .HasForeignKey(d => d.PhaseId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkey_phase_id");
+
+            entity.HasOne(d => d.Template).WithMany(p => p.ApplicationTypeTemplatePhases)
+                .HasForeignKey(d => d.TemplateId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkey_template_id");
         });
 
         modelBuilder.Entity<Examiner>(entity =>
@@ -243,7 +273,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("step");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
             entity.Property(e => e.CreatedBy)
                 .HasColumnType("character varying")
@@ -271,6 +301,11 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Phase).WithMany(p => p.Steps)
                 .HasForeignKey(d => d.PhaseId)
                 .HasConstraintName("fkey_phase_id");
+
+            entity.HasOne(d => d.StepType).WithMany(p => p.Steps)
+                .HasForeignKey(d => d.StepTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkey_step_type_id");
         });
 
         modelBuilder.Entity<StepType>(entity =>
@@ -283,6 +318,32 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(128)
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<TemplatePhaseStep>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("template_phase_step_pkey");
+
+            entity.ToTable("template_phase_step");
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_deleted");
+            entity.Property(e => e.StepId).HasColumnName("step_id");
+            entity.Property(e => e.TemplatePhaseId).HasColumnName("template_phase_id");
+
+            entity.HasOne(d => d.Step).WithMany(p => p.TemplatePhaseSteps)
+                .HasForeignKey(d => d.StepId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkey_step_id");
+
+            entity.HasOne(d => d.TemplatePhase).WithMany(p => p.TemplatePhaseSteps)
+                .HasForeignKey(d => d.TemplatePhaseId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkey_template_phase_id");
         });
 
         OnModelCreatingPartial(modelBuilder);

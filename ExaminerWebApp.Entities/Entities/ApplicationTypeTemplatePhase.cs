@@ -1,4 +1,6 @@
-﻿namespace ExaminerWebApp.Entities.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ExaminerWebApp.Entities.Entities
 {
     public partial class ApplicationTypeTemplatePhase
     {
@@ -6,11 +8,12 @@
 
         public int TemplateId { get; set; }
 
-        public int PhaseId { get; set; }
+        public int? PhaseId { get; set; }
 
         public int Ordinal { get; set; }
 
         public bool? IsDeleted { get; set; }
 
+        public List<TemplatePhaseStep>? TemplatePhaseSteps { get; set; }
     }
 }

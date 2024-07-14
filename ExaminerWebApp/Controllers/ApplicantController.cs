@@ -140,7 +140,7 @@ namespace ExaminerWebApp.Controllers
         {
             try
             {
-                await Task.Run(() => _applicantService.DeleteApplicant(id));
+                await _applicantService.DeleteApplicant(id);
                 return Json(new { success = true });
             }
             catch (Exception ex)

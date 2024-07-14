@@ -1,7 +1,7 @@
 ﻿using ExaminerWebApp.Repository.DataContext;
 using ExaminerWebApp.Repository.DataModels;
 using ExaminerWebApp.Repository.Interface;
-using static System.Net.WebRequestMethods;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExaminerWebApp.Repository.Implementation
 {
@@ -22,9 +22,10 @@ namespace ExaminerWebApp.Repository.Implementation
                     .Where(attp => attp.TemplateId == templateId && attp.IsDeleted != true)
                     .Select(attp => new
                     {
+                        TemplatePhaseId = attp.Id,
                         attp.Ordinal,
                         attp.Phase,
-                        StepCount = attp.Phase.Steps.Count(),
+                        StepCount = attp.TemplatePhaseSteps.Count(),
                     })
                     .OrderBy(x => x.Ordinal)
                     .ToList();
@@ -32,23 +33,39 @@ namespace ExaminerWebApp.Repository.Implementation
                 return phasesWithStepCounts;
             }
         }
-        public Object PhaseSteps(int templateId, int phaseId)
-        {
-            using (_context)
-            {
-                var phasesWithStepCounts = _context.ApplicationTypeTemplatePhases
-                    .Where(attp => attp.TemplateId == templateId && attp.PhaseId == phaseId && attp.IsDeleted != true)
-                    .Select(attp => new
-                    {
-                        attp.Ordinal,
-                        attp.Phase,
-                        StepCount = attp.Phase.Steps.Count(),
-                    })
-                    .OrderBy(x => x.Ordinal)
-                    .ToList();
 
-                return phasesWithStepCounts;
-            }
+        public async Task<IEnumerable<ApplicationTypeTemplatePhase>> PhaseStepsAsync(int templateId, int phaseId)
+        {
+            var phasesWithStepCounts = await _context.ApplicationTypeTemplatePhases
+                .Where(attp => attp.TemplateId == templateId && attp.PhaseId == phaseId && attp.IsDeleted != true)
+                .Select(attp => new ApplicationTypeTemplatePhase
+                {
+                    Id = attp.Id, //template phase Id
+                    TemplateId = attp.TemplateId,
+                    Ordinal = attp.Ordinal,
+                    Phase = attp.Phase,
+                })
+                .OrderBy(x => x.Ordinal)
+                .ToListAsync();
+
+            return phasesWithStepCounts; //also to be used in edit page for template
+        }
+
+        public async Task<IEnumerable<ApplicationTypeTemplatePhase>> PhaseStepsByTemplateAsync(int templateId, int phaseId)
+        {
+            var phasesWithStepCounts = await _context.ApplicationTypeTemplatePhases
+                .Where(attp => attp.TemplateId == templateId && attp.PhaseId == phaseId && attp.IsDeleted != true)
+                .Select(attp => new ApplicationTypeTemplatePhase
+                {
+                    Id = attp.Id, //template phase Id
+                    TemplateId = attp.TemplateId,
+                    Ordinal = attp.Ordinal,
+                    Phase = attp.Phase,
+                })
+                .OrderBy(x => x.Ordinal)
+                .ToListAsync();
+
+            return phasesWithStepCounts; //also to be used in edit page for template
         }
 
         public async Task<ApplicationTypeTemplatePhase> Create(ApplicationTypeTemplatePhase _object)
@@ -60,11 +77,18 @@ namespace ExaminerWebApp.Repository.Implementation
 
         public void Update(ApplicationTypeTemplatePhase _object) { }
 
-        public void Delete(int id) { }
-
-        public ApplicationTypeTemplatePhase GetById(int id)
+        public async Task<bool> Delete(int id)
         {
-            return _context.ApplicationTypeTemplatePhases.Where(x => x.Id == id).First();
+            ApplicationTypeTemplatePhase templatePhase = await _context.ApplicationTypeTemplatePhases.Where(x => x.Id == id).FirstAsync();
+            templatePhase.IsDeleted = true;
+            _context.ApplicationTypeTemplatePhases.Update(templatePhase);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<ApplicationTypeTemplatePhase> GetById(int id)
+        {
+            return await _context.ApplicationTypeTemplatePhases.Where(x => x.Id == id).FirstAsync();
         }
 
         public IQueryable<ApplicationTypeTemplatePhase> GetAllTemplates(int templateId)
@@ -72,7 +96,7 @@ namespace ExaminerWebApp.Repository.Implementation
             return _context.ApplicationTypeTemplatePhases.Where(x => x.TemplateId == templateId).AsQueryable();
         }
 
-        public void AddPhaseWithOrdinal(ApplicationTypeTemplatePhase model)
+        public ApplicationTypeTemplatePhase AddPhaseWithOrdinal(ApplicationTypeTemplatePhase model)
         {
             var allPhases = GetAllTemplates(model.TemplateId)
                 .OrderBy(x => x.Ordinal)
@@ -109,26 +133,6 @@ namespace ExaminerWebApp.Repository.Implementation
                 }
             }
 
-
-            //for (int i = lowerPhase.Count; i >= 0; i--)
-            //{
-            //    if (lowerPhase[lowerPhase.Count - 1].Ordinal < model.Ordinal)
-            //    {
-            //        break;
-            //    }
-            //    else
-            //    {
-            //        if (i > 0 && lowerPhase[i + 1].Ordinal++ == lowerPhase[i].Ordinal)
-            //        {
-            //            lowerPhase[i].Ordinal++;
-            //        }
-            //        else
-            //        {
-            //            break;
-            //        }
-            //    }
-            //}
-
             _context.SaveChanges();
 
             var newPhase = new ApplicationTypeTemplatePhase
@@ -141,8 +145,10 @@ namespace ExaminerWebApp.Repository.Implementation
 
             _context.Add(newPhase);
             _context.SaveChanges();
+            return newPhase;
         }
-        public bool UpdateOrdinal(int templateId, int phaseId, int ordinal)
+
+        public async Task<bool> UpdateOrdinal(int templateId, int phaseId, int ordinal)
         {
             var allPhases = GetAllTemplates(templateId).OrderBy(x => x.Ordinal).ToList();
 
@@ -196,7 +202,7 @@ namespace ExaminerWebApp.Repository.Implementation
                     }
                 }
             }
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
     }

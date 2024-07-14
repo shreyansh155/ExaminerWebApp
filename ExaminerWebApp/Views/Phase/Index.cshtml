@@ -2,10 +2,26 @@
     Layout = "_Layout";
     ViewData["Title"] = "Phase";
 }
-<h3>Phases</h3>
-<div id="grid"></div>
-<div class="justify-content-center align-items-center" id="window"></div>
-<div id="stepwindow"></div>
+<div class="app-content ">
+    <!--begin::Container-->
+    <div class="container-fluid mt-3">
+        <!--begin::Row-->
+        <div class="row">
+            <div class="col-12">
+                <!-- Default box -->
+                <div class="card">
+                    <h2><i>Phases</i></h2>
+                    <div class="card-body">
+                        <div id="grid"></div>
+                        <div class="justify-content-center align-items-center" id="window"></div>
+                        <div id="displayModal">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <button id="refreshButton" type="button" hidden></button>
 <script id="custom-toolbar-template" type="text/x-kendo-template">

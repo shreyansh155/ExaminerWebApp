@@ -1,5 +1,6 @@
 ﻿var kendoWindow;
 $((function () {
+
     kendoWindow = $("#window").kendoWindow({
         width: "600px",
         title: "Add Phase",
@@ -138,7 +139,7 @@ $((function () {
                 },
             },
         },
-       // detailInit: PhaseRow,
+        detailInit: PhaseRow,
         pageable: {
             pageSize: 10,
             pageSizes: [10, 15, 20]
@@ -193,8 +194,8 @@ $((function () {
         },
         columns: [
             { field: "ordinal", title: "Ordinal", width: "110px" },
-            { field: "phase", title: "Phase", width: "110px" },
-            { field: "steps", title: "Steps", width: "110px" }
+            { field: "phase", title: "Phase" },
+            { field: "steps", title: "Steps",width:"110px" }
         ]
     }).data("kendoGrid");
     $("#refreshButton").on("click", function () {
@@ -210,34 +211,44 @@ $((function () {
                 transport: {
                     read: function (options) {
                         $.ajax({
-                            url: "Step/GetAll",
+                            url: "ApplicationTypeTemplate/GetPhaseStep",
                             type: "GET",
                             dataType: "json",
                             data: {
-                                phaseId: dataItem.phaseId,
+                                phaseId: dataItem.id,
+                                templateId: templateId
                             },
                             success: function (data) {
                                 options.success(data);
                             },
                             error: function (error) {
-                                console.log(error);
                                 alert('Error fetching data.');
                             }
                         });
                     },
                 },
                 schema: {
+                    data: function (response) {
+                        return response.map(function (item) {
+                            return {
+                                id: item.templatePhaseStepId,
+                                ordinal: item.ordinal,
+                                step: item.step.name,
+
+                            };
+                        });
+
+                    },
+                    total: function (response) {
+                        return response.length;
+                    },
                     model: {
-                        id: "id",
                         fields: {
-                            id: { editable: false, nullable: true },
-                            name: { type: "string" },
-                            description: { type: "string" },
-                            instruction: { type: "string" },
-                            typeId: { type: "number" },
-                            stepType: { type: "string" }
-                        }
-                    }
+                            id: { type: "number" },
+                            ordinal: { type: "number" },
+                            step: { type: "string" },
+                        },
+                    },
                 },
                 pageSize: 10,
             },
@@ -247,22 +258,34 @@ $((function () {
             editable: false,
             columns: [
                 { field: "id", title: "Step Id", width: "125px", hidden: true },
-                { field: "name", title: "Step Name", width: "130px" },
-                { field: "description", title: "Description", width: "130px" },
-                { field: "instruction", title: "Instruction", width: "130px" },
-                { field: "stepType", title: "Step Type", width: "150px" },
+                { field: "ordinal", title: "Ordinal", width: "125px" },
+                { field: "step", title: "Step Name" },
+                {
+                    command: [
+
+                        { text: "Edit" },
+                        { text: "Delete" }
+                    ],
+                    title: "Actions",
+                    width: "220px",
+                }
             ],
         });
     }
     // Event handlers for custom toolbar buttons
     $(document).on("click", "#expand", function () {
         var grid = $("#grid").data("kendoGrid");
+        console.log("clicked 123");
         $(".k-master-row").each(function (index) {
             grid.expandRow(this);
         });
     });
+    $("#expand").on("click", function () {
+        console.log("expanded");
+    })
 
     $(document).on("click", "#collapse", function () {
+        console.log("abcd");
         var grid = $("#grid").data("kendoGrid");
         $(".k-master-row").each(function (index) {
             grid.collapseRow(this);

@@ -5,6 +5,7 @@ namespace ExaminerWebApp.Repository.Interface
     public interface IPhaseRepository : IBaseRepository<Phase>
     {
         IQueryable<Phase> GetAll();
-        bool CheckIfPhaseExists(string phaseName);
+        Task<bool> CheckIfPhaseExists(string phaseName);
+        Task<bool> CheckPhaseOnUpdateExists(string phaseName,int? phaseId);
     }
 }

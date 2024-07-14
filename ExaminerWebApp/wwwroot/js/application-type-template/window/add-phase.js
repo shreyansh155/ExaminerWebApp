@@ -32,11 +32,34 @@ $((function () {
             this.ordinal.validate();
 
             if (this.isValid()) {
+                // Get the Kendo Grid data
+                var phasegrid = $("#phaseGrid").data("kendoGrid");
+                var gridData = phasegrid.dataSource.view().map(function (item) {
+                    return {
+                        Id: item.id,
+                        TemplatePhaseId: item.templatePhaseId,
+                        Name: item.name,
+                        Ordinal: phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[name="ordinal"]').data("kendoNumericTextBox").value(),
+                        IsInTemplatePhaseSteps: phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[type="checkbox"]').is(":checked")
+                    };
+                });
+
+                // Create the form data object
                 var formdata = {
                     PhaseId: this.phaseid(),
                     Ordinal: this.ordinal(),
-                    TemplateId: data.templateId
+                    TemplateId: data.templateId,
+                    GridData: gridData.map(item => ({
+                        Id: item.Id,
+                        TemplatePhaseId: item.templatePhaseId,
+                        TemplatePhaseStepId: item.templatePhaseStepId,
+                        Name: item.Name,
+                        Ordinal: item.Ordinal,
+                        IsInTemplatePhaseSteps: item.IsInTemplatePhaseSteps
+                    }))
                 };
+
+                console.log(JSON.stringify(formdata));
                 $.ajax({
                     url: '/ApplicationTypeTemplate/AddTemplatePhase',
                     type: 'POST',
@@ -66,16 +89,22 @@ $((function () {
         };
 
         this.isValid = function () {
-            return !this.phaseid.hasError();
+            return !this.phaseid.hasError() && !this.ordinal.hasError();
         };
     }
+
     var viewModel = new AddPhaseModel(window.initialData);
 
     ko.applyBindings(viewModel, document.getElementById("addPhase"));
     function GetPhaseSteps(e) {
         var phaseId = e.target.value;
-        phasegrid = $("#phaseGrid").kendoGrid({
-            dataSource: {
+
+        // Initialize the grid if it does not exist
+        if (!$("#phaseGrid").data("kendoGrid")) {
+            initializeGrid(phaseId);
+        } else {
+            phasegrid = $("#phaseGrid").data("kendoGrid");
+            phasegrid.setDataSource(new kendo.data.DataSource({
                 transport: {
                     read: function (options) {
                         $.ajax({
@@ -87,7 +116,7 @@ $((function () {
                                 phaseId
                             },
                             success: function (data) {
-
+                                console.log(data);
                                 options.success(data);
                             },
                             error: function (error) {
@@ -113,7 +142,7 @@ $((function () {
                             },
                             error: function (error) {
                                 console.log(error);
-                                alert('Error fetching data.');
+                                alert('Error updating data.');
                             }
                         });
                         options.success(options.data);
@@ -129,9 +158,10 @@ $((function () {
                     data: function (response) {
                         return response.map(function (item) {
                             return {
-                                id: item.phase.id,
-                                ordinal: item.ordinal,
-                                phase: item.phase.name,
+                                id: item.step.id,
+                                name: item.step.name,
+                                ordinal: item.step.ordinal,
+                                isInTemplatePhaseSteps: item.isInTemplatePhaseSteps
                             };
                         });
                     },
@@ -142,11 +172,91 @@ $((function () {
                         id: "id",
                         fields: {
                             id: { type: "number" },
+                            name: { type: "string" },
                             ordinal: { type: "number" },
-                            phase: { type: "string", editable: false },
-                        },
+                            isInTemplatePhaseSteps: { type: "boolean" }
+                        }
+                    }
+                }
+            }));
+        }
+    }
+
+    function initializeGrid(phaseId) {
+        $("#phaseGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: function (options) {
+                        $.ajax({
+                            url: "/ApplicationTypeTemplate/GetPhaseSteps",
+                            type: "GET",
+                            dataType: "json",
+                            data: {
+                                templateId: window.initialData.templateId,
+                                phaseId
+                            },
+                            success: function (data) {
+                                options.success(data);
+                            },
+                            error: function (error) {
+                                console.log(error);
+                                alert('Error fetching data.');
+                            }
+                        });
                     },
+                    update: function (options) {
+                        $.ajax({
+                            url: "/ApplicationTypeTemplate/UpdateOrdinal",
+                            type: "POST",
+                            dataType: "json",
+                            data: {
+                                templateId: window.initialData.templateId,
+                                phaseId: options.data.id,
+                                ordinal: options.data.ordinal
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    $("#refreshButton").trigger("click");
+                                }
+                            },
+                            error: function (error) {
+                                console.log(error);
+                                alert('Error updating data.');
+                            }
+                        });
+                        options.success(options.data);
+                    },
+                    parameterMap: function (data, type) {
+                        if (type === "read") {
+                            return kendo.stringify(data);
+                        }
+                        return data;
+                    }
                 },
+                schema: {
+                    data: function (response) {
+                        return response.map(function (item) {
+                            return {
+                                id: item.step.id,
+                                name: item.step.name,
+                                ordinal: item.step.ordinal,
+                                isInTemplatePhaseSteps: item.isInTemplatePhaseSteps
+                            };
+                        });
+                    },
+                    total: function (response) {
+                        return response.length;
+                    },
+                    model: {
+                        id: "id",
+                        fields: {
+                            id: { type: "number" },
+                            name: { type: "string", editable: false },
+                            ordinal: { type: "number", validation: { min: 1, required: true } },
+                            isInTemplatePhaseSteps: { type: "boolean" }
+                        }
+                    }
+                }
             },
             pageable: false,
             sortable: false,
@@ -154,32 +264,47 @@ $((function () {
             editable: "inline",
             height: 0,
             columns: [
-                { selectable: true, width: "50px" },
-                { field: "phase", title: "Phase", width: "110px" },
-                { field: "ordinal", title: "Ordinal", width: "110px" },
                 {
-                    command: ["edit"],
-                    width: "100px"
+                    field: "isInTemplatePhaseSteps",
+                    selectable: true,
+                    template: '<input type="checkbox" #= isInTemplatePhaseSteps ? "checked=checked" : "" # disabled="disabled" />',
+                    width: "40px"
+                },
+                { field: "name", title: "Step", width: "150px" },
+                {
+                    field: "ordinal",
+                    title: "Ordinal",
+                    width: "110px",
+                    template: function (dataItem) {
+                        return '<input class="k-input k-textbox" name="ordinal" type="number" value="' + dataItem.ordinal + '" min="1" required />';
+                    }
                 }
             ],
-        }).data("kendoGrid");
-        //function setGridHeightToRows(count) {
-        //    var rowHeight = $("#grid .k-grid-content tr").first().outerHeight();
-        //    var headerHeight = $("#grid .k-grid-header").outerHeight();
-        //    var newHeight = (rowHeight * count) + headerHeight;
-        //    $("#phaseGrid").height(newHeight);
-        //    phasegrid.resize();
-        //}
+            dataBound: function (e) {
+                var grid = e.sender;
+                var rows = grid.tbody.find("tr");
+                rows.each(function () {
+                    var row = $(this);
+                    var dataItem = grid.dataItem(row);
+                    row.find('input[name="ordinal"]').kendoNumericTextBox({
+                        format: "n0", // integer format
+                        decimals: 0, // no decimals
+                        min: 1 // minimum value of 1
+                    }).data("kendoNumericTextBox").value(dataItem.ordinal);
+                });
+            }
+        });
     }
-
 
     //setGridHeightToRows(3);
     $("#refreshButton").on("click", function () {
-        phasegrid.dataSource.read();
+        grid.dataSource.read();
     });
+
     $("#closeBtn").click(function () {
         $(this).closest("[data-role=window]").data("kendoWindow").close();
     });
+
     $("#phaseid").on("change", function (e) {
         GetPhaseSteps(e);
     })

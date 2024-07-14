@@ -27,23 +27,17 @@ namespace ExaminerWebApp.Service.Implementation
         #region READ SPECIFIC APPLICANT
         public Entities.Entities.Applicant GetApplicantById(int id)
         {
-            return ExecuteWithTryCatch(() =>
-            {
-                var result = _applicantRepository.GetById(id);
-                return _mapper.Map<Entities.Entities.Applicant>(result);
-            });
+            var result = _applicantRepository.GetById(id);
+            return _mapper.Map<Entities.Entities.Applicant>(result);
         }
         #endregion
 
         #region READ ALL APPLICANTS
         public IQueryable<Entities.Entities.Applicant> GetAllApplicants()
         {
-            return ExecuteWithTryCatch(() =>
-            {
-                var list = _applicantRepository.GetAll().Include(x => x.ApplicantType).AsQueryable();
-                var obj = _mapper.ProjectTo<Entities.Entities.Applicant>(list);
-                return obj;
-            });
+            var list = _applicantRepository.GetAll().Include(x => x.ApplicantType).AsQueryable();
+            var obj = _mapper.ProjectTo<Entities.Entities.Applicant>(list);
+            return obj;
         }
         #endregion
 
@@ -70,13 +64,10 @@ namespace ExaminerWebApp.Service.Implementation
         #endregion
 
         #region DELETE APPLICANT
-        public bool DeleteApplicant(int id)
+        public async Task<bool> DeleteApplicant(int id)
         {
-            return ExecuteWithTryCatch(() =>
-            {
-                _applicantRepository.Delete(id);
-                return true;
-            });
+            await _applicantRepository.Delete(id);
+            return true;
         }
         #endregion
 
@@ -126,31 +117,10 @@ namespace ExaminerWebApp.Service.Implementation
             return uniqueFileName;
         }
 
-        private static T ExecuteWithTryCatch<T>(Func<T> func)
-        {
-            try
-            {
-                return func();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while processing your request.", ex);
-            }
-        }
 
-        private async Task<T> ExecuteWithTryCatchAsync<T>(Func<Task<T>> func)
-        {
-            try
-            {
-                return await func();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while processing your request.", ex);
-            }
-        }
-        #endregion
+
         #endregion
 
+        #endregion
     }
 }

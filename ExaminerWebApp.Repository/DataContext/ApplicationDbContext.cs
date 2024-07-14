@@ -46,6 +46,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<TemplatePhaseStep> TemplatePhaseSteps { get; set; }
 
+   
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Applicant>(entity =>
@@ -332,6 +334,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_deleted");
+            entity.Property(e => e.Ordinal).HasColumnName("ordinal");
             entity.Property(e => e.StepId).HasColumnName("step_id");
             entity.Property(e => e.TemplatePhaseId).HasColumnName("template_phase_id");
 

@@ -30,28 +30,24 @@ namespace PracticeWebApp.Service.Implementation
         #region Interface Methods
 
         #region READ SPECIFIC APPLICANT
-        public ExaminerWebApp.Entities.Entities.Examiner GetExaminerById(int id)
+        public async Task<ExaminerWebApp.Entities.Entities.Examiner> GetExaminerById(int id)
         {
-            return ExecuteWithTryCatch(() =>
-              {
-                  ExaminerWebApp.Repository.DataModels.Examiner result = _examinerRepository.GetById(id);
-                  return _mapper.Map<ExaminerWebApp.Entities.Entities.Examiner>(result);
-              });
+            ExaminerWebApp.Repository.DataModels.Examiner result = await _examinerRepository.GetById(id);
+            return _mapper.Map<ExaminerWebApp.Entities.Entities.Examiner>(result);
         }
         #endregion
 
         #region READ ALL APPLICANTS
         public IQueryable<ExaminerWebApp.Entities.Entities.Examiner> GetAllExaminer()
         {
-            return ExecuteWithTryCatch(() =>
-          {
-              IQueryable<ExaminerWebApp.Repository.DataModels.Examiner> list = _examinerRepository.GetAll()
-              .Include(x => x.ExaminerNavigation)
-              .Include(x => x.Status)
-              .AsQueryable();
-              IQueryable<ExaminerWebApp.Entities.Entities.Examiner> obj = _mapper.ProjectTo<ExaminerWebApp.Entities.Entities.Examiner>(list);
-              return obj;
-          });
+
+            IQueryable<ExaminerWebApp.Repository.DataModels.Examiner> list = _examinerRepository.GetAll()
+            .Include(x => x.ExaminerNavigation)
+            .Include(x => x.Status)
+            .AsQueryable();
+            IQueryable<ExaminerWebApp.Entities.Entities.Examiner> obj = _mapper.ProjectTo<ExaminerWebApp.Entities.Entities.Examiner>(list);
+            return obj;
+
         }
         #endregion
 
@@ -72,29 +68,23 @@ namespace PracticeWebApp.Service.Implementation
         #endregion
 
         #region DELETE APPLICANT
-        public bool DeleteExaminer(int id)
+        public async Task<bool> DeleteExaminer(int id)
         {
-            return ExecuteWithTryCatch(() =>
-            {
-                _examinerRepository.Delete(id);
-                return true;
-            });
+            await _examinerRepository.Delete(id);
+            return true;
         }
         #endregion
 
         #region GET APPLICANT DETAILS
         public bool UpdateExaminer(ExaminerWebApp.Entities.Entities.Examiner model)
         {
-            return ExecuteWithTryCatch(() =>
+            if (model.FormFile != null && model.FormFile.Length > 0)
             {
-                if (model.FormFile != null && model.FormFile.Length > 0)
-                {
-                    model.FilePath = SaveFile(model.FormFile);
-                }
-                var result = _mapper.Map<ExaminerWebApp.Repository.DataModels.Examiner>(model);
-                _examinerRepository.Update(result);
-                return true;
-            });
+                model.FilePath = SaveFile(model.FormFile);
+            }
+            var result = _mapper.Map<ExaminerWebApp.Repository.DataModels.Examiner>(model);
+            _examinerRepository.Update(result);
+            return true;
         }
         #endregion
 
@@ -116,15 +106,7 @@ namespace PracticeWebApp.Service.Implementation
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                try
-                {
-
-                    formFile.CopyTo(fileStream);
-                }
-                catch (Exception)
-                {
-                    throw new Exception();
-                }
+                formFile.CopyTo(fileStream);
             }
 
             return uniqueFileName;
@@ -148,22 +130,12 @@ namespace PracticeWebApp.Service.Implementation
             }
         }
 
-        private async Task<T> ExecuteWithTryCatchAsync<T>(Func<Task<T>> func)
-        {
-            try
-            {
-                return await func();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while processing your request.", ex);
-            }
-        }
+
         #endregion
         #endregion
         public void SendEmail(string email)
         {
-            string? senderEmail = _config.GetSection("OutlookSMTP")["Sender"];
+            string? senderEmail = _config.GetSection("OutlookSMTP")["Sender"] ?? "";
             string? senderPassword = _config.GetSection("OutlookSMTP")["Password"];
 
             SmtpClient client = new("smtp.office365.com")

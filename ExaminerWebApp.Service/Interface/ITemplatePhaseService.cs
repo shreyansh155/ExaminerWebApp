@@ -4,8 +4,8 @@ namespace ExaminerWebApp.Service.Interface
 {
     public interface ITemplatePhaseService
     {
-        ApplicationTypeTemplatePhase AddTemplatePhase(ApplicationTypeTemplatePhase model);
+        ApplicationTypeTemplatePhase AddTemplatePhaseStep(ApplicationTypeTemplatePhase model);
 
-        bool UpdateOrdinal(int templateId, int phaseId, int ordinal);
+        Task<bool> UpdateOrdinal(int templateId, int phaseId, int ordinal);
     }
 }

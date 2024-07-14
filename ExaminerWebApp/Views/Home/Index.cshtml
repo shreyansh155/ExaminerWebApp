@@ -314,9 +314,8 @@
     </footer>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.3.0/browser/overlayscrollbars.browser.es6.min.js" integrity="sha256-H2VM7BKda+v2Z4+DRy69uknwxjyDRhszjXFhsL4gD3w=" crossorigin="anonymous"></script> 
-<script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha256-whL0tQWoY1Ku1iskqPFvmZ+CHsvmRWx/PIoEvIeWh4I=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha256-YMa+wAM6QkVyz999odX7lPRxkoYAan8suedu4k2Zur8=" crossorigin="anonymous"></script>
+
+@* *@
 <script>
     const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
     const Default = {
@@ -340,24 +339,9 @@
         }
     });
 </script>
-<script>
-    const connectedSortables =
-        document.querySelectorAll(".connectedSortable");
-    connectedSortables.forEach((connectedSortable) => {
-        let sortable = new Sortable(connectedSortable, {
-            group: "shared",
-            handle: ".card-header",
-        });
-    });
-
-    const cardHeaders = document.querySelectorAll(
-        ".connectedSortable .card-header",
-    );
-    cardHeaders.forEach((cardHeader) => {
-        cardHeader.style.cursor = "move";
-    });
-</script>
+ 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js" integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js" integrity="sha512-TelkP3PCMJv+viMWynjKcvLsQzx6dJHvIGhfqzFtZKgAjKM1YPqcwzzDEoTc/BHjf43PcPzTQOjuTr4YdE8lNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     // NOTICE!! DO NOT USE ANY OF THIS JAVASCRIPT
     // IT'S ALL JUST JUNK FOR DEMO

@@ -3,40 +3,49 @@
 @{
     var serializedData = Json.Serialize(Model);
 }
-
+<style>
+    .k-list {
+        text-align-last:match-parent !important;
+    }
+</style>
 <script type="text/javascript">
     window.initialData = @Html.Raw(serializedData);
 </script>
 <div>
     <form id="addPhase">
         <div id="errorBody" class="text-danger"></div>
-        <div class="form-group">
-            <label for="name">Phase</label>
-            <kendo-dropdownlist name="phaseid"
-                                dataTextField="name"
-                                dataValueField="id"
-                                option-label="Select phase"
-                                change="GetPhaseSteps"
-                                data-bind="value: phaseid">
-                <datasource>
-                    <transport>
-                        <read url="/ApplicationTypeTemplate/PhaseList?templateId=@Model.TemplateId" />
-                    </transport>
-                </datasource>
-            </kendo-dropdownlist>
-
-            <span class="text-danger" data-bind="visible: phaseid.hasError, text: phaseid.validationMessage"></span>
+        <div class="form-group row">
+            <label for="phaseid" class="col-form-label col-sm-2">Phase</label>
+            <div class="col-sm-10">
+                <kendo-dropdownlist name="phaseid"
+                                    dataTextField="name"
+                                    dataValueField="id"
+                                    class="k-list"
+                                    option-label="Select phase"
+                                    change="GetPhaseSteps"
+                                    data-bind="value: phaseid">
+                    <datasource>
+                        <transport>
+                            <read url="/ApplicationTypeTemplate/PhaseList?templateId=@Model.TemplateId" />
+                        </transport>
+                    </datasource>
+                </kendo-dropdownlist>
+                <span class="text-danger" data-bind="visible: phaseid.hasError, text: phaseid.validationMessage"></span>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="description">Ordinal</label>
-            <kendo-numerictextbox name="ordinal"
-                                  min="1"
-                                  required="required"
-                                  format="n0"
-                                  decimals="0"
-                                  data-bind="value: ordinal, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
-            </kendo-numerictextbox>
-            <span class="text-danger" data-bind="visible: ordinal.hasError, text: ordinal.validationMessage"></span>
+
+        <div class="form-group row">
+            <label for="ordinal" class="col-form-label col-sm-2">Ordinal</label>
+            <div class="col-sm-10">
+                <kendo-numerictextbox name="ordinal"
+                                      min="1"
+                                      required="required"
+                                      format="n0"
+                                      decimals="0"
+                                      data-bind="value: ordinal, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                </kendo-numerictextbox>
+                <span class="text-danger" data-bind="visible: ordinal.hasError, text: ordinal.validationMessage"></span>
+            </div>
         </div>
 
         <div class="mt-2" id="phaseGrid"></div>
@@ -53,6 +62,5 @@
             </kendo-button>
         </div>
     </form>
-
 </div>
 <script src="~/js/application-type-template/window/add-phase.js"></script>

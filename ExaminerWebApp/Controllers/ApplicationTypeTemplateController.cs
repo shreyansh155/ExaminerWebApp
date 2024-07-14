@@ -70,9 +70,9 @@ namespace ExaminerWebApp.Controllers
             return Json(new { redirectUrl = Url.Action("EditPage", "ApplicationTypeTemplate", new { id }) });
         }
 
-        public IActionResult EditPage(int id)
+        public async Task<IActionResult> EditPage(int id)
         {
-            var model = _applicationTypeService.GetById(id);
+            var model = await _applicationTypeService.GetById(id);
             ApplicationTypeTemplateModel obj = new()
             {
                 Id = id,
@@ -115,16 +115,43 @@ namespace ExaminerWebApp.Controllers
             }
         }
 
-        public async Task<ActionResult> GetPhaseSteps(int templateId, int phaseId)
-        {
-            Object phases = await Task.Run(() => _applicationTypeService.GetPhaseStepsByTemplate(templateId, phaseId));
-            return Json(phases);
-        }
-
         public async Task<ActionResult> GetPhase(int templateId)
         {
             Object phases = await Task.Run(() => _applicationTypeService.GetPhaseByTemplate(templateId));
             return Json(phases);
+        }
+
+        [Route("/ApplicationTypeTemplate/EditPage/ApplicationTypeTemplate/GetPhaseStep")]
+        public async Task<ActionResult> GetPhaseStep(int templateId, int phaseId)
+        {
+            try
+            {
+                var phases = await _applicationTypeService.GetPhaseStepsAsync(templateId, phaseId);
+                var obj = Json(phases);
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine(ex.Message);
+                return Json(new { success = false });
+            }
+        }
+
+        public async Task<ActionResult> GetPhaseSteps(int templateId, int phaseId)
+        {
+            try
+            {
+                var phases = await _applicationTypeService.GetPhaseStepsByTemplateAsync(templateId, phaseId);
+                var obj = Json(phases);
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine(ex.Message);
+                return Json(new { success = false });
+            }
         }
 
         public IActionResult OpenTemplatePhase(int templateId)
@@ -144,28 +171,42 @@ namespace ExaminerWebApp.Controllers
         [HttpPost]
         public IActionResult AddTemplatePhase([FromBody] PhaseViewModel model)
         {
+            if (model == null)
+            {
+                return Json(new { success = false, errors = "Model is null" });
+            }
+
             if (ModelState.IsValid)
             {
+                List<TemplatePhaseStep>? gridDataItems = model.GridData?.Where(x => x.Ordinal != null).Select(data => new TemplatePhaseStep
+                {
+                    StepId = data.Id,
+                    Ordinal = data.Ordinal,
+                    IsInTemplatePhaseSteps = data.IsInTemplatePhaseSteps
+                }).ToList();
+
                 ApplicationTypeTemplatePhase obj = new()
                 {
                     TemplateId = model.TemplateId,
                     Ordinal = model.Ordinal,
                     PhaseId = model.PhaseId,
+                    TemplatePhaseSteps = gridDataItems
                 };
-                _templatePhaseService.AddTemplatePhase(obj);
+                _templatePhaseService.AddTemplatePhaseStep(obj);
                 return Json(new { success = true });
             }
+
             else
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                var errors = ModelStateErrorSerializer(ModelState);
                 return Json(new { success = false, errors });
             }
         }
-        public ActionResult UpdateOrdinal(int phaseId, int templateId, int ordinal)
+
+        public ActionResult UpdatePhaseOrdinal(int phaseId, int templateId, int ordinal)
         {
             _templatePhaseService.UpdateOrdinal(templateId, phaseId, ordinal);
             return Json(new { success = true });
         }
-
     }
 }

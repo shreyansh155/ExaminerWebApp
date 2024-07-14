@@ -3,7 +3,7 @@
 $(function () {
     kendoWindow = $("#window").kendoWindow({
         width: "600px",
-        title: "Add Application Type",
+        title: "Add Application Template",
         visible: false,
         modal: true
     }).data("kendoWindow");

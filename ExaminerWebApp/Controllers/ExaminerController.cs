@@ -78,9 +78,9 @@ namespace ExaminerWebApp.Controllers
         #endregion
 
         #region GET EXAMINER BY ID
-        public IActionResult GetExaminer(int id)
+        public async Task<IActionResult> GetExaminer(int id)
         {
-            Examiner result = _examinerService.GetExaminerById(id);
+            Examiner result = await _examinerService.GetExaminerById(id);
             ExaminerModel obj = new()
             {
                 Id = id,
@@ -114,7 +114,7 @@ namespace ExaminerWebApp.Controllers
                     Phone = model.Phone,
                     ExaminerTypeName = model.ExaminerTypeName ?? "",
                     FilePath = model.Filepath,
-                    FormFile = model.FormFile ,
+                    FormFile = model.FormFile,
                     ModifiedBy = "1",
                     ModifiedDate = DateTime.Now,
                 };
@@ -135,7 +135,7 @@ namespace ExaminerWebApp.Controllers
         {
             try
             {
-                await Task.Run(() => _examinerService.DeleteExaminer(id));
+                await _examinerService.DeleteExaminer(id);
                 return Json(new { success = true });
             }
             catch (Exception ex)

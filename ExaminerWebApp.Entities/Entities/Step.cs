@@ -2,7 +2,7 @@
 {
     public partial class Step
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public int PhaseId { get; set; }
 

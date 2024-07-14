@@ -7,45 +7,59 @@
 <script type="text/javascript">
     window.initialData = @Html.Raw(serializedData);
 </script>
+ 
+<div class="modal" id="create-phase" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered @(showGrid?"modal-xl":"")">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-align-center" id="exampleModalLabel">Phase</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="phaseForm">
+                    <div id="errorBody" class="text-danger"></div>
+                    <div class="form-group">
+                        <label for="phasename">Name</label>
+                        <kendo-textbox name="phasename"
+                                       required="required"
+                                       data-bind="value: phasename, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                        </kendo-textbox>
+                        <span class="text-danger" data-bind="visible: phasename.hasError, text: phasename.validationMessage"> </span>
 
-<div>
-    <form id="phaseForm">
-        <div id="errorBody" class="text-danger"></div>
-        <div class="form-group">
-            <label for="phasename">Name</label>
-            <kendo-textbox name="phasename"
-                           required="required"
-                           data-bind="value: phasename, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
-            </kendo-textbox>
-            <span class="text-danger" data-bind="visible: phasename.hasError, text: phasename.validationMessage"> </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="phasedescription">Description</label>
+                        <kendo-textarea name="phasedescription"
+                                        required="required"
+                                        rows="3"
+                                        data-bind="value: phasedescription, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                        </kendo-textarea>
+                    </div>
 
+                    @if (showGrid)
+                    {
+
+                        <div id="stepGrid"></div>
+                        <div id="tooltipTemplate" style="display: none;">
+                            <textarea id="tooltipEditor"></textarea>
+                        </div>
+                        <script src="~/js/step/step.js"></script>
+                    }
+                    <kendo-button name="primaryTextButton"
+                                  data-bind="click: submitForm"
+                                  theme-color="ThemeColor.Primary">
+                        Save
+                    </kendo-button>
+                    <kendo-button name="cancelButton"
+                                  data-bs-dismiss="modal"
+                                  theme-color="ThemeColor.Secondary">
+                        Cancel
+                    </kendo-button>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="phasedescription">Description</label>
-            <kendo-textarea name="phasedescription"
-                            required="required"
-                            rows="3"
-                            data-bind="value: phasedescription, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
-            </kendo-textarea>
-        </div>
-        <kendo-button name="primaryTextButton"
-                      data-bind="click: submitForm"
-                      theme-color="ThemeColor.Primary">
-            Save
-        </kendo-button>
-        <kendo-button name="cancelButton"
-                      theme-color="ThemeColor.Secondary">
-            Cancel
-        </kendo-button>
-    </form>
-    @if (showGrid)
-    {
-        <div id="stepGrid"></div>
-        <div id="tooltipTemplate" style="display: none;">
-            <textarea id="tooltipEditor"></textarea>
-        </div>
-        <script src="~/js/step/step.js"></script>
-    }
+    </div>
 </div>
+
 
 <script src="~/js/phase/modal.js"></script>

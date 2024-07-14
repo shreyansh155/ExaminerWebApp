@@ -6,7 +6,7 @@ namespace ExaminerWebApp.Service.Interface
     {
         IQueryable<ApplicationTypeTemplate> GetAll(string search);
 
-        ApplicationTypeTemplate GetById(int id);
+        Task<ApplicationTypeTemplate> GetById(int id);
 
         Task<ApplicationTypeTemplate> Add(ApplicationTypeTemplate model);
 
@@ -15,7 +15,9 @@ namespace ExaminerWebApp.Service.Interface
         bool Delete(int id);
 
         bool Update(ApplicationTypeTemplate model);
-        object GetPhaseStepsByTemplate(int templateId, int phaseId);
+        Task<object> GetPhaseStepsByTemplateAsync(int templateId, int phaseId);
+
+        Task<object> GetPhaseStepsAsync(int templateId, int phaseId);
 
         object GetPhaseByTemplate(int templateId);
 

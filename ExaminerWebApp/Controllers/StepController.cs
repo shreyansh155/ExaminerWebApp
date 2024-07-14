@@ -8,6 +8,7 @@ namespace ExaminerWebApp.Controllers
     public class StepController : BaseController
     {
         private readonly IStepService _stepService;
+
         public StepController(IStepService stepService)
         {
             _stepService = stepService;
@@ -28,11 +29,11 @@ namespace ExaminerWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateStep([FromBody] StepViewModel model)
+        public async Task<IActionResult> CreateStep([FromBody] StepViewModel model)
         {
             if (ModelState.IsValid)
             {
-                if (!_stepService.CheckIfStepExists(model.PhaseId, model.Name))
+                if (model.Name != null && await _stepService.CheckIfStepExists(model.PhaseId, model.Name) != true)
                 {
                     Step step = new()
                     {
@@ -44,13 +45,13 @@ namespace ExaminerWebApp.Controllers
                         CreatedDate = DateTime.UtcNow,
                         CreatedBy = "1",
                     };
-                    _stepService.CreateStep(step);
+                    await _stepService.CreateStep(step);
 
                     return Json(new { success = true });
                 }
                 else
                 {
-                    return Json(new { success = false, errors = "This phase already contains the entered step." });
+                    return Json(new { success = false, errors = "Step already exists." });
                 }
             }
             else
@@ -66,16 +67,14 @@ namespace ExaminerWebApp.Controllers
             {
                 Step step = new()
                 {
-                    Id = (int)model.Id,
+                    Id = model.Id,
                     PhaseId = model.PhaseId,
-                    Name = model.Name,
+                    Name = model.Name ?? "",
                     Description = model.Description,
                     Instruction = model.Instruction,
                     StepTypeId = model.TypeId,
                     ModifiedDate = DateTime.UtcNow,
                     ModifiedBy = "2",
-                    CreatedDate = DateTime.UtcNow,
-                    CreatedBy = "1",
                 };
                 _stepService.UpdateStep(step);
 
@@ -87,23 +86,15 @@ namespace ExaminerWebApp.Controllers
             }
         }
 
-        public List<StepType> StepTypeList()
+        public async Task<List<StepType>> StepTypeList()
         {
-            return _stepService.GetStepTypeList();
+            return await _stepService.GetStepTypeList();
         }
 
         [HttpPost]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            try
-            {
-                _stepService.DeleteStep(id);
-                return Json(new { success = true });
-            }
-            catch
-            {
-                return Json(new { success = false });
-            }
+            return Json(new { success = await _stepService.DeleteStep(id) });
         }
     }
 }

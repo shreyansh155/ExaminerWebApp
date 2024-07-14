@@ -24,7 +24,7 @@
 
         data = data || {};
 
-        this.steptypeid = ko.observable(data.phasename || "").extend({ required: "Please select phase type" });
+        this.steptypeid = ko.observable(data.phasename || "").extend({ required: "Please select step type" });
         this.phaseordinal = ko.observable();
         this.submitForm = function () {
             this.phasename.validate();

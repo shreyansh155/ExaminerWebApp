@@ -9,6 +9,10 @@ namespace ExaminerWebApp.Entities.Entities
 
         public int StepId { get; set; }
 
+        public int? Ordinal { get; set; }
+
+        public bool? IsInTemplatePhaseSteps { get; set; }
+
         public bool? IsDeleted { get; set; }
     }
 }

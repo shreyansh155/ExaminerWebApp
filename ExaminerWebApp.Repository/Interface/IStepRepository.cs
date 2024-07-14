@@ -5,7 +5,7 @@ namespace ExaminerWebApp.Repository.Interface
     public interface IStepRepository : IBaseRepository<Step>
     {
         IQueryable<Step> GetAllSteps(int phaseId);
-        List<StepType> GetStepTypeList();
-        bool CheckIfStepExists(int phaseId, string stepName);
+        Task<List<StepType>> GetStepTypeList();
+        Task<bool> CheckIfStepExists(int phaseId, string stepName);
     }
 }

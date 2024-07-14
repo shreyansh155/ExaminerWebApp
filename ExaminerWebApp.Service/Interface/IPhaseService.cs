@@ -5,10 +5,11 @@ namespace ExaminerWebApp.Service.Interface
     public interface IPhaseService
     {
         IQueryable<Phase> GetAll();
-        Phase GetPhaseById(int id);
+        Task<Phase> GetPhaseById(int id);
         Task<Phase> CreatePhase(Phase model);
-        bool DeletePhase(int id);
-        bool UpdatePhase(Phase model);
-        bool CheckIfPhaseExists(string phaseName);
+        Task<bool> DeletePhase(int id);
+        Task<bool> UpdatePhase(Phase model);
+        Task<bool> CheckIfPhaseExists(string phaseName);
+        Task<bool> CheckPhaseOnUpdateExists(string phaseName,int? phaseId);
     }
 }

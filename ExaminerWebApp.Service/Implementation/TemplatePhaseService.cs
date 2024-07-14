@@ -9,20 +9,31 @@ namespace ExaminerWebApp.Service.Implementation
     {
         private readonly IMapper _mapper;
         private readonly ITemplatePhaseRepository _templatePhaseRepository;
-        public TemplatePhaseService(ITemplatePhaseRepository templatePhaseRepository, IMapper mapper)
+        private readonly IPhaseStepRepository _phaseStepRepository;
+
+        public TemplatePhaseService(ITemplatePhaseRepository templatePhaseRepository, IMapper mapper, IPhaseStepRepository phaseStepRepository)
         {
             _mapper = mapper;
             _templatePhaseRepository = templatePhaseRepository;
+            _phaseStepRepository = phaseStepRepository;
         }
-        public ApplicationTypeTemplatePhase AddTemplatePhase(ApplicationTypeTemplatePhase model)
+
+        public ApplicationTypeTemplatePhase AddTemplatePhaseStep(ApplicationTypeTemplatePhase model)
         {
             Repository.DataModels.ApplicationTypeTemplatePhase obj = _mapper.Map<Repository.DataModels.ApplicationTypeTemplatePhase>(model);
-            _templatePhaseRepository.AddPhaseWithOrdinal(obj);
+
+            List<Repository.DataModels.TemplatePhaseStep> templatePhaseStep = _mapper.Map<List<Repository.DataModels.TemplatePhaseStep>>(model.TemplatePhaseSteps);
+
+            Repository.DataModels.ApplicationTypeTemplatePhase tempPhase = _templatePhaseRepository.AddPhaseWithOrdinal(obj);
+
+            _phaseStepRepository.AddStepsWithOrdinal(templatePhaseStep,tempPhase);
+
             return model;
         }
-        public bool UpdateOrdinal(int templateId, int phaseId, int ordinal)
+
+        public async Task<bool> UpdateOrdinal(int templateId, int phaseId, int ordinal)
         {
-            _templatePhaseRepository.UpdateOrdinal(templateId, phaseId, ordinal);
+            await _templatePhaseRepository.UpdateOrdinal(templateId, phaseId, ordinal);
             return true;
         }
     }

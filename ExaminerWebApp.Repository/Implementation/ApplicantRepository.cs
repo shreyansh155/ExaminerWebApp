@@ -1,6 +1,7 @@
 ﻿using ExaminerWebApp.Repository.DataModels;
 using ExaminerWebApp.Repository.Interface;
 using ExaminerWebApp.Repository.DataContext;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExaminerWebApp.Repository.Implementation
 {
@@ -20,30 +21,24 @@ namespace ExaminerWebApp.Repository.Implementation
             return model;
         }
 
-        public void Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            var applicant = _context.Applicants.First(x => x.Id == id);
+            var applicant = await _context.Applicants.FirstAsync(x => x.Id == id);
             applicant.IsDeleted = true;
 
             _context.Applicants.Update(applicant);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public IQueryable<Applicant> GetAll()
         {
-            try
-            {
-                return _context.Applicants.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return _context.Applicants.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
         }
 
-        public Applicant GetById(int id)
+        public async Task<Applicant> GetById(int id)
         {
-            return _context.Applicants.First(x => x.Id == id);
+            return await _context.Applicants.FirstAsync(x => x.Id == id);
         }
 
         public void Update(Applicant model)
@@ -62,6 +57,7 @@ namespace ExaminerWebApp.Repository.Implementation
             _context.Applicants.Update(applicant);
             _context.SaveChanges();
         }
+     
         public bool CheckEmail(string email)
         {
             return _context.Applicants.Where(x => x.Email == email && x.IsDeleted != true).Any();

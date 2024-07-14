@@ -94,7 +94,7 @@ namespace ExaminerWebApp.Controllers
         {
             return entities.Select(entity => new StepsList
             {
-                StepTypeId = entity.Id,
+                StepTypeId = (int)entity.Id,
                 Name = entity.Name,
             });
         }

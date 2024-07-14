@@ -2,7 +2,7 @@
     ko.extenders.required = function (target, overrideMessage) {
         target.hasError = ko.observable(false);
         target.validationMessage = ko.observable();
-        target.validationTriggered = ko.observable(false); // Track if validation should be triggered
+        target.validationTriggered = ko.observable(false);
 
         function validate(newValue) {
             if (target.validationTriggered()) {
@@ -49,7 +49,7 @@
                     success: function (response) {
                         if (response.success) {
                             $("#refreshButton").trigger("click");
-                            kendoWindow.close();
+                            $('#create-phase').modal('hide');
                         } else {
                             var errorsHtml = '<ul>';
                             if (typeof (response.errors) === "string") {
@@ -78,7 +78,3 @@
     var viewModel = new PhaseViewModel(window.initialData);
     ko.applyBindings(viewModel, document.getElementById("phaseForm"));
 }))
-
-$("#cancelButton").click(function () {
-    $(this).closest("[data-role=window]").data("kendoWindow").close();
-});

@@ -32,9 +32,9 @@ namespace ExaminerWebApp.Controllers
             return PartialView("Modal/_CreatePhase");
         }
 
-        public IActionResult AddPhaseSteps(int phaseId)
+        public async Task<IActionResult> AddPhaseSteps(int phaseId)
         {
-            Phase phase = _phaseService.GetPhaseById(phaseId);
+            Phase phase = await _phaseService.GetPhaseById(phaseId);
             CreatePhaseModel model = new()
             {
                 Name = phase.Name,
@@ -46,73 +46,66 @@ namespace ExaminerWebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreatePhase(CreatePhaseModel model)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    if (!_phaseService.CheckIfPhaseExists(model.Name))
-                    {
-                        Phase phase = new()
-                        {
-                            Name = model.Name,
-                            Description = model.Description,
-                        };
-                        _phaseService.CreatePhase(phase);
-                        return Json(new { success = true });
-                    }
-                    else
-                    {
-                        return Json(new { success = false, errors = "Entered phase name already exists." });
-                    }
-                }
-                else
-                {
-                    var errors = ModelStateErrorSerializer(ModelState);
-                    return Json(new { success = false, errors });
-                }
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        public ActionResult Edit(int id)
-        {
-            try
-            {
-                Phase phase = _phaseService.GetPhaseById(id);
-                CreatePhaseModel model = new()
-                {
-                    PhaseId = phase.Id,
-                    Name = phase.Name,
-                    Description = phase.Description,
-                };
-                return PartialView("Modal/_CreatePhase", model);
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        [HttpPost]
-        public ActionResult EditPhase(CreatePhaseModel model)
+        public async Task<ActionResult> CreatePhase(CreatePhaseModel model)
         {
             if (ModelState.IsValid)
             {
-                Phase phase = new()
+                if (await _phaseService.CheckIfPhaseExists(model.Name) != true)
                 {
-                    Id = (int)model.PhaseId,
-                    Name = model.Name,
-                    Description = model.Description,
-                    ModifiedBy = "2",
-                    ModifiedDate = DateTime.UtcNow,
-                };
-                _phaseService.UpdatePhase(phase);
-                return Json(new { success = true });
+                    Phase phase = new()
+                    {
+                        Name = model.Name,
+                        Description = model.Description,
+                    };
+                    await _phaseService.CreatePhase(phase);
+                    return Json(new { success = true });
+                }
+                else
+                {
+                    return Json(new { success = false, errors = "Phase already exists." });
+                }
+            }
+            else
+            {
+                var errors = ModelStateErrorSerializer(ModelState);
+                return Json(new { success = false, errors });
+            }
+        }
+
+        public async Task<ActionResult> Edit(int id)
+        {
+            Phase phase = await _phaseService.GetPhaseById(id);
+            CreatePhaseModel model = new()
+            {
+                PhaseId = phase.Id,
+                Name = phase.Name,
+                Description = phase.Description,
+            };
+            return PartialView("Modal/_CreatePhase", model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> EditPhase(CreatePhaseModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (await _phaseService.CheckPhaseOnUpdateExists(model.Name, model.PhaseId) != true)
+                {
+                    Phase phase = new()
+                    {
+                        Id = model.PhaseId,
+                        Name = model.Name,
+                        Description = model.Description,
+                        ModifiedBy = "2",
+                        ModifiedDate = DateTime.UtcNow,
+                    };
+                    await _phaseService.UpdatePhase(phase);
+                    return Json(new { success = true });
+                }
+                else
+                {
+                    return Json(new { success = false, errors = "Phase already exists." });
+                }
             }
             else
             {
@@ -123,15 +116,12 @@ namespace ExaminerWebApp.Controllers
 
         public async Task<ActionResult> Delete(int id)
         {
-            try
+            if (id != 0)
             {
                 await Task.Run(() => _phaseService.DeletePhase(id));
                 return Json(new { success = true });
             }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, error = ex });
-            }
+            return Json(new { success = false });
         }
     }
 }

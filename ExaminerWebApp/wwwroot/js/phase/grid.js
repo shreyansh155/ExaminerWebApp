@@ -1,18 +1,6 @@
-﻿var kendoWindow;
-var stepWindow;
-
-$(function () {
-    kendoWindow = $("#window").kendoWindow({
-        position: {
-            top: "50%",  
-            left: "50%",
-        },
-        title: "Phase",
-        visible: false,
-        modal: true
-    }).data("kendoWindow");
+﻿$(function () {
     function textBox(container, options) {
-        $('<textarea rows="3" id="decription" name="decription" data-bind="value:' + options.field + '"></textarea>')
+        $('<textarea rows="3" id="description" name="description" data-bind="value:' + options.field + '"></textarea>')
             .appendTo(container);
     }
     var grid = $("#grid").kendoGrid({
@@ -100,9 +88,8 @@ $(function () {
                 phaseId: dataItem.phaseId,
             },
             success: function (result) {
-
-                kendoWindow.content(result);
-                kendoWindow.center().open();
+                $('#displayModal').html(result);
+                $('#create-phase').modal('show');
             },
             error: function (error) {
                 console.log(error);
@@ -119,8 +106,8 @@ $(function () {
                 id: dataItem.phaseId,
             },
             success: function (result) {
-                kendoWindow.content(result);
-                kendoWindow.center().open();
+                $('#displayModal').html(result);
+                $('#create-phase').modal('show');
             },
             error: function (error) {
                 console.log(error);
@@ -130,24 +117,26 @@ $(function () {
     function DeletePhase(e) {
         var tr = $(e.target).closest("tr");
         var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
-        $.ajax({
-            url: "/Phase/Delete",
-            type: "POST",
-            data: {
-                id: dataItem.phaseId,
-            },
-            success: function (result) {
-                $("#refreshButton").trigger("click");
-                alert("Phase has been deleted successfully");
-            },
-            error: function (error) {
-                console.log(error);
-            }
-        });
+        if (confirm("Are you sure?")) {
+            $.ajax({
+                url: "/Phase/Delete",
+                type: "POST",
+                data: {
+                    id: dataItem.phaseId,
+                },
+                success: function (result) {
+                    $("#refreshButton").trigger("click");
+                    alert("Phase has been deleted successfully");
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
     }
     //Steps Grid
     function PhaseRow(e) {
-        var dataItem = e.data; 
+        var dataItem = e.data;
 
         $("<div/>").appendTo(e.detailCell).kendoGrid({
             dataSource: {
@@ -177,7 +166,7 @@ $(function () {
                             id: { editable: false, nullable: true },
                             name: { type: "string" },
                             description: { type: "string" },
-                            instruction: { type: "string" },
+                            instruction: { type: "string", encoded: false },
                             typeId: { type: "number" },
                             stepType: { type: "string" }
                         }
@@ -193,7 +182,15 @@ $(function () {
                 { field: "id", title: "Step Id", width: "125px", hidden: true },
                 { field: "name", title: "Step Name", width: "130px" },
                 { field: "description", title: "Description", width: "130px" },
-                { field: "instruction", title: "Instruction", width: "130px" },
+                {
+                    field: "instruction",
+                    title: "Instruction",
+                    width: "130px",
+                    encoded: false,
+                    template: function (dataItem) {
+                        return dataItem.instruction;
+                    },
+                },
                 { field: "stepType", title: "Step Type", width: "150px" },
             ],
         });
@@ -205,8 +202,8 @@ $(function () {
             url: "/Phase/AddPhase",
             type: 'GET',
             success: function (result) {
-                kendoWindow.content(result);
-                kendoWindow.center().open();
+                $('#displayModal').html(result);
+                $('#create-phase').modal('show');
             },
             error: function (error) {
                 console.log(error);

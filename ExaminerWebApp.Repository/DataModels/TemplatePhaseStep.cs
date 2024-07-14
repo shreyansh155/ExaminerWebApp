@@ -1,4 +1,7 @@
-﻿namespace ExaminerWebApp.Repository.DataModels;
+﻿using System;
+using System.Collections.Generic;
+
+namespace ExaminerWebApp.Repository.DataModels;
 
 public partial class TemplatePhaseStep
 {
@@ -7,6 +10,8 @@ public partial class TemplatePhaseStep
     public int TemplatePhaseId { get; set; }
 
     public int StepId { get; set; }
+
+    public int Ordinal { get; set; }
 
     public bool? IsDeleted { get; set; }
 

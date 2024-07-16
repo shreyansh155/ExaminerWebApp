@@ -78,7 +78,7 @@
                     dataType: "json",
                 },
             },
-            pageSize: 3,
+            pageSize: 5,
             schema: {
                 data: function (response) {
                     return response;
@@ -124,7 +124,7 @@
         sortable: true,
         scrollable: true,
         editable: "inline",
-        toolbar: [{ name: "create", text: "Add Steps" }],
+        toolbar: [{ name: "create", text: "Add" }, { name: "search",text:"Search for..." }],
         columns: [
             { field: "id", title: "Step Id", width: "150px", hidden: true },
             { field: "name", title: "Name", width: "150px" },

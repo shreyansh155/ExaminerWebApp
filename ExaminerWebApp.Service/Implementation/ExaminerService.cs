@@ -27,9 +27,9 @@ namespace PracticeWebApp.Service.Implementation
         }
         #endregion
 
-        #region Interface Methods
+        #region INTERFACE METHODS
 
-        #region READ SPECIFIC APPLICANT
+        #region READ SPECIFIC EXAMINER
         public async Task<ExaminerWebApp.Entities.Entities.Examiner> GetExaminerById(int id)
         {
             ExaminerWebApp.Repository.DataModels.Examiner result = await _examinerRepository.GetById(id);
@@ -37,7 +37,7 @@ namespace PracticeWebApp.Service.Implementation
         }
         #endregion
 
-        #region READ ALL APPLICANTS
+        #region READ ALL EXAMINER
         public IQueryable<ExaminerWebApp.Entities.Entities.Examiner> GetAllExaminer()
         {
 
@@ -51,7 +51,7 @@ namespace PracticeWebApp.Service.Implementation
         }
         #endregion
 
-        #region ADD APPLICANT
+        #region ADD EXAMINER
         public async Task<ExaminerWebApp.Entities.Entities.Examiner> AddExaminer(ExaminerWebApp.Entities.Entities.Examiner model)
         {
 
@@ -67,7 +67,7 @@ namespace PracticeWebApp.Service.Implementation
         }
         #endregion
 
-        #region DELETE APPLICANT
+        #region DELETE EXAMINER
         public async Task<bool> DeleteExaminer(int id)
         {
             await _examinerRepository.Delete(id);
@@ -75,7 +75,7 @@ namespace PracticeWebApp.Service.Implementation
         }
         #endregion
 
-        #region GET APPLICANT DETAILS
+        #region GET EXAMINER DETAILS
         public bool UpdateExaminer(ExaminerWebApp.Entities.Entities.Examiner model)
         {
             if (model.FormFile != null && model.FormFile.Length > 0)
@@ -111,13 +111,15 @@ namespace PracticeWebApp.Service.Implementation
 
             return uniqueFileName;
         }
-        #region CHECK EMAIL IF EXISTS
+        #region CHECK IF EMAIL EXISTS
         public bool CheckEmailIfExists(string email)
         {
             return _examinerRepository.CheckEmail(email);
         }
         #endregion
-        #region Helper Methods
+        #endregion
+
+        #region HELPER METHODS
         private T ExecuteWithTryCatch<T>(Func<T> func)
         {
             try
@@ -130,9 +132,6 @@ namespace PracticeWebApp.Service.Implementation
             }
         }
 
-
-        #endregion
-        #endregion
         public void SendEmail(string email)
         {
             string? senderEmail = _config.GetSection("OutlookSMTP")["Sender"] ?? "";
@@ -158,5 +157,6 @@ namespace PracticeWebApp.Service.Implementation
             mailMessage.To.Add(email);
             client.Send(mailMessage);
         }
+        #endregion
     }
 }

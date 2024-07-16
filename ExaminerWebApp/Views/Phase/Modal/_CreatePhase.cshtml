@@ -7,9 +7,9 @@
 <script type="text/javascript">
     window.initialData = @Html.Raw(serializedData);
 </script>
- 
+
 <div class="modal" id="create-phase" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered @(showGrid?"modal-xl":"")">
+    <div class="modal-dialog modal-dialog-centered @(showGrid?"modal-xl":"modal-lg")">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title text-align-center" id="exampleModalLabel">Phase</h5>
@@ -18,22 +18,26 @@
             <div class="modal-body">
                 <form id="phaseForm">
                     <div id="errorBody" class="text-danger"></div>
-                    <div class="form-group">
-                        <label for="phasename">Name</label>
-                        <kendo-textbox name="phasename"
-                                       required="required"
-                                       data-bind="value: phasename, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
-                        </kendo-textbox>
-                        <span class="text-danger" data-bind="visible: phasename.hasError, text: phasename.validationMessage"> </span>
+                    <div class="form-group row">
+                        <label for="phasename" class="col-form-label col-sm-4">Name</label>
+                        <div class="col-sm-8">
+                            <kendo-textbox name="phasename"
+                                           required="required"
+                                           data-bind="value: phasename, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                            </kendo-textbox>
+                            <span class="text-danger" data-bind="visible: phasename.hasError, text: phasename.validationMessage"> </span>
 
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="phasedescription">Description</label>
-                        <kendo-textarea name="phasedescription"
-                                        required="required"
-                                        rows="3"
-                                        data-bind="value: phasedescription, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
-                        </kendo-textarea>
+                    <div class="form-group row">
+                        <label for="phasedescription" class="col-form-label col-sm-4">Description</label>
+                        <div class="col-sm-8">
+                            <kendo-textarea name="phasedescription"
+                                            required="required"
+                                            rows="3"
+                                            data-bind="value: phasedescription, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                            </kendo-textarea>
+                        </div>
                     </div>
 
                     @if (showGrid)
@@ -45,16 +49,22 @@
                         </div>
                         <script src="~/js/step/step.js"></script>
                     }
-                    <kendo-button name="primaryTextButton"
-                                  data-bind="click: submitForm"
-                                  theme-color="ThemeColor.Primary">
-                        Save
-                    </kendo-button>
-                    <kendo-button name="cancelButton"
-                                  data-bs-dismiss="modal"
-                                  theme-color="ThemeColor.Secondary">
-                        Cancel
-                    </kendo-button>
+                    <div class="d-flex justify-content-start flex-row-reverse">
+                        <div class="mx-2">
+                            <kendo-button name="primaryTextButton"
+                                          data-bind="click: submitForm"
+                                          theme-color="ThemeColor.Primary">
+                                Save
+                            </kendo-button>
+                        </div>
+                        <div class="mx-2">
+                            <kendo-button name="cancelButton"
+                                          data-bs-dismiss="modal"
+                                          theme-color="ThemeColor.Secondary">
+                                Cancel
+                            </kendo-button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

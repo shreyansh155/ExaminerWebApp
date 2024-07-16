@@ -4,7 +4,8 @@ namespace ExaminerWebApp.Repository.Interface
 {
     public interface IApplicationTypeTemplateRepository : IBaseRepository<ApplicationTypeTemplate>
     {
-        public bool ApplicationTemplateExists(string name);
-        public IQueryable<ApplicationTypeTemplate> GetAll(string s);
+        bool ApplicationTemplateExists(string name);
+        Task<bool> EditApplicationTemplateExists(int? id, string name);
+        IQueryable<ApplicationTypeTemplate> GetAll(string s);
     }
 }

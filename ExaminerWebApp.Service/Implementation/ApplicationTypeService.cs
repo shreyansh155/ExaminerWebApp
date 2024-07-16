@@ -47,25 +47,27 @@ namespace ExaminerWebApp.Service.Implementation
         {
             return _applicationTypeRepository.ApplicationTemplateExists(applicationName);
         }
-
-        public bool Delete(int id)
+        public async Task<bool> EditApplicationTemplateExists(int? id, string applicationName)
         {
-            _applicationTypeRepository.Delete(id);
-            return true;
+            return await _applicationTypeRepository.EditApplicationTemplateExists(id, applicationName);
+        }
+
+        public async Task<bool> Delete(int id)
+        {
+            return await _templatePhaseRepository.Delete(id);
+        }
+        public async Task<bool> DeleteTemplate(int id)
+        {
+            return await _applicationTypeRepository.Delete(id);
         }
 
         public bool Update(ApplicationTypeTemplate model)
         {
             Repository.DataModels.ApplicationTypeTemplate obj = _mapper.Map<Repository.DataModels.ApplicationTypeTemplate>(model);
-            try
-            {
-                _applicationTypeRepository.Update(obj);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+
+            _applicationTypeRepository.Update(obj);
+
+            return true;
         }
 
         public IQueryable<Phase> PhaseList(int templateId)
@@ -105,6 +107,19 @@ namespace ExaminerWebApp.Service.Implementation
             var phaseSteps = await _phaseStepRepository.GetPhaseStepsAsync(templatePhases, templateId, phaseId);
 
             return phaseSteps;
+        }
+
+        public async Task<List<Step>> StepList(int? templatePhaseStepId)
+        {
+            List<Repository.DataModels.Step> steps = await _phaseStepRepository.GetStepList(templatePhaseStepId);
+            List<Step> step = _mapper.Map<List<Step>>(steps);
+            return step;
+        }
+        public async Task<List<Step>> PhaseStepList(int? templatePhaseId)
+        {
+            List<Repository.DataModels.Step> steps = await _phaseStepRepository.GetPhaseStepList(templatePhaseId);
+            List<Step> step = _mapper.Map<List<Step>>(steps);
+            return step;
         }
     }
 }

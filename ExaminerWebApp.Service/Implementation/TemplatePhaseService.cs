@@ -26,15 +26,39 @@ namespace ExaminerWebApp.Service.Implementation
 
             Repository.DataModels.ApplicationTypeTemplatePhase tempPhase = _templatePhaseRepository.AddPhaseWithOrdinal(obj);
 
-            _phaseStepRepository.AddStepsWithOrdinal(templatePhaseStep,tempPhase);
+            _phaseStepRepository.AddStepsWithOrdinal(templatePhaseStep, tempPhase);
 
             return model;
         }
 
-        public async Task<bool> UpdateOrdinal(int templateId, int phaseId, int ordinal)
+        public async Task<bool> UpdateOrdinal(int templatePhaseId, int ordinal)
         {
-            await _templatePhaseRepository.UpdateOrdinal(templateId, phaseId, ordinal);
+            await _templatePhaseRepository.UpdateOrdinal(templatePhaseId, ordinal);
+
             return true;
+        }
+        public TemplatePhaseStep GetTemplatePhaseStep(int id)
+        {
+            Repository.DataModels.TemplatePhaseStep templatePhaseStep = _phaseStepRepository.GetTemplatePhaseStep(id);
+            TemplatePhaseStep obj = _mapper.Map<TemplatePhaseStep>(templatePhaseStep);
+            return obj;
+        }
+
+        public int GetStepTypeId(int stepId)
+        {
+            return _phaseStepRepository.GetStepTypeId(stepId);
+        }
+
+        public async Task<TemplatePhaseStep> EditTemplatePhaseStep(TemplatePhaseStep templatePhaseStep)
+        {
+            Repository.DataModels.TemplatePhaseStep phaseStep = _mapper.Map<Repository.DataModels.TemplatePhaseStep>(templatePhaseStep);
+            await _phaseStepRepository.UpdatePhaseStep(phaseStep);
+            return templatePhaseStep;
+        }
+        
+        public async Task<bool> DeleteStep(int id)
+        {
+            return await _phaseStepRepository.DeleteStep(id);
         }
     }
 }

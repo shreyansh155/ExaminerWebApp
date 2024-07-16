@@ -32,7 +32,6 @@ $((function () {
             this.ordinal.validate();
 
             if (this.isValid()) {
-                // Get the Kendo Grid data
                 var phasegrid = $("#phaseGrid").data("kendoGrid");
                 var gridData = phasegrid.dataSource.view().map(function (item) {
                     return {
@@ -44,7 +43,6 @@ $((function () {
                     };
                 });
 
-                // Create the form data object
                 var formdata = {
                     PhaseId: this.phaseid(),
                     Ordinal: this.ordinal(),
@@ -59,7 +57,6 @@ $((function () {
                     }))
                 };
 
-                console.log(JSON.stringify(formdata));
                 $.ajax({
                     url: '/ApplicationTypeTemplate/AddTemplatePhase',
                     type: 'POST',
@@ -68,13 +65,14 @@ $((function () {
                     success: function (response) {
                         if (response.success) {
                             $("#refreshButton").trigger("click");
+                            $('#add-phase').modal('hide');
                         } else {
                             var errorsHtml = '<ul>';
                             if (typeof (response.errors) === "string") {
                                 errorsHtml += '<li>' + response.errors + '</li>';
                             } else {
                                 $.each(response.errors, function (key, value) {
-                                    errorsHtml += '<li>' + value + '</li>'; // Create list of errors
+                                    errorsHtml += '<li>' + value + '</li>'; 
                                 });
                             }
                             errorsHtml += '</ul>';
@@ -96,6 +94,7 @@ $((function () {
     var viewModel = new AddPhaseModel(window.initialData);
 
     ko.applyBindings(viewModel, document.getElementById("addPhase"));
+
     function GetPhaseSteps(e) {
         var phaseId = e.target.value;
 
@@ -116,7 +115,6 @@ $((function () {
                                 phaseId
                             },
                             success: function (data) {
-                                console.log(data);
                                 options.success(data);
                             },
                             error: function (error) {
@@ -287,23 +285,14 @@ $((function () {
                     var row = $(this);
                     var dataItem = grid.dataItem(row);
                     row.find('input[name="ordinal"]').kendoNumericTextBox({
-                        format: "n0", // integer format
-                        decimals: 0, // no decimals
-                        min: 1 // minimum value of 1
+                        format: "n0",
+                        decimals: 0,
+                        min: 1,
                     }).data("kendoNumericTextBox").value(dataItem.ordinal);
                 });
             }
         });
     }
-
-    //setGridHeightToRows(3);
-    $("#refreshButton").on("click", function () {
-        grid.dataSource.read();
-    });
-
-    $("#closeBtn").click(function () {
-        $(this).closest("[data-role=window]").data("kendoWindow").close();
-    });
 
     $("#phaseid").on("change", function (e) {
         GetPhaseSteps(e);

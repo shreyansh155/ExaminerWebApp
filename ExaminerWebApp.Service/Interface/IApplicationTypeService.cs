@@ -11,10 +11,14 @@ namespace ExaminerWebApp.Service.Interface
         Task<ApplicationTypeTemplate> Add(ApplicationTypeTemplate model);
 
         bool ApplicationTemplateExists(string applicationName);
+       
+        Task<bool> EditApplicationTemplateExists(int? id, string applicationName);
 
-        bool Delete(int id);
+        Task<bool> Delete(int id);
+        Task<bool> DeleteTemplate(int id);
 
         bool Update(ApplicationTypeTemplate model);
+      
         Task<object> GetPhaseStepsByTemplateAsync(int templateId, int phaseId);
 
         Task<object> GetPhaseStepsAsync(int templateId, int phaseId);
@@ -22,5 +26,9 @@ namespace ExaminerWebApp.Service.Interface
         object GetPhaseByTemplate(int templateId);
 
         IQueryable<Phase> PhaseList(int templateId);
+      
+        Task<List<Step>> StepList(int? templatePhaseStepId);
+        
+        Task<List<Step>> PhaseStepList(int? templatePhaseId);
     }
 }

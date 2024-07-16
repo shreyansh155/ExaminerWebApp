@@ -7,27 +7,39 @@
 <script type="text/javascript">
     window.initialData = @Html.Raw(serializedData);
 </script>
+<div class="modal" id="templateModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-align-center" id="exampleModalLabel">Add Template</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="templateForm">
+                    <div id="errorBody" class="text-danger"></div>
+                    <div class="form-group">
+                        <label for="name">Template Name</label>
+                        <input id="name" name="name" data-bind="kendoMaskedTextBox: { value: name }" />
+                        <span class="text-danger" data-bind="visible: name.hasError, text: name.validationMessage"> </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" data-bind="kendoMaskedTextBox: { value: description }"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Instruction</label>
+                        <textarea rows="3" id="description" name="description" data-bind="kendoEditor: { value: instruction }"></textarea>
+                    </div>
+                    <kendo-button name="primaryTextButton"
+                                  data-bind="click: submitForm"
+                                  theme-color="ThemeColor.Primary">
+                        Save
+                    </kendo-button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <div>
-    <form id="templateForm">
-        <div id="errorBody" class="text-danger"></div>
-        <div class="form-group">
-            <label for="name">Template Name</label>
-            <input id="name" name="name" data-bind="kendoMaskedTextBox: { value: name }" />
-            <span class="text-danger" data-bind="visible: name.hasError, text: name.validationMessage"> </span>
-        </div>
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" name="description" data-bind="kendoMaskedTextBox: { value: description }" />
-        </div>
-        <div class="form-group">
-            <label for="description">Instruction</label>
-            <textarea rows="3" id="description" name="description" data-bind="kendoEditor: { value: instruction }"></textarea>
-        </div>
-        <kendo-button name="primaryTextButton"
-                      data-bind="click: submitForm"
-                      theme-color="ThemeColor.Primary">
-            Save
-        </kendo-button>
-    </form>
 </div>
 <script src="~/js/application-type-template/window/window.js"></script>

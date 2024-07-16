@@ -1,44 +1,30 @@
-﻿@model PhaseViewModel;
+﻿@model EditPhase;
 
 @{
     var serializedData = Json.Serialize(Model);
 }
-<style>
-    .k-list {
-        text-align-last: match-parent !important;
-    }
-</style>
 <script type="text/javascript">
     window.initialData = @Html.Raw(serializedData);
+    console.log(window.initialData);
 </script>
 <div>
-    <div class="modal" id="add-phase" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+    <div class="modal" id="edit-phase" tabindex="-1">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-align-center" id="exampleModalLabel">Step</h5>
+                    <h5 class="modal-title text-align-center" id="exampleModalLabel">Phase</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addPhase">
+                    <form id="editPhase">
                         <div id="errorBody" class="text-danger"></div>
                         <div class="form-group row">
-                            <label for="phaseid" class="col-form-label col-sm-2">Phase</label>
+                            <label for="phasename" class="col-form-label col-sm-2">Phase</label>
                             <div class="col-sm-10">
-                                <kendo-dropdownlist name="phaseid"
-                                                    dataTextField="name"
-                                                    dataValueField="id"
-                                                    class="k-list"
-                                                    option-label="Select phase"
-                                                    change="GetPhaseSteps"
-                                                    data-bind="value: phaseid">
-                                    <datasource>
-                                        <transport>
-                                            <read url="/ApplicationTypeTemplate/PhaseList?templateId=@Model.TemplateId" />
-                                        </transport>
-                                    </datasource>
-                                </kendo-dropdownlist>
-                                <span class="text-danger" data-bind="visible: phaseid.hasError, text: phaseid.validationMessage"></span>
+                                <kendo-textbox name="phasename"
+                                               enable="false"
+                                               data-bind="value: phasename">
+                                </kendo-textbox>
                             </div>
                         </div>
 
@@ -55,7 +41,6 @@
                                 <span class="text-danger" data-bind="visible: ordinal.hasError, text: ordinal.validationMessage"></span>
                             </div>
                         </div>
-                        <div class="mt-2" id="phaseGrid"></div>
                         <div class="footer">
                             <kendo-button name="submitBtn"
                                           data-bind="click: submitForm"
@@ -74,4 +59,5 @@
         </div>
     </div>
 </div>
-<script src="~/js/application-type-template/window/add-phase.js"></script>
+
+<script src="~/js/application-type-template/window/edit-phase.js"></script> 

@@ -14,6 +14,6 @@ namespace ExaminerWebApp.Repository.Interface
 
         ApplicationTypeTemplatePhase AddPhaseWithOrdinal(ApplicationTypeTemplatePhase model);
 
-        Task<bool> UpdateOrdinal(int templateId, int phaseId, int ordinal);
+        Task<bool> UpdateOrdinal(int templatePhaseId,int ordinal);
     }
 }

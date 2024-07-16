@@ -175,7 +175,7 @@
                 pageSize: 10,
             },
             scrollable: true,
-            sortable: false,
+            sortable: true,
             pageable: false,
             editable: false,
             columns: [

@@ -1,13 +1,4 @@
-﻿var kendoWindow;
-
-$(function () {
-    kendoWindow = $("#window").kendoWindow({
-        width: "600px",
-        title: "Add Application Template",
-        visible: false,
-        modal: true
-    }).data("kendoWindow");
-
+﻿$(function () {
     var grid = $("#grid").kendoGrid({
         dataSource: {
             transport: {
@@ -61,7 +52,7 @@ $(function () {
             pageSizes: [10, 15, 20]
         },
         editable: false,
-        toolbar: ["Create"],
+        toolbar: [{ name: "Create", text: "Add Template" }],
         columns: [
             { field: "id", title: "", width: "125px", hidden: true },
             { field: "name", title: "Name", width: "130px" },
@@ -96,8 +87,8 @@ $(function () {
                     url: "/ApplicationTypeTemplate/ShowTemplateModal",
                     type: 'GET',
                     success: function (result) {
-                        kendoWindow.content(result);
-                        kendoWindow.center().open();
+                        $('#displayModal').html(result);
+                        $('#templateModal').modal('show');
                     },
                     error: function () {
                         alert("An error occurred while loading the content.");
@@ -108,7 +99,6 @@ $(function () {
     }).data("kendoGrid");
     $("#searchButton").click(function () {
         grid.dataSource.read();
-
     });
     function EditEntry(e) {
         e.preventDefault();
@@ -133,7 +123,6 @@ $(function () {
         });
     }
 
-
     function DeleteEntry(e) {
         e.preventDefault();
         var tr = $(e.target).closest("tr");
@@ -157,13 +146,6 @@ $(function () {
 
     $("#refreshButton").on("click", function () {
         grid.dataSource.read();
-    });
-
-    // Initialize Kendo Window
-
-    $("#undo").bind("click", function () {
-        $("#application-type-template").data("kendoWindow").open();
-        $("#undo").hide();
     });
 });
 

@@ -2,7 +2,7 @@
     ko.extenders.required = function (target, overrideMessage) {
         target.hasError = ko.observable(false);
         target.validationMessage = ko.observable();
-        target.validationTriggered = ko.observable(false); // Track if validation should be triggered
+        target.validationTriggered = ko.observable(false);  
 
         function validate(newValue) {
             if (target.validationTriggered()) {
@@ -50,7 +50,7 @@
                     success: function (response) {
                         if (response.success) {
                             $("#refreshButton").trigger("click");
-                            kendoWindow.close();
+                            $('#templateModal').modal('hide');
                         } else {
                             var errorsHtml = '<ul>';
                             if (typeof (response.errors) === "string") {
@@ -58,7 +58,7 @@
                             }
                             else {
                                 $.each(response.errors, function (key, value) {
-                                    errorsHtml += '<li>' + value + '</li>'; // Create list of errors
+                                    errorsHtml += '<li>' + value + '</li>'; 
                                 });
                             }
                             errorsHtml += '</ul>';

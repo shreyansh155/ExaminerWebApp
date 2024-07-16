@@ -1,13 +1,14 @@
 ﻿@model ApplicationTypeTemplateModel;
 
 @{
+    ViewData["Title"] = "Edit Template";
     var serializedData = Json.Serialize(Model);
 }
-
 <script type="text/javascript">
     window.initialData = @Html.Raw(serializedData);
 </script>
 <div>
+    <h2 class="mb-2">Edit Template</h2>
     <form id="templateForm">
         <div id="errorBody" class="text-danger"></div>
         <div class="form-group">
@@ -20,30 +21,51 @@
         </div>
         <div class="form-group">
             <label for="description">Instruction</label>
-            <textarea rows="1" id="instruction" name="description" data-bind="kendoEditor: { value: instruction }"></textarea>
+            <textarea rows="3" id="description" name="description" data-bind="kendoEditor: { value: instruction }"></textarea>
         </div>
-        <div class="justify-content-center align-items-center">
-            <kendo-button name="submit-btn"
-                          data-bind="click: submitTemplate"
-                          theme-color="ThemeColor.Primary">
-                Save
-            </kendo-button>
-            <kendo-button name="cancel-btn"
-                          theme-color="ThemeColor.Light">
-                Back
-            </kendo-button>
-            <kendo-button name="delete-btn"
-                          theme-color="ThemeColor.Error">
-                Delete
-            </kendo-button>
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="mx-2">
+                <kendo-button name="submit-btn"
+                              data-bind="click: submitTemplate"
+                              theme-color="ThemeColor.Primary">
+                    Save
+                </kendo-button>
+            </div>
+            <div class="mx-2">
+                <kendo-button name="cancel-btn"
+                              theme-color="ThemeColor.Light">
+                    Back
+                </kendo-button>
+            </div>
+            <div class="mx-2">
+                <kendo-button name="delete-btn"
+                              data-bind="click: deleteTemplate"
+                              theme-color="ThemeColor.Error">
+                    Delete
+                </kendo-button>
+            </div>
         </div>
     </form>
 
     <div id="grid"></div>
 
-    <div id="window"></div>
+    <div id="displayModal"></div>
 
     <button id="refreshButton" type="button" hidden></button>
 </div>
+<script id="custom-toolbar-template" type="text/x-kendo-template">
+    <div>
+        <button id="expand" class='k-button k-button-md k-rounded-md k-button-solid k-button-primary k-button-solid-base'>
+            <span class='k-button-text'>
+                Expand All
+            </span>
+        </button>
+        <button id="collapse" class='k-button k-button-md k-rounded-md k-button-solid k-button-primary k-button-solid-base'>
+            <span class='k-button-text'>
+                Collapse All
+            </span>
+        </button>
+    </div>
 
+</script>
 <script src="~/js/application-type-template/edit-template/edit.js"></script>

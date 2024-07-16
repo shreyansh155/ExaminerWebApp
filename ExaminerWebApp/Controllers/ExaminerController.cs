@@ -29,21 +29,16 @@ namespace ExaminerWebApp.Controllers
             return Json(await Pagination<ExaminerModel>.CreateAsync(result, pageNumber, pageSize));
         }
 
-        #region OPEN MODAL
         public IActionResult ExaminerForm()
         {
             return PartialView("Modal/_ExaminerFormModal");
         }
-        #endregion
 
-        #region GET EXAMINER TYPE LIST
         public List<ExaminerType> ExaminerTypeList()
         {
             return _examinerTypeService.GetExaminerTypeList();
         }
-        #endregion
 
-        #region CREATE (POST)
         [HttpPost]
         public async Task<ActionResult> AddExaminer(ExaminerModel model)
         {
@@ -75,9 +70,7 @@ namespace ExaminerWebApp.Controllers
                 return Json(new { success = false, errors });
             }
         }
-        #endregion
 
-        #region GET EXAMINER BY ID
         public async Task<IActionResult> GetExaminer(int id)
         {
             Examiner result = await _examinerService.GetExaminerById(id);
@@ -95,9 +88,7 @@ namespace ExaminerWebApp.Controllers
             };
             return PartialView("Modal/_ExaminerFormModal", obj);
         }
-        #endregion
 
-        #region EDIT EXAMINER (POST)
         [HttpPost]
         public ActionResult EditExaminer(ExaminerModel model)
         {
@@ -119,7 +110,6 @@ namespace ExaminerWebApp.Controllers
                     ModifiedDate = DateTime.Now,
                 };
                 _examinerService.UpdateExaminer(obj);
-                // _notyf.Success("Examiner has been updated successfully");
                 return Json(new { success = true });
             }
             else
@@ -128,21 +118,11 @@ namespace ExaminerWebApp.Controllers
                 return Json(new { success = false, errors });
             }
         }
-        #endregion
 
-        #region DELETE EXAMINER (POST)
         public async Task<ActionResult> DeleteExaminer(int id)
         {
-            try
-            {
-                await _examinerService.DeleteExaminer(id);
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, error = ex });
-            }
+            await _examinerService.DeleteExaminer(id);
+            return Json(new { success = true });
         }
-        #endregion
     }
 }

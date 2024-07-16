@@ -6,6 +6,14 @@ namespace ExaminerWebApp.Service.Interface
     {
         ApplicationTypeTemplatePhase AddTemplatePhaseStep(ApplicationTypeTemplatePhase model);
 
-        Task<bool> UpdateOrdinal(int templateId, int phaseId, int ordinal);
+        Task<bool> UpdateOrdinal(int templatePhaseId, int ordinal);
+
+        TemplatePhaseStep GetTemplatePhaseStep(int id);
+
+        public int GetStepTypeId(int stepId);
+
+        Task<TemplatePhaseStep> EditTemplatePhaseStep(TemplatePhaseStep templatePhaseStep);
+
+        Task<bool> DeleteStep(int id);
     }
 }

@@ -1,0 +1,104 @@
+﻿@model AddEditStepModel;
+@{
+    var serializedData = Json.Serialize(Model);
+    var edit = Model?.StepId == null ? true : false;
+}
+
+<script type="text/javascript">
+    window.initialData = @Html.Raw(serializedData);
+</script>
+
+<div class="modal" id="add-edit-step" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-align-center" id="exampleModalLabel">Step</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-edit-step-form">
+                    <div id="errorBody" class="text-danger"></div>
+                    <div class="form-group row">
+                        <label for="stepname" class="col-form-label col-sm-2">Step</label>
+                        <div class="col-sm-10">
+                            <kendo-dropdownlist id="stepname" name="steptype"
+                                                data-text-field="name"
+                                                data-value-field="id"
+                                                option-label="--Select Step--"
+                                                enable="@edit"
+                                                data-bind="value: stepid"
+                                                auto-bind="true">
+                                <datasource>
+                                    <transport>
+                                        @if (!edit)
+                                        {
+                                            <read url="/ApplicationTypeTemplate/StepList?id=@Model?.Id" />
+                                        }
+                                        else
+                                        {
+                                            <read url="/ApplicationTypeTemplate/PhaseStepList?templatePhaseId=@Model?.TemplatePhaseId" />
+                                        }
+                                    </transport>
+                                </datasource>
+                            </kendo-dropdownlist>
+                            <span class="text-danger" data-bind="visible: stepid.hasError, text: stepid.validationMessage"> </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="steptypeid" class="col-form-label col-sm-2">Step Type</label>
+                        <div class="col-sm-10">
+                            <kendo-dropdownlist id="steptypeid" name="steptype"
+                                                dataTextField="name"
+                                                dataValueField="id"
+                                                enable=false
+                                                option-label="Select Step type"
+                                                data-bind="value: steptypeid">
+                                <datasource>
+                                    <transport>
+                                        <read url="/Step/StepTypeList" />
+                                    </transport>
+                                </datasource>
+                            </kendo-dropdownlist>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="ordinal" class="col-form-label col-sm-2">Ordinal</label>
+                        <div class="col-sm-10">
+                            <kendo-numerictextbox id="ordinal"
+                                                  name="ordinal"
+                                                  min="1"
+                                                  required="required"
+                                                  format="n0"
+                                                  decimals="0"
+                                                  data-bind="value: ordinal, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                            </kendo-numerictextbox>
+                            <span class="text-danger" data-bind="visible: ordinal.hasError, text: ordinal.validationMessage"></span>
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="stepinstruction" class="col-form-label col-sm-2">Instruction</label>
+                        <div class="col-sm-10">
+                            <kendo-textarea name="stepinstruction"
+                                            rows="3"
+                                            data-bind="kendoEditor: stepinstruction, valueUpdate: 'afterkeydown'">
+                            </kendo-textarea>
+                        </div>
+                    </div>
+                    <kendo-button name="primaryTextButton"
+                                  data-bind="click: formSubmit"
+                                  theme-color="ThemeColor.Primary">
+                        Save
+                    </kendo-button>
+                    <kendo-button name="cancelButton"
+                                  data-bs-dismiss="modal"
+                                  theme-color="ThemeColor.Secondary">
+                        Cancel
+                    </kendo-button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/application-type-template/edit-template/add-edit-step.js"></script>

@@ -2,6 +2,7 @@
 using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.Service.Interface;
 using ExaminerWebApp.ViewModels;
+using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExaminerWebApp.Controllers
@@ -10,6 +11,7 @@ namespace ExaminerWebApp.Controllers
     {
         private readonly IApplicationTypeService _applicationTypeService;
         private readonly ITemplatePhaseService _templatePhaseService;
+
         public ApplicationTypeTemplateController(IApplicationTypeService applicationTypeService, ITemplatePhaseService templatePhaseService)
         {
             _applicationTypeService = applicationTypeService;
@@ -33,13 +35,13 @@ namespace ExaminerWebApp.Controllers
             return PartialView("Modal/_TemplateModal");
         }
 
-        public IActionResult AddTemplate(ApplicationTypeTemplateModel model)
+        public async Task<IActionResult> AddTemplate(ApplicationTypeTemplateModel model)
         {
             if (ModelState.IsValid)
             {
                 if (_applicationTypeService.ApplicationTemplateExists(model.Name))
                 {
-                    return Json(new { success = false, errors = "The entered application template already exists" });
+                    return Json(new { success = false, errors = "This application template already exists" });
                 }
                 else
                 {
@@ -51,18 +53,17 @@ namespace ExaminerWebApp.Controllers
                         CreatedBy = "1",
                         CreatedDate = DateTime.UtcNow,
                     };
-                    try
-                    {
-                        var obj = _applicationTypeService.Add(applicationType);
-                    }
-                    catch (Exception ex)
-                    {
-                        return Json(new { success = false, errors = ex.Message });
-                    }
+
+                    await _applicationTypeService.Add(applicationType);
                     return Json(new { success = true });
                 }
             }
             return View(model);
+        }
+
+        public async Task<IActionResult> DeleteTemplate(int id)
+        {
+            return Json(new { success = await _applicationTypeService.DeleteTemplate(id) });
         }
 
         public IActionResult GetApplicationTemplate(int id)
@@ -84,10 +85,14 @@ namespace ExaminerWebApp.Controllers
             return View("EditTemplate", obj);
         }
 
-        public ActionResult EditTemplate(ApplicationTypeTemplateModel model)
+        public async Task<ActionResult> EditTemplate(ApplicationTypeTemplateModel model)
         {
             if (ModelState.IsValid)
             {
+                if (await _applicationTypeService.EditApplicationTemplateExists(model.Id, model.Name))
+                {
+                    return Json(new { success = false, errors = "This application template already exists" });
+                }
                 ApplicationTypeTemplate applicationType = new()
                 {
                     Id = model.Id,
@@ -102,56 +107,25 @@ namespace ExaminerWebApp.Controllers
             return View(model);
         }
 
-        public bool DeleteTemplate(int id)
-        {
-            try
-            {
-                _applicationTypeService.Delete(id);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         public async Task<ActionResult> GetPhase(int templateId)
         {
-            Object phases = await Task.Run(() => _applicationTypeService.GetPhaseByTemplate(templateId));
-            return Json(phases);
+            Object obj = await Task.Run(() => _applicationTypeService.GetPhaseByTemplate(templateId));
+            return Json(obj);
         }
 
         [Route("/ApplicationTypeTemplate/EditPage/ApplicationTypeTemplate/GetPhaseStep")]
         public async Task<ActionResult> GetPhaseStep(int templateId, int phaseId)
         {
-            try
-            {
-                var phases = await _applicationTypeService.GetPhaseStepsAsync(templateId, phaseId);
-                var obj = Json(phases);
-                return obj;
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                Console.WriteLine(ex.Message);
-                return Json(new { success = false });
-            }
+            var phases = await _applicationTypeService.GetPhaseStepsAsync(templateId, phaseId);
+            var obj = Json(phases);
+            return obj;
         }
 
         public async Task<ActionResult> GetPhaseSteps(int templateId, int phaseId)
         {
-            try
-            {
-                var phases = await _applicationTypeService.GetPhaseStepsByTemplateAsync(templateId, phaseId);
-                var obj = Json(phases);
-                return obj;
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                Console.WriteLine(ex.Message);
-                return Json(new { success = false });
-            }
+            var phases = await _applicationTypeService.GetPhaseStepsByTemplateAsync(templateId, phaseId);
+            var obj = Json(phases);
+            return obj;
         }
 
         public IActionResult OpenTemplatePhase(int templateId)
@@ -203,10 +177,103 @@ namespace ExaminerWebApp.Controllers
             }
         }
 
-        public ActionResult UpdatePhaseOrdinal(int phaseId, int templateId, int ordinal)
+        public IActionResult EditPhase(int templatePhaseId, int ordinal, string phaseName)
         {
-            _templatePhaseService.UpdateOrdinal(templateId, phaseId, ordinal);
-            return Json(new { success = true });
+            EditPhase model = new()
+            {
+                TemplatePhaseId = templatePhaseId,
+                Ordinal = ordinal,
+                PhaseName = phaseName
+            };
+            return PartialView("Modal/_EditPhase", model);
+        }
+
+        public async Task<IActionResult> EditTemplatePhase([FromBody] EditPhase model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _templatePhaseService.UpdateOrdinal(model.TemplatePhaseId, model.Ordinal);
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+
+        public IActionResult AddTemplatePhaseStep(int templatePhaseId)
+        {
+            AddEditStepModel model = new()
+            {
+                TemplatePhaseId = templatePhaseId
+            };
+            return PartialView("Modal/_AddStep", model);
+        }
+
+        public IActionResult EditStep(int id)
+        {
+            TemplatePhaseStep templatePhaseStep = _templatePhaseService.GetTemplatePhaseStep(id);
+
+            AddEditStepModel model = new()
+            {
+                Id = id, //template phase step id 
+                TemplatePhaseId = templatePhaseStep.TemplatePhaseId,
+                StepId = templatePhaseStep.StepId,
+                StepTypeId = templatePhaseStep?.Step?.StepTypeId,
+                Instruction = templatePhaseStep?.Step?.Instruction,
+                Ordinal = templatePhaseStep?.Ordinal,
+            };
+
+            return PartialView("Modal/_AddStep", model);
+        }
+
+        public async Task<IActionResult> DeleteStep(int id)
+        {
+            return Json(new { success = await _templatePhaseService.DeleteStep(id) });
+        }
+
+        public async Task<List<Step>> StepList(int? id)
+        {
+            return await _applicationTypeService.StepList(id);
+        }
+
+        public async Task<List<Step>> PhaseStepList(int templatePhaseId)
+        {
+            return await _applicationTypeService.PhaseStepList(templatePhaseId);
+        }
+
+        public ActionResult GetStepTypeId(int stepId)
+        {
+            var stepTypeId = 0;
+            if (stepId != 0)
+            {
+                stepTypeId = _templatePhaseService.GetStepTypeId(stepId);
+            }
+            return Json(new { stepTypeId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditTemplatePhaseStep([FromBody] AddEditStepModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                TemplatePhaseStep templatePhaseStep = new()
+                {
+                    Id = model.Id,
+                    TemplatePhaseId = model.TemplatePhaseId,
+                    StepId = model.StepId,
+                    Ordinal = model.Ordinal,
+                    Instruction = model.Instruction,
+                };
+                await _templatePhaseService.EditTemplatePhaseStep(templatePhaseStep);
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+
+        public async Task<IActionResult> DeleteTemplatePhase(int templatePhaseId)
+        {
+            return Json(new
+            {
+                success = await _applicationTypeService.Delete(templatePhaseId)
+            });
         }
     }
 }

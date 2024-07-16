@@ -14,7 +14,7 @@ namespace ExaminerWebApp.Repository.Implementation
             _context = context;
         }
 
-        public Object TemplatePhases(int templateId)
+        public object TemplatePhases(int templateId)
         {
             using (_context)
             {
@@ -81,7 +81,6 @@ namespace ExaminerWebApp.Repository.Implementation
         {
             ApplicationTypeTemplatePhase templatePhase = await _context.ApplicationTypeTemplatePhases.Where(x => x.Id == id).FirstAsync();
             templatePhase.IsDeleted = true;
-            _context.ApplicationTypeTemplatePhases.Update(templatePhase);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -102,17 +101,17 @@ namespace ExaminerWebApp.Repository.Implementation
                 .OrderBy(x => x.Ordinal)
                 .ToList();
 
-            var upperPhase = allPhases
+            var upperTemplatePhase = allPhases
                 .Where(tp => tp.Ordinal >= model.Ordinal)
                 .ToList();
 
-            var lowerPhase = allPhases
+            var lowerTemplatePhase = allPhases
                 .Where(tp => tp.Ordinal < model.Ordinal)
                 .ToList();
 
-            for (int i = 0; i < upperPhase.Count; i++)
+            for (int i = 0; i < upperTemplatePhase.Count; i++)
             {
-                if (i == 0 && upperPhase[0].Ordinal > model.Ordinal)
+                if (i == 0 && upperTemplatePhase[0].Ordinal > model.Ordinal)
                 {
                     break;
                 }
@@ -120,11 +119,11 @@ namespace ExaminerWebApp.Repository.Implementation
                 {
                     if (i == 0)
                     {
-                        upperPhase[i].Ordinal++;
+                        upperTemplatePhase[i].Ordinal++;
                     }
-                    else if (i > 0 && upperPhase[i - 1].Ordinal == upperPhase[i].Ordinal)
+                    else if (i > 0 && upperTemplatePhase[i - 1].Ordinal == upperTemplatePhase[i].Ordinal)
                     {
-                        upperPhase[i].Ordinal++;
+                        upperTemplatePhase[i].Ordinal++;
                     }
                     else
                     {
@@ -148,19 +147,27 @@ namespace ExaminerWebApp.Repository.Implementation
             return newPhase;
         }
 
-        public async Task<bool> UpdateOrdinal(int templateId, int phaseId, int ordinal)
+        public async Task<bool> UpdateOrdinal(int templatePhaseId, int ordinal)
         {
-            var allPhases = GetAllTemplates(templateId).OrderBy(x => x.Ordinal).ToList();
+            var currentTemplatePhase = await _context.ApplicationTypeTemplatePhases.FirstAsync(x => x.Id == templatePhaseId);
 
-            var currentPhase = allPhases.First(tp => tp.PhaseId == phaseId);
-            currentPhase.Ordinal = ordinal;
+            var allTemplatePhase = GetAllTemplates(currentTemplatePhase.TemplateId);
 
-            var upperPhase = allPhases.Where(tp => tp.Ordinal >= currentPhase.Ordinal && tp.PhaseId != phaseId).ToList();
-            var lowerPhase = allPhases.Where(tp => tp.Ordinal < currentPhase.Ordinal && tp.PhaseId != phaseId).ToList();
+            currentTemplatePhase.Ordinal = ordinal;
 
-            for (int i = 0; i < upperPhase.Count; i++)
+            var upperTemplatePhase = allTemplatePhase
+                .Where(tp => tp.Ordinal >= currentTemplatePhase.Ordinal && tp.PhaseId != currentTemplatePhase.PhaseId)
+                .OrderBy(comparer => comparer.Ordinal)
+                .ToList();
+
+            var lowerTemplatePhase = allTemplatePhase
+                .Where(tp => tp.Ordinal < currentTemplatePhase.Ordinal && tp.PhaseId != currentTemplatePhase.PhaseId)
+                .OrderBy(comparer => comparer.Ordinal)
+                .ToList();
+
+            for (int i = 0; i < upperTemplatePhase.Count; i++)
             {
-                if (i == 0 && upperPhase[0].Ordinal > ordinal)
+                if (i == 0 && upperTemplatePhase[0].Ordinal > ordinal)
                 {
                     break;
                 }
@@ -168,11 +175,11 @@ namespace ExaminerWebApp.Repository.Implementation
                 {
                     if (i == 0)
                     {
-                        upperPhase[i].Ordinal++;
+                        upperTemplatePhase[i].Ordinal++;
                     }
-                    else if (i > 0 && upperPhase[i - 1].Ordinal == upperPhase[i].Ordinal)
+                    else if (i > 0 && upperTemplatePhase[i - 1].Ordinal == upperTemplatePhase[i].Ordinal)
                     {
-                        upperPhase[i].Ordinal++;
+                        upperTemplatePhase[i].Ordinal++;
                     }
                     else
                     {
@@ -180,21 +187,22 @@ namespace ExaminerWebApp.Repository.Implementation
                     }
                 }
             }
-            for (int i = lowerPhase.Count; i >= 0; i--)
+
+            for (int i = lowerTemplatePhase.Count; i >= 0; i--)
             {
-                if (i == lowerPhase.Count - 1 && lowerPhase[i].Ordinal < ordinal)
+                if (i == lowerTemplatePhase.Count - 1 && lowerTemplatePhase[i].Ordinal < ordinal)
                 {
                     break;
                 }
                 else
                 {
-                    if (i == lowerPhase.Count - 1)
+                    if (i == lowerTemplatePhase.Count - 1)
                     {
-                        lowerPhase[i].Ordinal--;
+                        lowerTemplatePhase[i].Ordinal--;
                     }
-                    else if (i < lowerPhase.Count - 1 && lowerPhase[i - 1].Ordinal == lowerPhase[i].Ordinal)
+                    else if (i < lowerTemplatePhase.Count - 1 && lowerTemplatePhase[i - 1].Ordinal == lowerTemplatePhase[i].Ordinal)
                     {
-                        lowerPhase[i].Ordinal--;
+                        lowerTemplatePhase[i].Ordinal--;
                     }
                     else
                     {
@@ -202,7 +210,9 @@ namespace ExaminerWebApp.Repository.Implementation
                     }
                 }
             }
-            await _context.SaveChangesAsync();
+
+            var obj = await _context.SaveChangesAsync();
+
             return true;
         }
     }

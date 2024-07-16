@@ -13,7 +13,7 @@ namespace ExaminerWebApp.Repository.Implementation
         {
             _context = context;
         }
-     
+
         public IQueryable<ApplicationTypeTemplate> GetAll(string s)
         {
             return _context.ApplicationTypeTemplates.Where(x => x.IsDeleted != true && (string.IsNullOrEmpty(s) || x.Name.ToLower().Contains(s.ToLower()) || x.Description.ToLower().Contains(s.ToLower()))).OrderBy(x => x.Id).AsQueryable();
@@ -22,6 +22,10 @@ namespace ExaminerWebApp.Repository.Implementation
         public bool ApplicationTemplateExists(string name)
         {
             return _context.ApplicationTypeTemplates.Where(x => x.Name == name && x.IsDeleted != true).Any();
+        }
+        public async Task<bool> EditApplicationTemplateExists(int? id, string name)
+        {
+            return await _context.ApplicationTypeTemplates.Where(x => x.Id != id && x.Name == name && x.IsDeleted != true).AnyAsync();
         }
 
         public async Task<ApplicationTypeTemplate> Create(ApplicationTypeTemplate model)
@@ -41,7 +45,6 @@ namespace ExaminerWebApp.Repository.Implementation
         {
             var applicationType = await _context.ApplicationTypeTemplates.FirstAsync(x => x.Id == id);
             applicationType.IsDeleted = true;
-            _context.ApplicationTypeTemplates.Update(applicationType);
             await _context.SaveChangesAsync();
             return true;
         }

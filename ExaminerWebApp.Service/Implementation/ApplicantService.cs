@@ -103,21 +103,11 @@ namespace ExaminerWebApp.Service.Implementation
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                try
-                {
-
                     formFile.CopyTo(fileStream);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception();
-                }
             }
 
             return uniqueFileName;
         }
-
-
 
         #endregion
 

@@ -3,7 +3,6 @@ using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.ViewModels;
 using ExaminerWebApp.Service.Interface;
 using ExaminerWebApp.Composition.Helpers;
-using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace ExaminerWebApp.Controllers
 {
@@ -12,44 +11,36 @@ namespace ExaminerWebApp.Controllers
         private readonly IApplicantService _applicantService;
         private readonly IApplicantTypeService _applicantTypeService;
 
-        #region CONSTRUCTOR
         public ApplicantController(IApplicantService applicantService, IApplicantTypeService applicantTypeService)
         {
             _applicantService = applicantService;
             _applicantTypeService = applicantTypeService;
         }
-        #endregion
 
         public IActionResult ApplicantIndex()
         {
             return View("Grid/Grid");
         }
 
-        #region READ ALL APPLICANTS
         public async Task<ActionResult> GetAll(int pageSize, int pageNumber)
         {
             IQueryable<Applicant> data = await Task.Run(() => _applicantService.GetAllApplicants());
+
             IQueryable<ApplicantViewModel> result = GetApplicantViewModels(data);
 
             return Json(await Pagination<ApplicantViewModel>.CreateAsync(result, pageNumber, pageSize));
         }
-        #endregion
 
-        #region OPEN MODAL
         public IActionResult ApplicantForm()
         {
             return PartialView("Modal/_ApplicationFormModal");
         }
-        #endregion
 
-        #region GET APPLICANT TYPE LIST
         public List<ApplicantType> ApplicantTypeList()
         {
             return _applicantTypeService.GetApplicantTypeList();
         }
-        #endregion
 
-        #region CREATE (POST)
         [HttpPost]
         public async Task<ActionResult> AddApplicant(ApplicantViewModel model)
         {
@@ -81,9 +72,7 @@ namespace ExaminerWebApp.Controllers
                 return Json(new { success = false, errors });
             }
         }
-        #endregion
 
-        #region GET APPLICANT BY ID
         public IActionResult GetApplicant(int id)
         {
             var result = _applicantService.GetApplicantById(id);
@@ -101,9 +90,7 @@ namespace ExaminerWebApp.Controllers
             };
             return PartialView("Modal/_ApplicationFormModal", obj);
         }
-        #endregion
 
-        #region EDIT APPLICANT (POST)
         [HttpPost]
         public ActionResult EditApplicant(ApplicantViewModel model)
         {
@@ -133,21 +120,11 @@ namespace ExaminerWebApp.Controllers
                 return Json(new { success = false, errors });
             }
         }
-        #endregion
 
-        #region DELETE APPLICANT (POST)
         public async Task<ActionResult> DeleteApplicant(int id)
         {
-            try
-            {
-                await _applicantService.DeleteApplicant(id);
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, error = ex });
-            }
+            await _applicantService.DeleteApplicant(id);
+            return Json(new { success = true });
         }
-        #endregion
     }
 }

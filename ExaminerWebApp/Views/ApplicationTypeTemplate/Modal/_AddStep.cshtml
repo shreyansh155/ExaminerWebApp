@@ -18,8 +18,8 @@
             <div class="modal-body">
                 <form id="add-edit-step-form">
                     <div id="errorBody" class="text-danger"></div>
-                    <div class="form-group row">
-                        <label for="stepname" class="col-form-label col-sm-2">Step</label>
+                    <div class="form-group required row">
+                        <label for="stepname" class="col-form-label control-label col-sm-2">Step</label>
                         <div class="col-sm-10">
                             <kendo-dropdownlist id="stepname" name="steptype"
                                                 data-text-field="name"
@@ -61,8 +61,8 @@
                             </kendo-dropdownlist>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label for="ordinal" class="col-form-label col-sm-2">Ordinal</label>
+                    <div class="form-group required row">
+                        <label for="ordinal" class="col-form-label control-label col-sm-2">Ordinal</label>
                         <div class="col-sm-10">
                             <kendo-numerictextbox id="ordinal"
                                                   name="ordinal"
@@ -85,16 +85,22 @@
                             </kendo-textarea>
                         </div>
                     </div>
-                    <kendo-button name="primaryTextButton"
-                                  data-bind="click: formSubmit"
-                                  theme-color="ThemeColor.Primary">
-                        Save
-                    </kendo-button>
-                    <kendo-button name="cancelButton"
-                                  data-bs-dismiss="modal"
-                                  theme-color="ThemeColor.Secondary">
-                        Cancel
-                    </kendo-button>
+                    <div class="d-flex justify-content-start flex-row-reverse">
+                        <div class="mx-2">
+                            <kendo-button name="primaryTextButton"
+                                          data-bind="click: formSubmit"
+                                          theme-color="ThemeColor.Primary">
+                                Save
+                            </kendo-button>
+                        </div>
+                        <div class="mx-2">
+                            <kendo-button name="cancelButton"
+                                          data-bs-dismiss="modal"
+                                          theme-color="ThemeColor.Secondary">
+                                Close
+                            </kendo-button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

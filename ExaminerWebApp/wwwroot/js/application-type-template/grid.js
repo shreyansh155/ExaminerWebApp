@@ -6,6 +6,9 @@
                     var page = options.data.page || 1;
                     var pageSize = options.data.pageSize || 10;
 
+                    var searchValue = $(".k-searchbox.k-input");
+                    console.log(searchValue);
+
                     $.ajax({
                         url: "/ApplicationTypeTemplate/GetAll",
                         type: "GET",
@@ -52,7 +55,15 @@
             pageSizes: [10, 15, 20]
         },
         editable: false,
-        toolbar: [{ name: "Create", text: "Add Template" }],
+        toolbar: [
+            {
+                name: "Create",
+                text: "Add Template"
+            },
+            {
+                template: kendo.template($("#searchGrid").html())
+            }
+        ],
         columns: [
             { field: "id", title: "", width: "125px", hidden: true },
             { field: "name", title: "Name", width: "130px" },
@@ -97,7 +108,8 @@
             });
         },
     }).data("kendoGrid");
-    $("#searchButton").click(function () {
+
+    $("#searchBox").keyup(function () {
         grid.dataSource.read();
     });
     function EditEntry(e) {

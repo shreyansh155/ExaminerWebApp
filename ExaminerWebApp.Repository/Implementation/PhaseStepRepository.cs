@@ -159,6 +159,10 @@ namespace ExaminerWebApp.Repository.Implementation
                 .OrderBy(x => x.Ordinal)
                 .ToList();
 
+            //var step = _context.Steps.FirstOrDefault(x => x.Id == templatePhaseStep.StepId);
+
+            //step.Instruction = templatePhaseStep.Step.Instruction;
+
             var upperPhaseStep = allTemplatePhaseSteps
                 .Where(tp => tp.Ordinal >= templatePhaseStep.Ordinal && tp.StepId != templatePhaseStep.StepId).ToList();
 
@@ -218,7 +222,7 @@ namespace ExaminerWebApp.Repository.Implementation
 
         public async Task<bool> DeleteStep(int id)
         {
-            TemplatePhaseStep templatePhaseStep = await _context.TemplatePhaseSteps.FirstOrDefaultAsync(x => x.Id == id);
+            TemplatePhaseStep templatePhaseStep = await _context.TemplatePhaseSteps.FirstAsync(x => x.Id == id);
             templatePhaseStep.IsDeleted = true;
             await _context.SaveChangesAsync();
             return true;

@@ -72,5 +72,10 @@ namespace ExaminerWebApp.Service.Implementation
         {
             return await _stepRepository.CheckIfStepExists(phaseId, stepName);
         }
+      
+        public async Task<bool> CheckIfEditStepExists(int phaseId, int? stepId, string stepName)
+        {
+            return await _stepRepository.CheckIfEditStepExists(phaseId, stepId, stepName);
+        }
     }
 }

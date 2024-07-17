@@ -70,6 +70,13 @@
                     },
                     type: "POST",
                     dataType: "json",
+                    complete: function (e) {
+                        if (e.responseJSON.success) {
+                            dataSource.read();
+                        } else {
+                            displayErrors(e.responseJSON.errors);
+                        }
+                    }
                 },
 
                 destroy: {
@@ -159,6 +166,7 @@
                 e.preventDefault();
                 CreateStep(e.model);
             } else {
+                e.preventDefault();
                 EditStep(e.model);
             }
         },
@@ -212,16 +220,7 @@
                 if (response.success) {
                     $("#refreshButton").trigger("click");
                 } else {
-                    var errorsHtml = "<ul>";
-                    if (typeof response.errors === "string") {
-                        errorsHtml += "<li>" + response.errors + "</li>";
-                    } else {
-                        $.each(response.errors, function (key, value) {
-                            errorsHtml += "<li>" + value + "</li>";
-                        });
-                    }
-                    errorsHtml += "</ul>";
-                    $("#errorBody").html(errorsHtml);
+                    displayErrors(response.errors);
                 }
             },
             error: function (error) {
@@ -233,7 +232,7 @@
 
     function EditStep(data) {
         var formData = {
-            PhaseId: phaseId,
+            PhaseId: data.phaseId,
             Name: data.name,
             Description: data.description,
             Instruction: data.instruction,
@@ -247,7 +246,11 @@
             contentType: "application/json",
             data: JSON.stringify(formData),
             success: function (response) {
-                $("#refreshButton").trigger("click");
+                if (response.success) {
+                    $("#refreshButton").trigger("click");
+                } else {
+                    displayErrors(response.errors);
+                }
             },
             error: function (error) {
                 console.log(error);
@@ -270,10 +273,24 @@
             }
         });
     }
+    function displayErrors(errors) {
+        var errorsHtml = "<ul>";
+        if (typeof errors === "string") {
+            errorsHtml += "<li>" + errors + "</li>";
+        } else {
+            $.each(errors, function (key, value) {
+                errorsHtml += "<li>" + value + "</li>";
+            });
+        }
+        errorsHtml += "</ul>";
+        $("#errorBody").html(errorsHtml);
+    }
 
     $("#refreshButton").on("click", function () {
         grid.dataSource.read();
+        $("#errorBody").empty();
     });
+
     $("#search").on("input", function () {
         var value = $(this).val();
         grid.dataSource.filter({

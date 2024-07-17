@@ -81,6 +81,13 @@ namespace ExaminerWebApp.Repository.Implementation
         {
             ApplicationTypeTemplatePhase templatePhase = await _context.ApplicationTypeTemplatePhases.Where(x => x.Id == id).FirstAsync();
             templatePhase.IsDeleted = true;
+
+            List<TemplatePhaseStep> templatePhaseSteps = await _context.TemplatePhaseSteps.Where(x => x.TemplatePhaseId == templatePhase.Id).ToListAsync();
+            foreach (var item in templatePhaseSteps)
+            {
+                item.IsDeleted = true;
+            }
+
             await _context.SaveChangesAsync();
             return true;
         }
@@ -92,7 +99,7 @@ namespace ExaminerWebApp.Repository.Implementation
 
         public IQueryable<ApplicationTypeTemplatePhase> GetAllTemplates(int templateId)
         {
-            return _context.ApplicationTypeTemplatePhases.Where(x => x.TemplateId == templateId).AsQueryable();
+            return _context.ApplicationTypeTemplatePhases.Where(x => x.TemplateId == templateId && x.IsDeleted != true).AsQueryable();
         }
 
         public ApplicationTypeTemplatePhase AddPhaseWithOrdinal(ApplicationTypeTemplatePhase model)

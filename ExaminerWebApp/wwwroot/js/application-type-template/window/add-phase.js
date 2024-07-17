@@ -21,27 +21,40 @@ $((function () {
 
         return target;
     };
-    function AddPhaseModel(data) {
 
+    function AddPhaseModel(data) {
         data = data || {};
 
         this.phaseid = ko.observable(data.phaseid || "").extend({ required: "Please select a phase" });
         this.ordinal = ko.observable(data.ordinal || "").extend({ required: "Please enter ordinal number" });
+
         this.submitForm = function () {
             this.phaseid.validate();
             this.ordinal.validate();
 
             if (this.isValid()) {
                 var phasegrid = $("#phaseGrid").data("kendoGrid");
+                var isValidGrid = true;
+
                 var gridData = phasegrid.dataSource.view().map(function (item) {
+                    var ordinal = phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[name="ordinal"]').data("kendoNumericTextBox").value();
+                    var isChecked = phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[type="checkbox"]').is(":checked");
+
+                    if (isChecked && !ordinal) {
+                        isValidGrid = false;
+                        alert("Ordinal is required for selected phases.");
+                    }
+
                     return {
                         Id: item.id,
                         TemplatePhaseId: item.templatePhaseId,
                         Name: item.name,
-                        Ordinal: phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[name="ordinal"]').data("kendoNumericTextBox").value(),
-                        IsInTemplatePhaseSteps: phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[type="checkbox"]').is(":checked")
+                        Ordinal: ordinal,
+                        IsInTemplatePhaseSteps: isChecked
                     };
                 });
+
+                if (!isValidGrid) return;
 
                 var formdata = {
                     PhaseId: this.phaseid(),
@@ -72,7 +85,7 @@ $((function () {
                                 errorsHtml += '<li>' + response.errors + '</li>';
                             } else {
                                 $.each(response.errors, function (key, value) {
-                                    errorsHtml += '<li>' + value + '</li>'; 
+                                    errorsHtml += '<li>' + value + '</li>';
                                 });
                             }
                             errorsHtml += '</ul>';
@@ -92,7 +105,6 @@ $((function () {
     }
 
     var viewModel = new AddPhaseModel(window.initialData);
-
     ko.applyBindings(viewModel, document.getElementById("addPhase"));
 
     function GetPhaseSteps(e) {
@@ -289,6 +301,14 @@ $((function () {
                         decimals: 0,
                         min: 1,
                     }).data("kendoNumericTextBox").value(dataItem.ordinal);
+
+                    // Validation logic
+                    var isChecked = row.find('input[type="checkbox"]').is(":checked");
+                    var ordinalValue = row.find('input[name="ordinal"]').data("kendoNumericTextBox").value();
+                    if (isChecked && !ordinalValue) {
+                        row.find('input[name="ordinal"]').addClass("k-invalid");
+                        $("<span class='k-invalid-msg'>Ordinal is required</span>").insertAfter(row.find('input[name="ordinal"]'));
+                    }
                 });
             }
         });
@@ -296,5 +316,5 @@ $((function () {
 
     $("#phaseid").on("change", function (e) {
         GetPhaseSteps(e);
-    })
-}))
+    });
+}));

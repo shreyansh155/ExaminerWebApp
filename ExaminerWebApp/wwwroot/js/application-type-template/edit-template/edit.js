@@ -57,7 +57,7 @@ $((function () {
                             }
                             else {
                                 $.each(response.errors, function (key, value) {
-                                    errorsHtml += '<li>' + value + '</li>';  
+                                    errorsHtml += '<li>' + value + '</li>';
                                 });
                             }
                             errorsHtml += '</ul>';
@@ -81,7 +81,7 @@ $((function () {
                     },
                     success: function (result) {
                         $("#refreshButton").trigger("click");
-                        alert("Template has been deleted successfully");
+                        alert("Application Type Template has been deleted successfully");
                         window.location.replace('/ApplicationTypeTemplate/Index');
                     },
                     error: function (error) {
@@ -205,12 +205,15 @@ $((function () {
             {
                 command: [
 
-                    { text: "Add Steps", click: AddStep },
+                    {
+                        text: "Add Steps",
+                        click: AddStep
+                    },
                     {
                         name: "editPhase",
                         text: "",
-                        iconClass: ".k-i-pencil",
                         click: EditPhase,
+                        iconClass: ".k-i-pencil",
                         attributes: {
                             "class": "k-button k-primary"
                         },
@@ -295,8 +298,24 @@ $((function () {
                 {
                     command: [
 
-                        { text: "Edit", click: EditStep },
-                        { text: "Delete", click: DeleteStep }
+                        {
+                            name: "editStep",
+                            text: " ",
+                            click: EditStep,
+                            iconClass: ".k-i-pencil",
+                            attributes: {
+                                "class": "k-button k-primary"
+                            },
+                        },
+                        {
+                            name: "deleteStep",
+                            text: " ",
+                            click: DeleteStep,
+                            iconClass: ".k-i-trash",
+                            attributes: {
+                                "class": "k-button k-primary"
+                            },
+                        }
                     ],
                     title: "Actions",
                     width: "220px",
@@ -357,7 +376,7 @@ $((function () {
                     if (result && result.success) {
 
                         $("#refreshButton").trigger("click");
-                        alert("Phase has been deleted successfully");
+                        alert("Step has been deleted successfully");
                     }
 
                 },

@@ -15,7 +15,7 @@ namespace ExaminerWebApp.Controllers
             _stepService = stepService;
         }
 
-        public async Task<ActionResult> GetAll(int phaseId )
+        public async Task<ActionResult> GetAll(int phaseId)
         {
             IQueryable<Step> data = _stepService.GetAll(phaseId);
             IQueryable<StepViewModel> result = await Task.Run(() => GetSteps(data));
@@ -62,10 +62,14 @@ namespace ExaminerWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditStep([FromBody] StepViewModel model)
+        public async Task<IActionResult> EditStep([FromBody] StepViewModel model)
         {
             if (ModelState.IsValid)
             {
+                if (await _stepService.CheckIfEditStepExists(model.PhaseId, model.Id, model.Name))
+                {
+                    return Json(new { success = false, errors = "Step already exists." });
+                }
                 Step step = new()
                 {
                     Id = model.Id,

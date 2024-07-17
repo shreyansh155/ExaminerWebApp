@@ -27,7 +27,7 @@ namespace ExaminerWebApp.Controllers
         {
             IQueryable<ApplicationTypeTemplate> data = await Task.Run(() => _applicationTypeService.GetAll(search));
             IQueryable<ApplicationTypeTemplateModel> result = GetApplicationTemplates(data);
-            return Json(await Pagination<ApplicationTypeTemplate>.CreateAsync(data, pageNumber, pageSize));
+            return Json(await Pagination<ApplicationTypeTemplateModel>.CreateAsync(result, pageNumber, pageSize));
         }
 
         public IActionResult ShowTemplateModal()
@@ -259,7 +259,7 @@ namespace ExaminerWebApp.Controllers
                     Id = model.Id,
                     TemplatePhaseId = model.TemplatePhaseId,
                     StepId = model.StepId,
-                    Ordinal = model.Ordinal,
+                    Ordinal = model.Ordinal,    
                     Instruction = model.Instruction,
                 };
                 await _templatePhaseService.EditTemplatePhaseStep(templatePhaseStep);

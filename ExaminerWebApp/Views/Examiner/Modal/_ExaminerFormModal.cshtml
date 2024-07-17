@@ -9,7 +9,7 @@
 </script>
 
 <div class="modal fade" id="examiner-form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered draggable" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Examiner Form</h5>
@@ -22,16 +22,16 @@
                     <form id="addExaminer" data-bind="submit: submitForm" enctype="multipart/form-data">
                         <div id="errorBody" class="text-danger"></div>
                         <div class="row m-2">
-                            <div class="col-md-6" data-bind="css: { 'has-error': firstName.hasError }">
-                                <kendo-floating-label for="firstName">First Name</kendo-floating-label>
+                            <div class="form-group required col-md-6" data-bind="css: { 'has-error': firstName.hasError }">
+                                <kendo-floating-label for="firstName" class="control-label">First Name</kendo-floating-label>
                                 <kendo-textbox name="firstname"
                                                required="required"
                                                data-bind="value: firstName, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
                                 </kendo-textbox>
                                 <span class="text-danger" data-bind="visible: firstName.hasError, text: firstName.validationMessage"> </span>
                             </div>
-                            <div class="col-md-6" data-bind="css: { 'has-error': lastName.hasError }">
-                                <kendo-floating-label for="lastName">Last Name</kendo-floating-label>
+                            <div class="form-group required col-md-6" data-bind="css: { 'has-error': lastName.hasError }">
+                                <kendo-floating-label for="lastName" class="control-label">Last Name</kendo-floating-label>
                                 <kendo-textbox name="lastName"
                                                required="required"
                                                data-bind="value: lastName, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
@@ -40,8 +40,8 @@
                             </div>
                         </div>
                         <div class="row m-2">
-                            <div class="col-md-6">
-                                <kendo-floating-label for="dateOfBirth">Date Of Birth</kendo-floating-label>
+                            <div class="form-group required col-md-6">
+                                <kendo-floating-label for="dateOfBirth" class="control-label">Date Of Birth</kendo-floating-label>
                                 <kendo-datepicker name="dateOfBirth"
                                                   format="dd-MM-yyyy"
                                                   max="@DateTime.Today"
@@ -49,8 +49,8 @@
                                 </kendo-datepicker>
                                 <span class="text-danger" data-bind="visible: dateOfBirth.hasError, text: dateOfBirth.validationMessage"> </span>
                             </div>
-                            <div class="col-md-6">
-                                <kendo-floating-label for="phoneNumber">Phone Number</kendo-floating-label>
+                            <div class="form-group required col-md-6">
+                                <kendo-floating-label for="phoneNumber" class="control-label">Phone Number</kendo-floating-label>
                                 <kendo-textbox name="phoneNumber"
                                                data-bind="value: phoneNumber, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
                                 </kendo-textbox>
@@ -58,15 +58,15 @@
                             </div>
                         </div>
                         <div class="row m-2">
-                            <div class="col-md-6">
-                                <kendo-floating-label for="email">Email</kendo-floating-label>
+                            <div class="form-group required col-md-6">
+                                <kendo-floating-label for="email" class="control-label">Email</kendo-floating-label>
                                 <kendo-textbox name="email"
                                                data-bind="textInput: email, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
                                 </kendo-textbox>
                                 <span class="text-danger" data-bind="visible: email.hasError, text: email.validationMessage"> </span>
                             </div>
-                            <div class="col-md-6">
-                                <kendo-floating-label for="examinerid">Examiner Type</kendo-floating-label>
+                            <div class="form-group required col-md-6">
+                                <kendo-floating-label for="examinerid" class="control-label">Examiner Type</kendo-floating-label>
                                 <kendo-dropdownlist name="examinerid"
                                                     dataTextField="name"
                                                     dataValueField="id"
@@ -108,7 +108,14 @@
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" data-bind="click: submitForm" class="btn btn-outline-info">Submit</button>
+                            <div class="d-flex justify-content-start flex-row-reverse">
+                                <div class="mx-2">
+                                    <button type="button" data-bind="click: submitForm" class="btn btn-outline-info">Submit</button>
+                                </div>
+                                <div class="mx-2">
+                                    <button type="button" class="btn btn-light">Close</button>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>

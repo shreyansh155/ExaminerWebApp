@@ -6,7 +6,21 @@
 
 .k-grid .k-cell-inner > .k-link {
     text-align: left;
-    width:fit-content;
-    justify-content:start !important;
+    width: fit-content;
+    justify-content: start !important;
 }
- 
+
+.form-group.required .control-label:after {
+    content: " *";
+    color: red;
+}
+
+.k-list-item {
+    text-align: left !important;
+    display: block !important;
+}
+
+.k-list-item-text {
+    text-align: left !important;
+    display: block !important;
+}

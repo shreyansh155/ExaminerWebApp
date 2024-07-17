@@ -35,15 +35,22 @@
             </div>
         </div>
         <div id="ordinalGrid"></div>
-        <kendo-button name="primaryTextButton"
-                      data-bind="click: submitForm"
-                      theme-color="ThemeColor.Primary">
-            Save
-        </kendo-button>
-        <kendo-button name="cancelButton"
-                      theme-color="ThemeColor.Secondary">
-            Cancel
-        </kendo-button>
+        <div class="d-flex justify-content-start flex-row-reverse">
+            <div class="mx-2">
+                <kendo-button name="primaryTextButton"
+                              data-bind="click: submitForm"
+                              theme-color="ThemeColor.Primary">
+                    Save
+                </kendo-button>
+            </div>
+            <div class="mx-2">
+                <kendo-button name="cancelButton"
+                              data-bs-dismiss="modal"
+                              theme-color="ThemeColor.Secondary">
+                    Close
+                </kendo-button>
+            </div>
+        </div>
 
     </form>
 </div>

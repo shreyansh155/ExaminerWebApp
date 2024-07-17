@@ -92,6 +92,7 @@
 
     $("#stepname").on("change", function (e) {
         var newStepId = e.target.value;
+        console.log(newStepId);
         $.ajax({
             url: "/ApplicationTypeTemplate/GetStepTypeId",
             type: "GET",
@@ -100,17 +101,15 @@
                 if (response && response.stepTypeId) {
                     $("#steptypeid").data("kendoDropDownList").value(response.stepTypeId);
                 }
-
             },
             error: function () {
                 console.error("Failed to fetch step type ID.");
             }
-
         });
     })
     viewModel.steptypeid.subscribe(function (newValue) {
         $("#steptypeid").data("kendoDropDownList").value(newValue);
-    });
+    }); 
 
     //ordinal binding
     var ordinalNumericTextBox = $("#ordinal").data("kendoNumericTextBox");

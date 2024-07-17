@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ExaminerWebApp.Repository.DataModels;
-
-public partial class Status
+﻿namespace ExaminerWebApp.Repository.DataModels
 {
-    public int Id { get; set; }
+    public partial class Status
+    {
+        public int Id { get; set; }
 
-    public string StatusName { get; set; } = null!;
+        public string StatusName { get; set; } = null!;
 
-    public virtual ICollection<Examiner> Examiners { get; set; } = new List<Examiner>();
+        public virtual ICollection<Examiner> Examiners { get; set; } = new List<Examiner>();
+    }
 }

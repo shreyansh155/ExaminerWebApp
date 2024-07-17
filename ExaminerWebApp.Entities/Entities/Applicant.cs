@@ -27,8 +27,10 @@ namespace ExaminerWebApp.Entities.Entities
 
         [NotMapped]
         public IFormFile? FormFile { get; set; }
+       
         [NotMapped]
         public string ApplicantType { get; set; } = null!;
+      
         [NotMapped]
         public virtual ApplicantType Setting { get; set; } = null!;
     }

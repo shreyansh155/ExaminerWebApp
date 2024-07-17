@@ -20,7 +20,6 @@ namespace ExaminerWebApp.Composition.MappingProfile
                .ForMember(dest => dest.ExaminerNavigation, opt => opt.Ignore())
                .ForMember(dest => dest.Status, opt => opt.Ignore());
 
-
             CreateMap<Repository.DataModels.Examiner, Entities.Entities.Examiner>()
                .ForMember(dest => dest.ExaminerTypeName, opt => opt.MapFrom(src => src.ExaminerNavigation.Name))
                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.StatusName))

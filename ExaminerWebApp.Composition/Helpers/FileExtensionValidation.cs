@@ -5,7 +5,6 @@ namespace ExaminerWebApp.Composition.Helpers
 {
     public class FileValidationAttribute : ValidationAttribute
     {
-
         private readonly string[] _allowedExtensions;
 
         public FileValidationAttribute(string[] allowedExtensions)
@@ -26,5 +25,4 @@ namespace ExaminerWebApp.Composition.Helpers
             return ValidationResult.Success;
         }
     }
-
 }

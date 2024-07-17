@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ExaminerWebApp.Repository.DataModels;
+﻿using ExaminerWebApp.Repository.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -15,6 +13,7 @@ public partial class ApplicationDbContext : DbContext
     {
         _configuration = configuration;
     }
+  
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -45,8 +44,6 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<StepType> StepTypes { get; set; }
 
     public virtual DbSet<TemplatePhaseStep> TemplatePhaseSteps { get; set; }
-
-   
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

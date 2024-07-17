@@ -129,7 +129,7 @@ namespace ExaminerWebApp.Repository.Implementation
 
             // Fetch TemplatePhaseStep records to exclude from the steps
             var templatePhaseStepIds = await _context.TemplatePhaseSteps
-                                                     .Where(tps => tps.TemplatePhaseId == templatePhaseId)
+                                                     .Where(tps => tps.TemplatePhaseId == templatePhaseId && tps.IsDeleted != true)
                                                      .Select(tps => tps.StepId)
                                                      .ToListAsync();
 

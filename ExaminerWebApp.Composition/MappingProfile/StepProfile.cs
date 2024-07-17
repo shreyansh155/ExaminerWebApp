@@ -2,7 +2,6 @@
 
 namespace ExaminerWebApp.Composition.MappingProfile
 {
-
     public class StepProfile : Profile
     {
         public StepProfile()

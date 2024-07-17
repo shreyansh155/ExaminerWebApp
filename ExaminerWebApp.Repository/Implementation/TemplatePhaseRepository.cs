@@ -25,7 +25,7 @@ namespace ExaminerWebApp.Repository.Implementation
                         TemplatePhaseId = attp.Id,
                         attp.Ordinal,
                         attp.Phase,
-                        StepCount = attp.TemplatePhaseSteps.Count(),
+                        StepCount = attp.TemplatePhaseSteps.Where(x => x.IsDeleted != true).Count(),
                     })
                     .OrderBy(x => x.Ordinal)
                     .ToList();
@@ -217,4 +217,3 @@ namespace ExaminerWebApp.Repository.Implementation
         }
     }
 }
-

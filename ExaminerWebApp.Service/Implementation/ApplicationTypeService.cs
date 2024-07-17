@@ -47,6 +47,7 @@ namespace ExaminerWebApp.Service.Implementation
         {
             return _applicationTypeRepository.ApplicationTemplateExists(applicationName);
         }
+      
         public async Task<bool> EditApplicationTemplateExists(int? id, string applicationName)
         {
             return await _applicationTypeRepository.EditApplicationTemplateExists(id, applicationName);
@@ -56,6 +57,7 @@ namespace ExaminerWebApp.Service.Implementation
         {
             return await _templatePhaseRepository.Delete(id);
         }
+     
         public async Task<bool> DeleteTemplate(int id)
         {
             return await _applicationTypeRepository.Delete(id);
@@ -115,6 +117,7 @@ namespace ExaminerWebApp.Service.Implementation
             List<Step> step = _mapper.Map<List<Step>>(steps);
             return step;
         }
+     
         public async Task<List<Step>> PhaseStepList(int? templatePhaseId)
         {
             List<Repository.DataModels.Step> steps = await _phaseStepRepository.GetPhaseStepList(templatePhaseId);

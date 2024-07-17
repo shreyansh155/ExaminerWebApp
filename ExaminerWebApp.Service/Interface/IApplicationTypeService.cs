@@ -15,6 +15,7 @@ namespace ExaminerWebApp.Service.Interface
         Task<bool> EditApplicationTemplateExists(int? id, string applicationName);
 
         Task<bool> Delete(int id);
+     
         Task<bool> DeleteTemplate(int id);
 
         bool Update(ApplicationTypeTemplate model);

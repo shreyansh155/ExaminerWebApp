@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ExaminerWebApp.Repository.DataModels;
-
-public partial class StepType
+﻿namespace ExaminerWebApp.Repository.DataModels
 {
-    public int Id { get; set; }
+    public partial class StepType
+    {
+        public int Id { get; set; }
 
-    public string Name { get; set; } = null!;
+        public string Name { get; set; } = null!;
 
-    public virtual ICollection<Step> Steps { get; set; } = new List<Step>();
+        public virtual ICollection<Step> Steps { get; set; } = new List<Step>();
+    }
 }

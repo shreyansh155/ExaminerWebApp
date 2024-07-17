@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ExaminerWebApp.Entities.Entities
+﻿namespace ExaminerWebApp.Entities.Entities
 {
     public partial class ApplicationTypeTemplatePhase
     {

@@ -15,6 +15,7 @@ namespace ExaminerWebApp.Service.Implementation
             _mapper = mapper;
             _examinerTypeRepository = examinerTypeRepository;
         }
+
         public List<ExaminerType> GetExaminerTypeList()
         {
             List<Repository.DataModels.ExaminerType> obj = _examinerTypeRepository.GetList();

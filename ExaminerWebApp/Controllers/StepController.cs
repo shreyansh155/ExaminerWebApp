@@ -1,6 +1,7 @@
 ﻿using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.Service.Interface;
 using ExaminerWebApp.ViewModels;
+using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExaminerWebApp.Controllers
@@ -14,7 +15,7 @@ namespace ExaminerWebApp.Controllers
             _stepService = stepService;
         }
 
-        public async Task<ActionResult> GetAll(int phaseId)
+        public async Task<ActionResult> GetAll(int phaseId )
         {
             IQueryable<Step> data = _stepService.GetAll(phaseId);
             IQueryable<StepViewModel> result = await Task.Run(() => GetSteps(data));

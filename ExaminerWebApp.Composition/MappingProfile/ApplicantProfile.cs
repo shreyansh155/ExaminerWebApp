@@ -15,5 +15,4 @@ namespace ExaminerWebApp.Composition.MappingProfile
                 .ForMember(dest => dest.FormFile, opt => opt.Ignore());
         }
     }
-}
- 
+} 

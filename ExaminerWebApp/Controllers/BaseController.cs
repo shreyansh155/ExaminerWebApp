@@ -7,8 +7,6 @@ namespace ExaminerWebApp.Controllers
 {
     public class BaseController : Controller
     {
-        #region ERROR MESSAGES
-
         protected string ModelStateErrorSerializer(ModelStateDictionary modelState)
         {
             List<string> errors = new();
@@ -22,7 +20,6 @@ namespace ExaminerWebApp.Controllers
             return string.Join("; ", errors);
         }
 
-        #endregion
         protected IQueryable<ApplicantViewModel> GetApplicantViewModels(IQueryable<Applicant> entities)
         {
             return entities.Select(entity => new ApplicantViewModel
@@ -58,6 +55,7 @@ namespace ExaminerWebApp.Controllers
                 Status = entity.Status,
             });
         }
+        
         protected IQueryable<ApplicationTypeTemplateModel> GetApplicationTemplates(IQueryable<ApplicationTypeTemplate> entities)
         {
             return entities.Select(entity => new ApplicationTypeTemplateModel
@@ -67,6 +65,7 @@ namespace ExaminerWebApp.Controllers
                 Description = entity.Description,
             });
         }
+        
         protected IQueryable<PhaseViewModel> GetPhase(IQueryable<Phase> entities)
         {
             return entities.Select(entity => new PhaseViewModel
@@ -77,6 +76,7 @@ namespace ExaminerWebApp.Controllers
                 Ordinal = entity.Ordinal,
             });
         }
+        
         protected IQueryable<StepViewModel> GetSteps(IQueryable<Step> entities)
         {
             return entities.Select(entity => new StepViewModel
@@ -90,6 +90,7 @@ namespace ExaminerWebApp.Controllers
                 StepType = entity.StepType,
             });
         }
+        
         protected IQueryable<StepsList> GetAllSteps(IQueryable<Step> entities)
         {
             return entities.Select(entity => new StepsList

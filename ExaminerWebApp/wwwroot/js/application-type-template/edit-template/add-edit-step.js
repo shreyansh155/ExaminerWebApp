@@ -87,7 +87,7 @@
         $("#stepname").data("kendoDropDownList").value(newValue);
     });
 
-    //step type bindind
+    //Step type binding
     $("#steptypeid").data("kendoDropDownList").value(viewModel.steptypeid());
 
     $("#stepname").on("change", function (e) {

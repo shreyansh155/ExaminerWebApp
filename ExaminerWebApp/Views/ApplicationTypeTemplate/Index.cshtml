@@ -2,6 +2,10 @@
     ViewData["Title"] = "Application Type Template";
 }
 <div class="d-flex row">
+    <div class="d-inline-flex justify-content-start align-items-end">
+        <h3><strong>Application Type Templates</strong></h3>
+        <h6 class="mx-2">Provides abilty to manage Application Type Templates</h6>
+    </div>
     <div class="col-6 form-group">
         <kendo-textbox name="searchBox"
                        required="required"
@@ -9,15 +13,17 @@
         </kendo-textbox>
     </div>
     <div class="col-6 form-group">
-         <button class="btn btn-info" id="searchButton">Search</button>
-         <button class="btn btn-info" id="clearButton">Clear</button>
+        <button class="btn btn-info" id="searchButton">Search</button>
+        <button class="btn btn-info" id="clearButton">Clear</button>
     </div>
 </div>
 
 <div id="grid"></div>
+
 <div id="displayModal"></div>
 
 <button id="refreshButton" type="button" hidden></button>
 
 <script src="~/js/application-type-template/grid.js"></script>
+
 <link rel="stylesheet" src="~/css/applicant-type-modal/style.css" />

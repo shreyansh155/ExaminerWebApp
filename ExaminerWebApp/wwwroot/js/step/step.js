@@ -63,6 +63,7 @@
                         },
                     });
                 },
+
                 update: {
                     url: function (data) {
                         return "/Step/Update/" + data.id;
@@ -70,6 +71,7 @@
                     type: "POST",
                     dataType: "json",
                 },
+
                 destroy: {
                     url: function (data) {
                         return "/Step/Delete/" + data.id;
@@ -119,12 +121,20 @@
                     },
                 },
             },
+            filter: function (e) {
+                console.log("Filter applied: ", e.filter);
+            }
         },
         pageable: true,
         sortable: true,
         scrollable: true,
         editable: "inline",
-        toolbar: [{ name: "create", text: "Add" }, { name: "search",text:"Search for..." }],
+        toolbar: [
+            {
+                name: "create",
+                text: "Add",
+            },
+        ],
         columns: [
             { field: "id", title: "Step Id", width: "150px", hidden: true },
             { field: "name", title: "Name", width: "150px" },
@@ -179,6 +189,10 @@
             });
         },
     }).data("kendoGrid");
+
+    $("#searchBox").on("input", function () {
+        $("#grid").data("kendoGrid").dataSource.read();
+    });
 
     function CreateStep(data) {
         var formData = {
@@ -259,5 +273,16 @@
 
     $("#refreshButton").on("click", function () {
         grid.dataSource.read();
+    });
+    $("#search").on("input", function () {
+        var value = $(this).val();
+        grid.dataSource.filter({
+            logic: "or",
+            filters: [
+                { field: "name", operator: "contains", value: value },
+                { field: "description", operator: "contains", value: value },
+                { field: "instruction", operator: "contains", value: value }
+            ]
+        });
     });
 });

@@ -10,6 +10,7 @@ namespace ExaminerWebApp.Repository.Interface
     public interface IExaminerRepository : IBaseRepository<Examiner>
     {
         public bool CheckEmail(string email);
+      
         public IQueryable<Examiner> GetAll();
     }
 }

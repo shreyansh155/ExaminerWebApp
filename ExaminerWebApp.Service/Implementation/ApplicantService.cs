@@ -13,35 +13,26 @@ namespace ExaminerWebApp.Service.Implementation
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
 
-        #region Constructor
         public ApplicantService(IApplicantRepository applicant, IMapper mapper, IWebHostEnvironment environment)
         {
             _environment = environment;
             _applicantRepository = applicant;
             _mapper = mapper;
         }
-        #endregion
 
-        #region Interface Methods
-
-        #region READ SPECIFIC APPLICANT
         public Entities.Entities.Applicant GetApplicantById(int id)
         {
             var result = _applicantRepository.GetById(id);
             return _mapper.Map<Entities.Entities.Applicant>(result);
         }
-        #endregion
 
-        #region READ ALL APPLICANTS
         public IQueryable<Entities.Entities.Applicant> GetAllApplicants()
         {
             var list = _applicantRepository.GetAll().Include(x => x.ApplicantType).AsQueryable();
             var obj = _mapper.ProjectTo<Entities.Entities.Applicant>(list);
             return obj;
         }
-        #endregion
 
-        #region ADD APPLICANT
         public async Task<Entities.Entities.Applicant> AddApplicant(Entities.Entities.Applicant model)
         {
 
@@ -53,25 +44,18 @@ namespace ExaminerWebApp.Service.Implementation
             await _applicantRepository.Create(obj);
             return model;
         }
-        #endregion
 
-        #region CHECK EMAIL IF EXISTS
         public bool CheckEmailIfExists(string email)
         {
             return _applicantRepository.CheckEmail(email);
         }
 
-        #endregion
-
-        #region DELETE APPLICANT
         public async Task<bool> DeleteApplicant(int id)
         {
             await _applicantRepository.Delete(id);
             return true;
         }
-        #endregion
 
-        #region EDIT APPLICANT DETAILS
         public bool UpdateApplicant(Entities.Entities.Applicant model)
         {
             if (model.FormFile != null && model.FormFile.Length > 0)
@@ -82,9 +66,7 @@ namespace ExaminerWebApp.Service.Implementation
             _applicantRepository.Update(result);
             return true;
         }
-        #endregion
 
-        #region Helper Methods
         private string? SaveFile(IFormFile? formFile)
         {
             if (formFile == null || formFile.Length == 0)
@@ -108,9 +90,5 @@ namespace ExaminerWebApp.Service.Implementation
 
             return uniqueFileName;
         }
-
-        #endregion
-
-        #endregion
     }
 }

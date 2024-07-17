@@ -17,7 +17,6 @@ namespace PracticeWebApp.Service.Implementation
         private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _config;
 
-        #region Constructor
         public ExaminerService(IExaminerRepository examinerRepository, IMapper mapper, IWebHostEnvironment environment, IConfiguration config)
         {
             _environment = environment;
@@ -25,19 +24,13 @@ namespace PracticeWebApp.Service.Implementation
             _mapper = mapper;
             _config = config;
         }
-        #endregion
-
-        #region INTERFACE METHODS
-
-        #region READ SPECIFIC EXAMINER
+     
         public async Task<ExaminerWebApp.Entities.Entities.Examiner> GetExaminerById(int id)
         {
             ExaminerWebApp.Repository.DataModels.Examiner result = await _examinerRepository.GetById(id);
             return _mapper.Map<ExaminerWebApp.Entities.Entities.Examiner>(result);
         }
-        #endregion
 
-        #region READ ALL EXAMINER
         public IQueryable<ExaminerWebApp.Entities.Entities.Examiner> GetAllExaminer()
         {
 
@@ -49,9 +42,7 @@ namespace PracticeWebApp.Service.Implementation
             return obj;
 
         }
-        #endregion
 
-        #region ADD EXAMINER
         public async Task<ExaminerWebApp.Entities.Entities.Examiner> AddExaminer(ExaminerWebApp.Entities.Entities.Examiner model)
         {
 
@@ -65,17 +56,13 @@ namespace PracticeWebApp.Service.Implementation
             await _examinerRepository.Create(obj);
             return model;
         }
-        #endregion
 
-        #region DELETE EXAMINER
         public async Task<bool> DeleteExaminer(int id)
         {
             await _examinerRepository.Delete(id);
             return true;
         }
-        #endregion
 
-        #region GET EXAMINER DETAILS
         public bool UpdateExaminer(ExaminerWebApp.Entities.Entities.Examiner model)
         {
             if (model.FormFile != null && model.FormFile.Length > 0)
@@ -86,7 +73,6 @@ namespace PracticeWebApp.Service.Implementation
             _examinerRepository.Update(result);
             return true;
         }
-        #endregion
 
         private string? SaveFile(IFormFile? formFile)
         {
@@ -111,15 +97,12 @@ namespace PracticeWebApp.Service.Implementation
 
             return uniqueFileName;
         }
-        #region CHECK IF EMAIL EXISTS
+      
         public bool CheckEmailIfExists(string email)
         {
             return _examinerRepository.CheckEmail(email);
         }
-        #endregion
-        #endregion
 
-        #region HELPER METHODS
         private T ExecuteWithTryCatch<T>(Func<T> func)
         {
             try
@@ -157,6 +140,5 @@ namespace PracticeWebApp.Service.Implementation
             mailMessage.To.Add(email);
             client.Send(mailMessage);
         }
-        #endregion
     }
 }

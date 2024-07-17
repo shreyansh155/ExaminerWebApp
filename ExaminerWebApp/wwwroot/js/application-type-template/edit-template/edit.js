@@ -424,6 +424,10 @@ $((function () {
         ko.cleanNode(element);
     });
 
+    $("#back-btn").on("click", function () {
+        window.location.replace("/ApplicationTypeTemplate/Index")
+    })
+
     $(document).on("click", "#collapse", function () {
         var grid = $("#grid").data("kendoGrid");
         $(".k-master-row").each(function (index) {

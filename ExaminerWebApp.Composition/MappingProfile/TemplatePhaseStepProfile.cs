@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 namespace ExaminerWebApp.Composition.MappingProfile
 {
-
     public class TemplatePhaseStepProfile : Profile
     {
         public TemplatePhaseStepProfile()
@@ -12,10 +11,7 @@ namespace ExaminerWebApp.Composition.MappingProfile
                              .ForMember(dest => dest.Ordinal, opt => opt.MapFrom(src => src.Ordinal))
                              .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId));
 
-
             CreateMap<Entities.Entities.TemplatePhaseStep, Repository.DataModels.TemplatePhaseStep>();
-
         }
     }
 }
-

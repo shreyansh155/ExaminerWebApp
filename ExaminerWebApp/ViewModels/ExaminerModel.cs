@@ -26,6 +26,7 @@ namespace ExaminerWebApp.ViewModels
         [Required]
         [EmailAddress(ErrorMessage = "Please enter a valid email")]
         public string Email { get; set; } = null!;
+      
         public string? Password { get; set; }
 
         public int ExaminerTypeId { get; set; }
@@ -36,6 +37,7 @@ namespace ExaminerWebApp.ViewModels
 
         [FileValidation(new[] { ".pdf", ".jpg", ".jpeg", ".png" })]
         public IFormFile? FormFile { get; set; }
+      
         public string? Status { get; set; }
 
         public bool? Isdeleted { get; set; }

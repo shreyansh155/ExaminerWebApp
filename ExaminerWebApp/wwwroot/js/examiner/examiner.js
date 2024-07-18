@@ -92,6 +92,8 @@
                     success: function (result) {
                         $('#displayModal').html(result);
                         $('#examiner-form').modal('show');
+
+                        ExaminerModal(); //apply KO binding to modal
                     },
                     error: function (error) {
                         console.log(error);
@@ -118,6 +120,7 @@
             success: function (result) {
                 $('#displayModal').html(result);
                 $('#examiner-form').modal('show');
+                ExaminerModal();
             },
             error: function (error) {
                 console.log(error);
@@ -171,4 +174,130 @@
     $("#refreshButton").on("click", function () {
         grid.dataSource.read();
     });
+
+    function ExaminerModal() {
+        function ExaminerViewModel(data) {
+            data = data || {};
+
+            // Define observables for each form field with validation
+            this.firstName = ko.observable(data.firstname || "").extend({
+                required: "First name is required",
+                noNumbers: true
+            });
+            this.lastName = ko.observable(data.lastname || "").extend({
+                required: "Last name is required",
+                noNumbers: true
+            });
+            this.dateOfBirth = ko.observable(formatDate(data.dateofbirth) || "").extend({ required: "Date of birth is required" });
+            this.phoneNumber = ko.observable(data.phone || null).extend({
+                required: "Phone number is required",
+                pattern: {
+                    params: patternsRegex.phone,
+                    message: "Entered phone format is not valid."
+                }
+            });
+            this.email = ko.observable(data.email || "").extend({
+                required: "Email is required",
+                pattern: {
+                    params: patternsRegex.email,
+                    message: "Entered email format is not valid",
+                }
+            });
+
+            this.examinerTypeId = ko.observable(data.examinerTypeId || "").extend({ required: "Please select examiner type" });
+            this.formFile = ko.observable(null);
+
+
+            this.viewFile = function () {
+                if (data.filepath === null || data.filepath === "") {
+                    alert("No file found!");
+                    return;
+                }
+                var filePath = `UploadedFiles/${data.filepath}`;
+                window.open(filePath, '_blank');
+            }
+
+            this.submitForm = function () {
+                // Validate all observables
+                this.firstName.validate();
+                this.lastName.validate();
+                this.dateOfBirth.validate();
+                this.phoneNumber.validate();
+                this.email.validate();
+                this.examinerTypeId.validate();
+
+                if (this.isValid()) {
+                    var formData = new FormData($("#addExaminer")[0]);
+                    formData.append("Firstname", this.firstName());
+                    formData.append("Lastname", this.lastName());
+                    formData.append("Dateofbirth", this.dateOfBirth());
+                    formData.append("Phone", this.phoneNumber());
+                    formData.append("Email", this.email());
+                    formData.append("ExaminerTypeId", this.examinerTypeId());
+
+                    if (this.formFile()) {
+                        formData.append("FormFile", this.formFile());
+                    }
+                    if (data.id) {
+                        formData.append("Id", data.id);
+                    }
+
+                    var link = data && data.id ? '/Examiner/EditExaminer' : '/Examiner/AddExaminer';
+
+                    $.ajax({
+                        url: link,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            console.log(typeof (response.errors));
+                            if (response.success) {
+                                $("#refreshButton").trigger("click");
+                                $('#examiner-form').modal('hide');
+                            } else {
+                                var errorsHtml = '<ul>';
+                                if (typeof (response.errors) === "string") {
+                                    errorsHtml += '<li>' + response.errors + '</li>'
+                                }
+                                else {
+                                    $.each(response.errors, function (key, value) {
+                                        errorsHtml += '<li>' + value + '</li>'; // Create list of errors
+                                    });
+                                }
+                                errorsHtml += '</ul>';
+                                $('#errorBody').html(errorsHtml);
+                            }
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                } else {
+                    // Scroll to the first invalid field
+                    var firstInvalidField = $(".has-error").first();
+                    if (firstInvalidField.length) {
+                        $("html, body").animate({
+                            scrollTop: firstInvalidField.offset().top - 100
+                        }, 500);
+                        firstInvalidField.find("input, select, textarea").trigger("focus");
+                    }
+                }
+            };
+
+            String.prototype.camelCase = function () {
+                return this.charAt(0).toLowerCase() + this.slice(1);
+            };
+            // Helper function to check if all fields are valid
+            this.isValid = function () {
+                return !this.firstName.hasError() && !this.lastName.hasError() && !this.dateOfBirth.hasError()
+                    && !this.phoneNumber.hasError() && !this.email.hasError() && !this.examinerTypeId.hasError();
+            };
+        }
+
+        $('#examiner-form').on('shown.bs.modal', function () {
+            var viewModel = new ExaminerViewModel(initialData);
+            ko.applyBindings(viewModel, $("#addExaminer")[0]);
+        });
+    }
 });

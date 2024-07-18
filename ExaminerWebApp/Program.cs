@@ -1,5 +1,3 @@
-using AspNetCoreHero.ToastNotification;
-using AspNetCoreHero.ToastNotification.Extensions;
 using ExaminerWebApp.Composition.MappingProfile;
 using ExaminerWebApp.Repository.DataContext;
 using ExaminerWebApp.Repository.Implementation;
@@ -12,7 +10,6 @@ using PracticeWebApp.Service.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(ExaminerProfile));
 builder.Services.AddAutoMapper(typeof(ExaminerTypeProfile));
@@ -22,7 +19,7 @@ builder.Services.AddKendo();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//Register Repositories
+//Registered Repositories
 builder.Services.AddTransient<IExaminerRepository, ExaminerRepository>();
 builder.Services.AddTransient<IExaminerTypeRepository, ExaminerTypeRepository>();
 builder.Services.AddTransient<IApplicantRepository, ApplicantRepository>();
@@ -33,7 +30,7 @@ builder.Services.AddTransient<IStepRepository, StepRepository>();
 builder.Services.AddTransient<ITemplatePhaseRepository, TemplatePhaseRepository>();
 builder.Services.AddTransient<IPhaseStepRepository, PhaseStepRepository>();
 
-// Register services
+// Registered services
 builder.Services.AddScoped<IApplicantService, ApplicantService>();
 builder.Services.AddScoped<IApplicantTypeService, ApplicantTypeService>();
 builder.Services.AddScoped<IExaminerService, ExaminerService>();
@@ -44,20 +41,18 @@ builder.Services.AddScoped<IStepService, StepService>();
 builder.Services.AddScoped<ITemplatePhaseService, TemplatePhaseService>();
 
 builder.Services.AddDataProtection();
-//builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; config.HasRippleEffect = true; });
 
 var app = builder.Build();
-// Configure the HTTP request pipeline.
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
-//app.UseNotyf();
 
 app.UseRouting();
 

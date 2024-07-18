@@ -10,15 +10,16 @@ namespace ExaminerWebApp.Controllers
     {
         private readonly IExaminerService _examinerService;
         private readonly IExaminerTypeService _examinerTypeService;
+     
         public ExaminerController(IExaminerService examinerService, IExaminerTypeService examinerTypeService)
         {
             _examinerService = examinerService;
             _examinerTypeService = examinerTypeService;
         }
 
-        public IActionResult ExaminerIndex()
+        public IActionResult Index()
         {
-            return View("Grid/Grid");
+            return View();
         }
 
         public async Task<ActionResult> GetAll(int pageSize, int pageNumber)

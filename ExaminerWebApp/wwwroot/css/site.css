@@ -15,12 +15,7 @@
     color: red;
 }
 
-.k-list-item {
-    text-align: left !important;
-    display: block !important;
-}
-
-.k-list-item-text {
+.k-list-item, .k-list-optionlabel {
     text-align: left !important;
     display: block !important;
 }

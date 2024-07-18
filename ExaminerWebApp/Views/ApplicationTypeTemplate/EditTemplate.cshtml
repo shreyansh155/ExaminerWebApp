@@ -7,7 +7,7 @@
 <script type="text/javascript">
     window.initialData = @Html.Raw(serializedData);
 </script>
-<div>
+<div id="edit-template-page">
     <div class="container-fluid card bg-light justify-content-center">
         <form id="templateForm">
             <div class="card-header">
@@ -57,21 +57,21 @@
     <div id="displayModal"></div>
 
     <button id="refreshButton" type="button" hidden></button>
+
+    <script id="custom-toolbar-template" type="text/x-kendo-template">
+        <div>
+            <button id="expand" class='k-button k-button-md k-rounded-md k-button-solid k-button-primary k-button-solid-base'>
+                <span class='k-button-text'>
+                    Expand All
+                </span>
+            </button>
+            <button id="collapse" class='k-button k-button-md k-rounded-md k-button-solid k-button-primary k-button-solid-base'>
+                <span class='k-button-text'>
+                    Collapse All
+                </span>
+            </button>
+        </div>
+    </script>
+
+    <script src="~/js/application-type-template/application-type-template.js"></script>
 </div>
-
-<script id="custom-toolbar-template" type="text/x-kendo-template">
-    <div>
-        <button id="expand" class='k-button k-button-md k-rounded-md k-button-solid k-button-primary k-button-solid-base'>
-            <span class='k-button-text'>
-                Expand All
-            </span>
-        </button>
-        <button id="collapse" class='k-button k-button-md k-rounded-md k-button-solid k-button-primary k-button-solid-base'>
-            <span class='k-button-text'>
-                Collapse All
-            </span>
-        </button>
-    </div>
-</script>
-
-<script src="~/js/application-type-template/edit-template/edit.js"></script>

@@ -1,8 +1,14 @@
 ﻿@{
-    ViewData["Title"] = "Applicant List";
+    ViewData["Title"] = "Applicants";
 }
-
-<div id="grid"></div>
+<div class="card">
+    <div class="card-header">
+        <h3>Applicants</h3>
+    </div>
+    <div class="card-body">
+        <div id="grid"></div>
+    </div>
+</div>
 <div id="displayModal"></div>
 <button id="refreshButton" type="button" hidden></button>
-<script src="~/js/applicant-kendo-grid/grid.js"></script>  
+<script src="~/js/applicant/applicant.js"></script>  

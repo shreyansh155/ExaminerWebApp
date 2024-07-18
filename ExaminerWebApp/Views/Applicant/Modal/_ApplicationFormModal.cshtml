@@ -103,8 +103,23 @@
                                 }
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" data-bind="click: submitForm" class="btn btn-outline-info">Submit</button>
+                        <div class="footer">
+                            <div class="d-flex justify-content-start flex-row-reverse modal-footer">
+                                <div class="mx-2">
+                                    <kendo-button name="submitBtn"
+                                                  data-bind="click: submitForm"
+                                                  theme-color="ThemeColor.Primary">
+                                        Save
+                                    </kendo-button>
+                                </div>
+                                <div class="mx-2">
+                                    <kendo-button name="closeBtn"
+                                                  data-bs-dismiss="modal"
+                                                  theme-color="ThemeColor.Secondary">
+                                        Close
+                                    </kendo-button>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>

@@ -60,5 +60,12 @@ namespace ExaminerWebApp.Repository.Implementation
         {
             return await _context.Steps.Where(x => x.PhaseId == phaseId && x.Id != stepId && x.Name.ToLower() == stepName.ToLower()).AnyAsync();
         }
+        public async Task<bool> UpdateInstruction(int? stepId, string instruction)
+        {
+            Step step = await _context.Steps.FirstOrDefaultAsync(x => x.Id == stepId);
+            step.Instruction = instruction;
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

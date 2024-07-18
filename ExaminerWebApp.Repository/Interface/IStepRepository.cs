@@ -11,5 +11,7 @@ namespace ExaminerWebApp.Repository.Interface
         Task<bool> CheckIfStepExists(int phaseId, string stepName);
 
         Task<bool> CheckIfEditStepExists(int phaseId, int? stepId, string stepName);
+
+        Task<bool> UpdateInstruction(int? stepId,string instruction);
     }
 }

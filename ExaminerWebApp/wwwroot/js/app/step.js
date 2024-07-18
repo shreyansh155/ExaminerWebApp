@@ -21,13 +21,17 @@
             .appendTo(container)
             .kendoDropDownList({
                 autoBind: true,
-                optionLabel: "Select Step Type",
+                optionLabel: {
+                    name: "Select Step Type",
+                    id: 0
+                },  
                 dataTextField: "name",
                 dataValueField: "id",
                 dataSource: stepTypeDataSource,
                 value: options.model[options.field],
             });
     }
+
 
     function kendoEditor(container, options) {
         $('<textarea name="' + options.field + '"></textarea>')
@@ -96,26 +100,26 @@
                     id: "id",
                     fields: {
                         id: { editable: false, nullable: true },
-                        name: {
-                            type: "string",
-                            validation: {
-                                required: { message: "Name is required." },
-                                customValidation: function (input) {
-                                    if (input.is("[name='name']") && input.val() == "") {
-                                        input.attr("data-customValidation-msg", "Name is required.");
-                                        return false;
-                                    }
-                                    return true;
-                                }
-                            },
-                        },
                         typeId: {
                             type: "number",
                             validation: {
                                 required: { message: "Step Type is required." },
-                                customValidation: function (input) {
+                                typeIdValidation: function (input) {
                                     if (input.is("[name='typeId']") && input.val() == 0) {
-                                        input.attr("data-customValidation-msg", "Step Type is required.");
+                                        input.attr("data-typeIdValidation-msg", "Step Type is required.");
+                                        return false;
+                                    }
+                                    return true;
+                                }
+                            }
+                        },
+                        name: {
+                            type: "string",
+                            validation: {
+                                required: { message: "Name is required." },
+                                nameValidation: function (input) {
+                                    if (input.is("[name='name']") && input.val() == "") {
+                                        input.attr("data-nameValidation-msg", "Name is required.");
                                         return false;
                                     }
                                     return true;
@@ -132,7 +136,10 @@
                 console.log("Filter applied: ", e.filter);
             }
         },
-        pageable: true,
+        pageable: {
+            pageSize: 5,
+            pageSizes: [5,10, 15]
+        },
         sortable: true,
         scrollable: true,
         editable: "inline",
@@ -162,6 +169,7 @@
             { command: ["edit", "destroy"], title: "Actions", width: "220px" },
         ],
         save: function (e) {
+
             if (e.model.isNew()) {
                 e.preventDefault();
                 CreateStep(e.model);
@@ -203,6 +211,7 @@
     });
 
     function CreateStep(data) {
+
         var formData = {
             PhaseId: phaseId,
             Name: data.name,

@@ -21,5 +21,10 @@ namespace ExaminerWebApp.Repository.Interface
         Task<TemplatePhaseStep> UpdatePhaseStep(TemplatePhaseStep templatePhaseStep);
 
         Task<bool> DeleteStep(int id);
+
+        Task<int> GetNewPhaseOrdinal(int templateId);
+
+        Task<int> GetNewStepOrdinal(int templatePhaseId);
+
     }
 }

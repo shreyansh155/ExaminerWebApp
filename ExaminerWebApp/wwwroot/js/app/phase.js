@@ -64,8 +64,8 @@
         columns: [
             { field: "phaseId", title: "Phase ID", width: "125px", hidden: true },
             { field: "ordinal", title: "Ordinal", width: "125px", hidden: true },
-            { field: "name", title: "Phase", width: "130px" },
-            { field: "description", title: "Description", width: "130px", editor: textBox },
+            { field: "name", title: "Phase", width: "300px" },
+            { field: "description", title: "Description", editor: textBox },
             {
                 command: [
                     { text: "Add Steps", click: AddSteps },
@@ -73,7 +73,7 @@
                     { text: "Delete", click: DeletePhase }
                 ],
                 title: "Actions",
-                width: "220px",
+                width: "300px",
             }
         ],
     }).data("kendoGrid");
@@ -260,7 +260,7 @@
 
             data = data || {};
 
-            this.phasename = ko.observable(data.name || "").extend({ required: "Please enter phase name" });
+            this.phasename = ko.observable(data.name || "").extend({ required: "Please enter Phase name" });
             this.phasedescription = ko.observable(data.description || "");
 
             this.submitForm = function () {

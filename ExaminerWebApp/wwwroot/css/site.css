@@ -19,3 +19,8 @@
     text-align: left !important;
     display: block !important;
 }
+
+.k-toolbar.k-toolbar-resizable {
+    float: right;
+    justify-content: end
+}

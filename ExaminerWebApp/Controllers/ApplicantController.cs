@@ -73,9 +73,9 @@ namespace ExaminerWebApp.Controllers
             }
         }
 
-        public IActionResult GetApplicant(int id)
+        public async Task<IActionResult> GetApplicant(int id)
         {
-            var result = _applicantService.GetApplicantById(id);
+            Applicant result = await _applicantService.GetApplicantById(id);
             ApplicantViewModel obj = new()
             {
                 Id = id,

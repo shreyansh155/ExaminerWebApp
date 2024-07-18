@@ -251,7 +251,6 @@
                         processData: false,
                         contentType: false,
                         success: function (response) {
-                            console.log(typeof (response.errors));
                             if (response.success) {
                                 $("#refreshButton").trigger("click");
                                 $('#examiner-form').modal('hide');

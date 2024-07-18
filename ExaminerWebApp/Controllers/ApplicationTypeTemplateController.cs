@@ -128,11 +128,13 @@ namespace ExaminerWebApp.Controllers
             return obj;
         }
 
-        public IActionResult OpenTemplatePhase(int templateId)
+        public async Task<IActionResult> OpenTemplatePhase(int templateId)
         {
+            int ordinal = await _templatePhaseService.GetNewPhaseOrdinal(templateId);
             PhaseViewModel model = new()
             {
-                TemplateId = templateId
+                TemplateId = templateId,
+                Ordinal = ordinal,
             };
             return PartialView("Modal/_AddPhase", model);
         }
@@ -152,7 +154,7 @@ namespace ExaminerWebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                List<TemplatePhaseStep>? gridDataItems = model.GridData?.Where(x => x.Ordinal != null).Select(data => new TemplatePhaseStep
+                List<TemplatePhaseStep>? gridDataItems = model.GridData?.Where(x => x.IsInTemplatePhaseSteps == true).Select(data => new TemplatePhaseStep
                 {
                     StepId = data.Id,
                     Ordinal = data.Ordinal,
@@ -198,11 +200,13 @@ namespace ExaminerWebApp.Controllers
             return Json(new { success = false });
         }
 
-        public IActionResult AddTemplatePhaseStep(int templatePhaseId)
+        public async Task<IActionResult> AddTemplatePhaseStep(int templatePhaseId)
         {
+            int ordinal = await _templatePhaseService.GetNewStepOrdinal(templatePhaseId);
             AddEditStepModel model = new()
             {
-                TemplatePhaseId = templatePhaseId
+                TemplatePhaseId = templatePhaseId,
+                Ordinal = ordinal,
             };
             return PartialView("Modal/_AddStep", model);
         }
@@ -259,7 +263,7 @@ namespace ExaminerWebApp.Controllers
                     Id = model.Id,
                     TemplatePhaseId = model.TemplatePhaseId,
                     StepId = model.StepId,
-                    Ordinal = model.Ordinal,    
+                    Ordinal = model.Ordinal,
                     Instruction = model.Instruction,
                 };
                 await _templatePhaseService.EditTemplatePhaseStep(templatePhaseStep);

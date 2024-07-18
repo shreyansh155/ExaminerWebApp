@@ -45,7 +45,6 @@ function formatDate(dateString) {
     if (dateString) {
         var date = new Date(dateString);
         return kendo.toString(date, "dd-MM-yyyy");
-
     }
     return "";
 }

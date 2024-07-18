@@ -52,7 +52,7 @@ namespace PracticeWebApp.Service.Implementation
             {
                 obj.FilePath = SaveFile(model.FormFile);
             }
-            SendEmail(model.Email);
+            //SendEmail(model.Email);
             await _examinerRepository.Create(obj);
             return model;
         }

@@ -38,6 +38,8 @@
     <script src="https://kendo.cdn.telerik.com/2024.2.514/js/kendo.aspnetmvc.min.js"></script>
 
     <script src="/lib/knockoutjs/knockout.js"></script>
+    <script src="/lib/knockout-kendo/knockout-kendo.js"></script>
+
     <script src="/js/utilities.js"></script>
     
     <script src="~/lib/Knockout-Validation/Dist/knockout.validation.min.js"></script>
@@ -134,7 +136,7 @@
                             </a>
                         </li>
                         <li class="nav-item d-none d-sm-inline-block">
-                            <a href="@Url.Action("ExaminerIndex", "Examiner")" class="nav-link">Examiner</a>
+                            <a href="@Url.Action("Index", "Examiner")" class="nav-link">Examiner</a>
                         </li>
                         <li class="nav-item d-none d-sm-inline-block">
                             <a href="@Url.Action("ApplicantIndex","Applicant")" class="nav-link">Applicant</a>
@@ -151,7 +153,7 @@
         <div class="content-wrapper ">
             <!-- Main content -->
             <section class="content">
-                <div class="container-fluid">
+                <div class="container-fluid bg-light">
                     <main role="main" class="pb-3">
                         @RenderBody()
                     </main>

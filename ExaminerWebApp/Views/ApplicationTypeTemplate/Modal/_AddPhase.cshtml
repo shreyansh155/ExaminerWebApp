@@ -13,7 +13,7 @@
 </script>
 <div>
     <div class="modal" id="add-phase" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-align-center" id="exampleModalLabel">Phase</h5>
@@ -50,7 +50,7 @@
                                                       required="required"
                                                       format="n0"
                                                       decimals="0"
-                                                      data-bind="value: ordinal, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                                                      data-bind="value: ordinal">
                                 </kendo-numerictextbox>
                                 <span class="text-danger" data-bind="visible: ordinal.hasError, text: ordinal.validationMessage"></span>
                             </div>
@@ -59,7 +59,7 @@
                             <div class="mt-2" id="phaseGrid"></div>
                         </div>
                         <div class="footer">
-                            <div class="d-flex justify-content-start flex-row-reverse">
+                            <div class="d-flex justify-content-start flex-row-reverse modal-footer">
                                 <div class="mx-2">
                                     <kendo-button name="submitBtn"
                                                   data-bind="click: submitForm"

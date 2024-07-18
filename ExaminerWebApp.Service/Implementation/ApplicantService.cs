@@ -20,9 +20,9 @@ namespace ExaminerWebApp.Service.Implementation
             _mapper = mapper;
         }
 
-        public Entities.Entities.Applicant GetApplicantById(int id)
+        public async Task<Entities.Entities.Applicant> GetApplicantById(int id)
         {
-            var result = _applicantRepository.GetById(id);
+            ExaminerWebApp.Repository.DataModels.Applicant result = await _applicantRepository.GetById(id);
             return _mapper.Map<Entities.Entities.Applicant>(result);
         }
 

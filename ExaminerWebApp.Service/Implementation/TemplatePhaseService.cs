@@ -10,12 +10,14 @@ namespace ExaminerWebApp.Service.Implementation
         private readonly IMapper _mapper;
         private readonly ITemplatePhaseRepository _templatePhaseRepository;
         private readonly IPhaseStepRepository _phaseStepRepository;
+        private readonly IStepRepository _stepRepository;
 
-        public TemplatePhaseService(ITemplatePhaseRepository templatePhaseRepository, IMapper mapper, IPhaseStepRepository phaseStepRepository)
+        public TemplatePhaseService(ITemplatePhaseRepository templatePhaseRepository, IMapper mapper, IPhaseStepRepository phaseStepRepository, IStepRepository stepRepository)
         {
             _mapper = mapper;
             _templatePhaseRepository = templatePhaseRepository;
             _phaseStepRepository = phaseStepRepository;
+            _stepRepository = stepRepository;
         }
 
         public ApplicationTypeTemplatePhase AddTemplatePhaseStep(ApplicationTypeTemplatePhase model)
@@ -37,7 +39,7 @@ namespace ExaminerWebApp.Service.Implementation
 
             return true;
         }
-      
+
         public TemplatePhaseStep GetTemplatePhaseStep(int id)
         {
             Repository.DataModels.TemplatePhaseStep templatePhaseStep = _phaseStepRepository.GetTemplatePhaseStep(id);
@@ -54,12 +56,27 @@ namespace ExaminerWebApp.Service.Implementation
         {
             Repository.DataModels.TemplatePhaseStep phaseStep = _mapper.Map<Repository.DataModels.TemplatePhaseStep>(templatePhaseStep);
             await _phaseStepRepository.UpdatePhaseStep(phaseStep);
+            if (templatePhaseStep.Instruction != "")
+            {
+                await _stepRepository.UpdateInstruction(templatePhaseStep.StepId, templatePhaseStep.Instruction);
+            }
             return templatePhaseStep;
         }
-        
+
         public async Task<bool> DeleteStep(int id)
         {
             return await _phaseStepRepository.DeleteStep(id);
+        }
+        public async Task<int> GetNewPhaseOrdinal(int templateId)
+        {
+            int ordinal = await _phaseStepRepository.GetNewPhaseOrdinal(templateId);
+            return ordinal;
+        }
+        
+        public async Task<int> GetNewStepOrdinal(int templatePhaseId)
+        {
+            int ordinal = await _phaseStepRepository.GetNewStepOrdinal(templatePhaseId);
+            return ordinal;
         }
     }
 }

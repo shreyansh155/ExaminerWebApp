@@ -11,6 +11,7 @@ using PracticeWebApp.Service.Implementation;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(ApplicantProfile));
 builder.Services.AddAutoMapper(typeof(ExaminerProfile));
 builder.Services.AddAutoMapper(typeof(ExaminerTypeProfile));
 

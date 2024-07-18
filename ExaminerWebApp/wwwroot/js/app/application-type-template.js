@@ -65,9 +65,9 @@ $(function () {
                 }
             ],
             columns: [
-                { field: "id", title: "", width: "125px", hidden: true },
-                { field: "name", title: "Name", width: "130px" },
-                { field: "description", title: "Description", width: "130px" },
+                { field: "id", title: "", hidden: true },
+                { field: "name", title: "Name", width: "300px" },
+                { field: "description", title: "Description", },
                 {
                     command: [
                         {
@@ -110,9 +110,20 @@ $(function () {
             },
         }).data("kendoGrid");
 
+        var typingTimer;
+        var doneTypingInterval = 500;
+
         $("#searchBox").keyup(function () {
-            grid.dataSource.read();
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(function () {
+                grid.dataSource.read();
+            }, doneTypingInterval);
         });
+
+        $("#searchBox").keydown(function () {
+            clearTimeout(typingTimer);
+        });
+
         function EditEntry(e) {
             e.preventDefault();
             var tr = $(e.target).closest("tr");
@@ -244,7 +255,7 @@ $(function () {
                 this.name = ko.observable(data.name || "").extend({ required: "Please enter application name" });
                 this.description = ko.observable(data.description || "");
                 this.instruction = ko.observable(data.instruction || "");
-
+                 
                 this.submitTemplate = function () {
                     this.name.validate();
 
@@ -574,6 +585,7 @@ $(function () {
                     success: function (result) {
                         $('#displayModal').html(result);
                         $('#add-edit-step').modal('show');
+                        AddEditStepViewModal();
                     },
                     error: function (error) {
                         console.log(error);
@@ -584,6 +596,7 @@ $(function () {
             function DeleteStep(e) {
                 var tr = $(e.target).closest("tr");
                 var dataItem = stepGrid.data("kendoGrid").dataItem(tr);
+                console.log(dataItem);
                 if (confirm("Are you sure you want to delete this entry?")) {
                     $.ajax({
                         url: "/ApplicationTypeTemplate/DeleteStep",
@@ -738,6 +751,13 @@ $(function () {
                 var viewModel = new AddEditStepModel(window.initialData);
                 ko.applyBindings(viewModel, document.getElementById("add-edit-step-form"));
 
+                var ordinalNumericTextBox = $("#ordinal").data("kendoNumericTextBox");
+
+                ordinalNumericTextBox.value(viewModel.ordinal());
+
+                viewModel.ordinal.subscribe(function (newValue) {
+                    ordinalNumericTextBox.value(newValue);
+                });
                 //step name binding
                 $("#stepname").data("kendoDropDownList").value(viewModel.stepid());
 
@@ -783,9 +803,8 @@ $(function () {
         function AddPhaseViewModal() {
             function AddPhaseModel(data) {
                 data = data || {};
-
-                this.phaseid = ko.observable(data.phaseid || "").extend({ required: "Please select a phase" });
-                this.ordinal = ko.observable(data.ordinal || "").extend({ required: "Please enter ordinal number" });
+                this.phaseid = ko.observable(data.phaseid || "").extend({ required: "Please select a Phase" });
+                this.ordinal = ko.observable(data.ordinal || null).extend({ required: "Please enter Ordinal Number" });
 
                 this.submitForm = function () {
                     this.phaseid.validate();
@@ -801,7 +820,10 @@ $(function () {
 
                             if (isChecked && !ordinal) {
                                 isValidGrid = false;
-                                alert("Ordinal is required for selected phases.");
+                                var ordinalBox = phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[name="ordinal"]');
+                                ordinalBox.addClass("k-invalid");
+                                $("<span class='k-input k-textbox k-input-solid k-input-md k-rounded-md k-invalid'>Ordinal is required</span>").insertAfter(ordinalBox);
+                                console.log(ordinalBox);
                             }
 
                             return {
@@ -819,14 +841,16 @@ $(function () {
                             PhaseId: this.phaseid(),
                             Ordinal: this.ordinal(),
                             TemplateId: data.templateId,
-                            GridData: gridData.map(item => ({
-                                Id: item.Id,
-                                TemplatePhaseId: item.templatePhaseId,
-                                TemplatePhaseStepId: item.templatePhaseStepId,
-                                Name: item.Name,
-                                Ordinal: item.Ordinal,
-                                IsInTemplatePhaseSteps: item.IsInTemplatePhaseSteps
-                            }))
+                            GridData: gridData
+                                .filter(item => item.IsInTemplatePhaseSteps)
+                                .map(item => ({
+                                    Id: item.Id,
+                                    TemplatePhaseId: item.templatePhaseId,
+                                    TemplatePhaseStepId: item.templatePhaseStepId,
+                                    Name: item.Name,
+                                    Ordinal: item.Ordinal,
+                                    IsInTemplatePhaseSteps: item.IsInTemplatePhaseSteps
+                                }))
                         };
 
                         $.ajax({
@@ -867,13 +891,22 @@ $(function () {
 
             ko.applyBindings(viewModel, document.getElementById("addPhase"));
 
+            var ordinalNumericTextBox = $("#ordinal").data("kendoNumericTextBox");
+
+            ordinalNumericTextBox.value(viewModel.ordinal());
+
+            viewModel.ordinal.subscribe(function (newValue) {
+                ordinalNumericTextBox.value(newValue);
+            });
+
             function GetPhaseSteps(e) {
                 var phaseId = e.target.value;
 
                 // Initialize the grid if it does not exist
                 if (!$("#phaseGrid").data("kendoGrid")) {
                     initializeGrid(phaseId);
-                } else {
+                }
+                else {
                     phasegrid = $("#phaseGrid").data("kendoGrid");
                     phasegrid.setDataSource(new kendo.data.DataSource({
                         transport: {
@@ -930,7 +963,7 @@ $(function () {
                                     return {
                                         id: item.step.id,
                                         name: item.step.name,
-                                        ordinal: item.step.ordinal,
+                                        ordinal: item.ordinal,
                                         isInTemplatePhaseSteps: item.isInTemplatePhaseSteps
                                     };
                                 });
@@ -1009,7 +1042,7 @@ $(function () {
                                     return {
                                         id: item.step.id,
                                         name: item.step.name,
-                                        ordinal: item.step.ordinal,
+                                        ordinal: item.ordinal,
                                         isInTemplatePhaseSteps: item.isInTemplatePhaseSteps
                                     };
                                 });

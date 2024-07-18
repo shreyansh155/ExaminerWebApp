@@ -31,7 +31,6 @@ namespace ExaminerWebApp.Entities.Entities
         [NotMapped]
         public string ApplicantType { get; set; } = null!;
       
-        [NotMapped]
         public virtual ApplicantType Setting { get; set; } = null!;
     }
 }

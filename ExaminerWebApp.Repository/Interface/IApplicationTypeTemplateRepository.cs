@@ -8,6 +8,6 @@ namespace ExaminerWebApp.Repository.Interface
       
         Task<bool> EditApplicationTemplateExists(int? id, string name);
         
-        IQueryable<ApplicationTypeTemplate> GetAll(string s);
+        IQueryable<ApplicationTypeTemplate> GetAll();
     }
 }

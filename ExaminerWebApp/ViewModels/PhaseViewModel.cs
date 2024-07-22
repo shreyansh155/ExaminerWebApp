@@ -1,8 +1,11 @@
 ﻿
+using ExaminerWebApp.Entities.Entities;
+
 namespace ExaminerWebApp.ViewModels
 {
     public class PhaseViewModel
     {
+        public ApplicationTypeTemplatePhase? TemplatePhase { get; set; }
         public int? PhaseId { get; set; }
       
         public int Ordinal { get; set; }
@@ -15,6 +18,7 @@ namespace ExaminerWebApp.ViewModels
         
         public List<GridDataItem>? GridData { get; set; }
     }
+
     public class GridDataItem
     {
         public int Id { get; set; }

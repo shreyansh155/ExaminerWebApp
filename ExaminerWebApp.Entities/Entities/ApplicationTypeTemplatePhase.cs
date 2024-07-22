@@ -8,7 +8,11 @@
 
         public int? PhaseId { get; set; }
 
+        public string? PhaseName { get; set; }
+
         public int Ordinal { get; set; }
+
+        public int? StepCount { get; set; }
 
         public bool? IsDeleted { get; set; }
 

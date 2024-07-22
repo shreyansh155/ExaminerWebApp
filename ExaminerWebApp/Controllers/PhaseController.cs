@@ -32,15 +32,8 @@ namespace ExaminerWebApp.Controllers
 
         public async Task<IActionResult> AddPhaseSteps(int phaseId)
         {
-            Phase phase = await _phaseService.GetPhaseById(phaseId);
-            CreatePhaseModel model = new()
-            {
-                Name = phase.Name,
-                Description = phase.Description ?? "",
-                PhaseId = phaseId,
-            };
             ViewBag.ShowGrid = true;
-            return PartialView("Modal/_CreatePhase", phase);
+            return PartialView("Modal/_CreatePhase", await _phaseService.GetPhaseById(phaseId));
         }
 
         [HttpPost]

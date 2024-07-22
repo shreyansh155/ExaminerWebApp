@@ -156,7 +156,7 @@
                             Filter: options.data.filter
                         };
                         var pager = JSON.stringify(gridData);
-                        console.log(pager);
+
                         $.ajax({
                             url: "/Step/GetAll?phaseId=" + dataItem.id,
                             type: "POST",

@@ -1,9 +1,11 @@
-﻿namespace ExaminerWebApp.Entities.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ExaminerWebApp.Entities.Entities
 {
     public partial class ApplicationTypeTemplate
     {
         public int? Id { get; set; }
-
+        [Required(ErrorMessage = "Please enter application template name")]
         public string Name { get; set; } = null!;
 
         public string? Description { get; set; }

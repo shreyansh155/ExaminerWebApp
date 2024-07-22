@@ -152,12 +152,81 @@ namespace ExaminerWebApp.Repository.Implementation
             return _context.Steps.First(x => x.Id == stepId).StepTypeId;
         }
 
+        public async Task<TemplatePhaseStep> AddPhaseStep(TemplatePhaseStep templatePhaseStep)
+        {
+            UpdateOrdinal(templatePhaseStep);
+          
+            ApplicationTypeTemplatePhase? templatePhase = await _context.ApplicationTypeTemplatePhases
+                .FirstOrDefaultAsync(x => x.Id == templatePhaseStep.TemplatePhaseId);
+            
+            templatePhase.StepCount++;
+            
+            await _context.TemplatePhaseSteps.AddAsync(templatePhaseStep);
+            
+            await _context.SaveChangesAsync();
+            
+            return templatePhaseStep;
+        }
         public async Task<TemplatePhaseStep> UpdatePhaseStep(TemplatePhaseStep templatePhaseStep)
         {
-            var allTemplatePhaseSteps = _context.TemplatePhaseSteps
-                .Where(x => x.TemplatePhaseId == templatePhaseStep.TemplatePhaseId && x.Id != templatePhaseStep.Id)
+            UpdateOrdinal(templatePhaseStep);
+            _context.TemplatePhaseSteps.Update(templatePhaseStep);
+            await _context.SaveChangesAsync();
+            return templatePhaseStep;
+        }
+
+        public async Task<bool> DeleteStep(int id)
+        {
+            TemplatePhaseStep templatePhaseStep = await _context.TemplatePhaseSteps.FirstAsync(x => x.Id == id);
+
+            templatePhaseStep.IsDeleted = true;
+
+            ApplicationTypeTemplatePhase? templatePhase = _context.ApplicationTypeTemplatePhases.FirstOrDefault(x => x.Id == templatePhaseStep.TemplatePhaseId);
+
+            templatePhase.StepCount--;
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<int> GetNewPhaseOrdinal(int templateId)
+        {
+            ApplicationTypeTemplatePhase? templatePhases = await _context.ApplicationTypeTemplatePhases.Where(x => x.TemplateId == templateId && x.IsDeleted != true).OrderBy(x => x.Ordinal).LastOrDefaultAsync();
+            if (templatePhases == null)
+            {
+                return 1;
+            }
+            else
+            {
+                int ordinal = templatePhases.Ordinal + 1;
+                return ordinal;
+            }
+        }
+
+        public async Task<int> GetNewStepOrdinal(int templatePhaseId)
+        {
+            TemplatePhaseStep? templatePhasesStep = await _context.TemplatePhaseSteps
+                .Where(x => x.TemplatePhaseId == templatePhaseId && x.IsDeleted != true)
                 .OrderBy(x => x.Ordinal)
-                .ToList();
+                .LastOrDefaultAsync();
+            if (templatePhasesStep == null)
+            {
+                return 1;
+            }
+            else
+            {
+                int ordinal = templatePhasesStep.Ordinal + 1;
+                return ordinal;
+            }
+        }
+
+        public void UpdateOrdinal(TemplatePhaseStep templatePhaseStep)
+        {
+            var allTemplatePhaseSteps = _context.TemplatePhaseSteps
+              .Where(x => x.TemplatePhaseId == templatePhaseStep.TemplatePhaseId && x.Id != templatePhaseStep.Id)
+              .OrderBy(x => x.Ordinal)
+              .ToList();
 
             var upperPhaseStep = allTemplatePhaseSteps
                 .Where(tp => tp.Ordinal >= templatePhaseStep.Ordinal && tp.StepId != templatePhaseStep.StepId).ToList();
@@ -211,48 +280,7 @@ namespace ExaminerWebApp.Repository.Implementation
                 }
             }
 
-            _context.TemplatePhaseSteps.Update(templatePhaseStep);
-            await _context.SaveChangesAsync();
-            return templatePhaseStep;
-        }
-
-        public async Task<bool> DeleteStep(int id)
-        {
-            TemplatePhaseStep templatePhaseStep = await _context.TemplatePhaseSteps.FirstAsync(x => x.Id == id);
-            templatePhaseStep.IsDeleted = true;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<int> GetNewPhaseOrdinal(int templateId)
-        {
-            ApplicationTypeTemplatePhase? templatePhases = await _context.ApplicationTypeTemplatePhases.Where(x => x.TemplateId == templateId && x.IsDeleted != true).OrderBy(x => x.Ordinal).LastOrDefaultAsync();
-            if (templatePhases == null)
-            {
-                return 1;
-            }
-            else
-            {
-                int ordinal = templatePhases.Ordinal + 1;
-                return ordinal;
-            }
-        }
-
-        public async Task<int> GetNewStepOrdinal(int templatePhaseId)
-        {
-            TemplatePhaseStep? templatePhasesStep = await _context.TemplatePhaseSteps
-                .Where(x => x.TemplatePhaseId == templatePhaseId && x.IsDeleted != true)
-                .OrderBy(x => x.Ordinal)
-                .LastOrDefaultAsync();
-            if (templatePhasesStep == null)
-            {
-                return 1;
-            }
-            else
-            {
-                int ordinal = templatePhasesStep.Ordinal + 1;
-                return ordinal;
-            }
+            _context.SaveChanges();
         }
     }
 }

@@ -69,7 +69,6 @@
                         dataType: "json",
                         data: pager,
                         success: function (data) {
-                            console.log(data);
                             options.success(data);
                         },
                         error: function (error) {

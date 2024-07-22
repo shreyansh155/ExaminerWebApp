@@ -1,4 +1,7 @@
-﻿namespace ExaminerWebApp.Repository.DataModels;
+﻿using System;
+using System.Collections.Generic;
+
+namespace ExaminerWebApp.Repository.DataModels;
 
 public partial class Applicant
 {

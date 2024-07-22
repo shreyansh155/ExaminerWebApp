@@ -6,7 +6,10 @@ namespace ExaminerWebApp.Composition.MappingProfile
     {
         public ApplicationTypeTemplatePhaseProfile()
         {
-            CreateMap<Entities.Entities.ApplicationTypeTemplatePhase, Repository.DataModels.ApplicationTypeTemplatePhase>().ReverseMap();
+            CreateMap<Entities.Entities.ApplicationTypeTemplatePhase, Repository.DataModels.ApplicationTypeTemplatePhase>();
+
+            CreateMap<Repository.DataModels.ApplicationTypeTemplatePhase, Entities.Entities.ApplicationTypeTemplatePhase>()
+               .ForMember(dest => dest.PhaseName, opt => opt.MapFrom(src => src.Phase.Name));
         }
     }
 }

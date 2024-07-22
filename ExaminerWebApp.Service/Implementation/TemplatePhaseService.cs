@@ -20,7 +20,7 @@ namespace ExaminerWebApp.Service.Implementation
             _stepRepository = stepRepository;
         }
 
-        public ApplicationTypeTemplatePhase AddTemplatePhaseStep(ApplicationTypeTemplatePhase model)
+        public async Task<ApplicationTypeTemplatePhase> AddTemplatePhase(ApplicationTypeTemplatePhase model)
         {
             Repository.DataModels.ApplicationTypeTemplatePhase obj = _mapper.Map<Repository.DataModels.ApplicationTypeTemplatePhase>(model);
 
@@ -52,13 +52,24 @@ namespace ExaminerWebApp.Service.Implementation
             return _phaseStepRepository.GetStepTypeId(stepId);
         }
 
+        public async Task<TemplatePhaseStep> AddTemplatePhaseStep(TemplatePhaseStep templatePhaseStep)
+        {
+            Repository.DataModels.TemplatePhaseStep phaseStep = _mapper.Map<Repository.DataModels.TemplatePhaseStep>(templatePhaseStep);
+            await _phaseStepRepository.AddPhaseStep(phaseStep);
+            if (templatePhaseStep.Instruction != "")
+            {
+                await _stepRepository.UpdateInstruction(templatePhaseStep.StepId, templatePhaseStep.Instruction ?? "");
+            }
+            return templatePhaseStep;
+        }
+
         public async Task<TemplatePhaseStep> EditTemplatePhaseStep(TemplatePhaseStep templatePhaseStep)
         {
             Repository.DataModels.TemplatePhaseStep phaseStep = _mapper.Map<Repository.DataModels.TemplatePhaseStep>(templatePhaseStep);
             await _phaseStepRepository.UpdatePhaseStep(phaseStep);
             if (templatePhaseStep.Instruction != "")
             {
-                await _stepRepository.UpdateInstruction(templatePhaseStep.StepId, templatePhaseStep.Instruction);
+                await _stepRepository.UpdateInstruction(templatePhaseStep.StepId, templatePhaseStep.Instruction ?? "");
             }
             return templatePhaseStep;
         }
@@ -72,7 +83,7 @@ namespace ExaminerWebApp.Service.Implementation
             int ordinal = await _phaseStepRepository.GetNewPhaseOrdinal(templateId);
             return ordinal;
         }
-        
+
         public async Task<int> GetNewStepOrdinal(int templatePhaseId)
         {
             int ordinal = await _phaseStepRepository.GetNewStepOrdinal(templatePhaseId);

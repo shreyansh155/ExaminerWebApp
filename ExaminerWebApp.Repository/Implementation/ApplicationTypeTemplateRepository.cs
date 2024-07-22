@@ -14,9 +14,9 @@ namespace ExaminerWebApp.Repository.Implementation
             _context = context;
         }
 
-        public IQueryable<ApplicationTypeTemplate> GetAll(string s)
+        public IQueryable<ApplicationTypeTemplate> GetAll()
         {
-            return _context.ApplicationTypeTemplates.Where(x => x.IsDeleted != true && (string.IsNullOrEmpty(s) || x.Name.ToLower().Contains(s.ToLower()) || x.Description.ToLower().Contains(s.ToLower()))).OrderBy(x => x.Id).AsQueryable();
+            return _context.ApplicationTypeTemplates.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
         }
 
         public bool ApplicationTemplateExists(string name)

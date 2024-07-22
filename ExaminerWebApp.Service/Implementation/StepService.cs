@@ -15,10 +15,10 @@ namespace ExaminerWebApp.Service.Implementation
 
         public StepService(IStepRepository stepRepository, IMapper mapper)
         {
-            _stepRepository = stepRepository;
+            _stepRepository = stepRepository;                                                                       
             _mapper = mapper;
         }
-
+                                                                                  
         public async Task<PaginationSet<Step>> GetAll(int phaseId, PaginationSet<Step> pager)
         {
             IQueryable<Repository.DataModels.Step> step =

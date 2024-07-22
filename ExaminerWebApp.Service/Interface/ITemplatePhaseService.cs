@@ -4,7 +4,7 @@ namespace ExaminerWebApp.Service.Interface
 {
     public interface ITemplatePhaseService
     {
-        ApplicationTypeTemplatePhase AddTemplatePhaseStep(ApplicationTypeTemplatePhase model);
+        Task<ApplicationTypeTemplatePhase> AddTemplatePhase(ApplicationTypeTemplatePhase model);
 
         Task<bool> UpdateOrdinal(int templatePhaseId, int ordinal);
 
@@ -12,6 +12,7 @@ namespace ExaminerWebApp.Service.Interface
 
         public int GetStepTypeId(int stepId);
 
+        Task<TemplatePhaseStep> AddTemplatePhaseStep(TemplatePhaseStep templatePhaseStep);
         Task<TemplatePhaseStep> EditTemplatePhaseStep(TemplatePhaseStep templatePhaseStep);
 
         Task<bool> DeleteStep(int id);

@@ -7,15 +7,19 @@ namespace ExaminerWebApp.Service.Implementation
 {
     public class BaseService<T>
     {
-        protected static IQueryable<T> ApplyFilter(IQueryable<T> query, GridFilter filter)
+        protected static IQueryable<T> ApplyFilter<T>(IQueryable<T> query, GridFilter filter)
         {
             if (filter.Operator == "eq")
             {
-                query = query.Where($"{filter.Field} == @0", filter.Value);
+                query = query.Where($"{filter.Field}.ToLower() == @0", filter.Value.ToString().ToLower());
             }
             else if (filter.Operator == "neq")
             {
-                query = query.Where($"{filter.Field} != @0", filter.Value);
+                query = query.Where($"{filter.Field}.ToLower() != @0", filter.Value.ToString().ToLower());
+            }
+            else if (filter.Operator == "contains")
+            {
+                query = query.Where($"{filter.Field}.ToLower().Contains(@0)", filter.Value.ToString().ToLower());
             }
 
             return query;

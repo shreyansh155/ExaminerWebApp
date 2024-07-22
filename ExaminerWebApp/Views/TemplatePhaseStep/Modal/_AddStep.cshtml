@@ -1,4 +1,4 @@
-﻿@model AddEditStepModel;
+﻿@model ExaminerWebApp.Entities.Entities.TemplatePhaseStep;
 @{
     var serializedData = Json.Serialize(Model);
     var edit = Model?.StepId == null ? true : false;
@@ -32,11 +32,11 @@
                                     <transport>
                                         @if (!edit)
                                         {
-                                            <read url="/ApplicationTypeTemplate/StepList?id=@Model?.Id" />
+                                            <read url="/TemplatePhaseStep/StepList?id=@Model?.Id" />
                                         }
                                         else
                                         {
-                                            <read url="/ApplicationTypeTemplate/PhaseStepList?templatePhaseId=@Model?.TemplatePhaseId" />
+                                            <read url="/TemplatePhaseStep/PhaseStepList?templatePhaseId=@Model?.TemplatePhaseId" />
                                         }
                                     </transport>
                                 </datasource>

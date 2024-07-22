@@ -1,4 +1,6 @@
-﻿using ExaminerWebApp.Repository.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using ExaminerWebApp.Repository.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -8,12 +10,11 @@ public partial class ApplicationDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration)
-      : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration) : base(options)
     {
         _configuration = configuration;
     }
-  
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -137,6 +138,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.Ordinal).HasColumnName("ordinal");
             entity.Property(e => e.PhaseId).HasColumnName("phase_id");
+            entity.Property(e => e.StepCount).HasColumnName("step_count");
             entity.Property(e => e.TemplateId).HasColumnName("template_id");
 
             entity.HasOne(d => d.Phase).WithMany(p => p.ApplicationTypeTemplatePhases)

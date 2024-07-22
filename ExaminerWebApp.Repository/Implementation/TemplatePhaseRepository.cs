@@ -14,24 +14,15 @@ namespace ExaminerWebApp.Repository.Implementation
             _context = context;
         }
 
-        public object TemplatePhases(int templateId)
+        public async Task<IQueryable<ApplicationTypeTemplatePhase>> TemplatePhases(int templateId)
         {
-            using (_context)
-            {
-                var phasesWithStepCounts = _context.ApplicationTypeTemplatePhases
-                    .Where(attp => attp.TemplateId == templateId && attp.IsDeleted != true)
-                    .Select(attp => new
-                    {
-                        TemplatePhaseId = attp.Id,
-                        attp.Ordinal,
-                        attp.Phase,
-                        StepCount = attp.TemplatePhaseSteps.Where(x => x.IsDeleted != true).Count(),
-                    })
-                    .OrderBy(x => x.Ordinal)
-                    .ToList();
+            var resultList = await _context.ApplicationTypeTemplatePhases
+                .Where(attp => attp.TemplateId == templateId && attp.IsDeleted != true)
+                .Include(attp => attp.Phase)
+                .OrderBy(x => x.Ordinal)
+                .ToListAsync();
 
-                return phasesWithStepCounts;
-            }
+            return resultList.AsQueryable();
         }
 
         public async Task<IEnumerable<ApplicationTypeTemplatePhase>> PhaseStepsAsync(int templateId, int phaseId)
@@ -104,7 +95,8 @@ namespace ExaminerWebApp.Repository.Implementation
 
         public IQueryable<ApplicationTypeTemplatePhase> GetAllTemplates(int templateId)
         {
-            return _context.ApplicationTypeTemplatePhases.Where(x => x.TemplateId == templateId && x.IsDeleted != true).AsQueryable();
+            return _context.ApplicationTypeTemplatePhases
+               .Where(x => x.TemplateId == templateId && x.IsDeleted != true);
         }
 
         public ApplicationTypeTemplatePhase AddPhaseWithOrdinal(ApplicationTypeTemplatePhase model)
@@ -151,7 +143,8 @@ namespace ExaminerWebApp.Repository.Implementation
                 TemplateId = model.TemplateId,
                 PhaseId = model.PhaseId,
                 Ordinal = model.Ordinal,
-                IsDeleted = false
+                IsDeleted = false,
+                StepCount = model.StepCount,
             };
 
             _context.Add(newPhase);

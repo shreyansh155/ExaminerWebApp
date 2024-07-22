@@ -1,21 +1,25 @@
-﻿namespace ExaminerWebApp.Repository.DataModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace ExaminerWebApp.Repository.DataModels;
+
+public partial class ApplicationTypeTemplatePhase
 {
-    public partial class ApplicationTypeTemplatePhase
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public int TemplateId { get; set; }
+    public int TemplateId { get; set; }
 
-        public int PhaseId { get; set; }
+    public int PhaseId { get; set; }
 
-        public int Ordinal { get; set; }
+    public int Ordinal { get; set; }
 
-        public bool? IsDeleted { get; set; }
+    public bool? IsDeleted { get; set; }
 
-        public virtual Phase Phase { get; set; } = null!;
+    public int? StepCount { get; set; }
 
-        public virtual ApplicationTypeTemplate Template { get; set; } = null!;
+    public virtual Phase Phase { get; set; } = null!;
 
-        public virtual ICollection<TemplatePhaseStep> TemplatePhaseSteps { get; set; } = new List<TemplatePhaseStep>();
-    }
+    public virtual ApplicationTypeTemplate Template { get; set; } = null!;
+
+    public virtual ICollection<TemplatePhaseStep> TemplatePhaseSteps { get; set; } = new List<TemplatePhaseStep>();
 }

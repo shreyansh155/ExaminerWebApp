@@ -1,5 +1,5 @@
 ﻿$(function () {
-    var phaseId = window.initialData.phaseId;
+    var phaseId = window.initialData.id;
 
     var stepTypeDataSource = new kendo.data.DataSource({
         transport: {
@@ -24,7 +24,7 @@
                 optionLabel: {
                     name: "Select Step Type",
                     id: 0
-                },  
+                },
                 dataTextField: "name",
                 dataValueField: "id",
                 dataSource: stepTypeDataSource,
@@ -53,12 +53,23 @@
         dataSource: {
             transport: {
                 read: function (options) {
+                    var gridData = {
+                        Skip: options.data.skip,
+                        Take: options.data.pageSize || 10,
+                        Page: options.data.page || 1,
+                        PageSize: options.data.pageSize || 10,
+                        Sort: options.data.sort,
+                        Filter: options.data.filter
+                    };
+                    var pager = JSON.stringify(gridData);
                     $.ajax({
-                        url: "/Step/GetAll",
-                        type: "GET",
+                        url: "/Step/GetAll?phaseId=" + phaseId,
+                        type: "POST",
+                        contentType: "application/json",
                         dataType: "json",
-                        data: { phaseId: phaseId },
+                        data: pager,
                         success: function (data) {
+                            console.log(data);
                             options.success(data);
                         },
                         error: function (error) {
@@ -67,7 +78,6 @@
                         },
                     });
                 },
-
                 update: {
                     url: function (data) {
                         return "/Step/Update/" + data.id;
@@ -91,11 +101,18 @@
                     dataType: "json",
                 },
             },
-            pageSize: 5,
+            page: 1,
+            pageSize: 10,
+            pageable: {
+                pageSize: 10,
+                pageSizes: [10, 15, 20]
+            },
+            serverPaging: true,
+            serverSorting: true,
+            serverFiltering: true,
             schema: {
-                data: function (response) {
-                    return response;
-                },
+                total: "totalCount",
+                data: "items",
                 model: {
                     id: "id",
                     fields: {
@@ -138,7 +155,7 @@
         },
         pageable: {
             pageSize: 5,
-            pageSizes: [5,10, 15]
+            pageSizes: [5, 10, 15]
         },
         sortable: true,
         scrollable: true,

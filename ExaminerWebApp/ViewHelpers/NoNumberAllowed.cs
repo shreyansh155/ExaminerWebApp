@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace ExaminerWebApp.Composition.Helpers
+namespace ExaminerWebApp.ViewHelpers
 {
     public class NoNumbersAttribute : ValidationAttribute
     {

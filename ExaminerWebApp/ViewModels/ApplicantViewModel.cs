@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using ExaminerWebApp.Composition.Helpers;
+using ExaminerWebApp.ViewHelpers;
 
 namespace ExaminerWebApp.ViewModels
 {

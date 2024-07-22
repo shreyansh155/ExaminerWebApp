@@ -40,10 +40,11 @@ namespace ExaminerWebApp.Repository.Implementation
             return await _context.Examiners.FirstAsync(x => x.Id == id);
         }
 
-        public void Update(Examiner model)
+        public async Task<bool> Update(Examiner model)
         {
             _context.Examiners.Update(model);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public bool CheckEmail(string email)

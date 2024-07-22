@@ -1,10 +1,11 @@
-﻿using ExaminerWebApp.Entities.Entities;
+﻿using ExaminerWebApp.Composition.Helpers;
+using ExaminerWebApp.Entities.Entities;
 
 namespace ExaminerWebApp.Service.Interface
 {
     public interface IStepService
     {
-        IQueryable<Step> GetAll(int phaseId);
+        Task<PaginationSet<Step>> GetAll(int phaseId, PaginationSet<Step> pager);
 
         Task<Step> GetStepById(int id);
 
@@ -12,7 +13,7 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<bool> DeleteStep(int id);
 
-        bool UpdateStep(Step model);
+        Task<bool> UpdateStep(Step model);
 
         Task<List<StepType>> GetStepTypeList();
 

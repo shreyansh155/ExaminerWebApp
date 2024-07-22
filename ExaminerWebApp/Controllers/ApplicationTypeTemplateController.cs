@@ -174,8 +174,8 @@ namespace ExaminerWebApp.Controllers
 
             else
             {
-                var errors = ModelStateErrorSerializer(ModelState);
-                return Json(new { success = false, errors });
+                
+                return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
             }
         }
 
@@ -269,7 +269,7 @@ namespace ExaminerWebApp.Controllers
                 await _templatePhaseService.EditTemplatePhaseStep(templatePhaseStep);
                 return Json(new { success = true });
             }
-            return Json(new { success = false });
+            return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
         }
 
         public async Task<IActionResult> DeleteTemplatePhase(int templatePhaseId)

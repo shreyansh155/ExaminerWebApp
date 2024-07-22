@@ -24,3 +24,7 @@
     float: right;
     justify-content: end
 }
+
+#add-edit-step {
+    width: 100vw;
+}

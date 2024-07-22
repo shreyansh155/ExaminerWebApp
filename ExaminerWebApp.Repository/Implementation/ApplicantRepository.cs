@@ -41,7 +41,7 @@ namespace ExaminerWebApp.Repository.Implementation
             return await _context.Applicants.FirstAsync(x => x.Id == id);
         }
 
-        public void Update(Applicant model)
+        public async Task<bool> Update(Applicant model)
         {
             var applicant = _context.Applicants.First(x => x.Id == model.Id);
 
@@ -51,13 +51,14 @@ namespace ExaminerWebApp.Repository.Implementation
             applicant.Phone = model.Phone;
             applicant.DateOfBirth = model.DateOfBirth;
             applicant.FilePath = model.FilePath ?? applicant.FilePath;
-            applicant.FirstName = model.FirstName ?? applicant.FileName;
+            applicant.FileName = applicant.FileName;
             applicant.ApplicantTypeId = model.ApplicantTypeId;
 
             _context.Applicants.Update(applicant);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            return true;
         }
-     
+
         public bool CheckEmail(string email)
         {
             return _context.Applicants.Where(x => x.Email == email && x.IsDeleted != true).Any();

@@ -16,9 +16,9 @@ namespace ExaminerWebApp.Service.Implementation
             _examinerTypeRepository = examinerTypeRepository;
         }
 
-        public List<ExaminerType> GetExaminerTypeList()
+        public async Task<List<ExaminerType>> GetExaminerTypeList()
         {
-            List<Repository.DataModels.ExaminerType> obj = _examinerTypeRepository.GetList();
+            List<Repository.DataModels.ExaminerType> obj = await _examinerTypeRepository.GetList();
 
             var list = _mapper.Map<List<ExaminerType>>(obj);
             return list;

@@ -10,7 +10,7 @@ namespace ExaminerWebApp.Controllers
     {
         private readonly IExaminerService _examinerService;
         private readonly IExaminerTypeService _examinerTypeService;
-     
+
         public ExaminerController(IExaminerService examinerService, IExaminerTypeService examinerTypeService)
         {
             _examinerService = examinerService;
@@ -30,14 +30,14 @@ namespace ExaminerWebApp.Controllers
             return Json(await Pagination<ExaminerModel>.CreateAsync(result, pageNumber, pageSize));
         }
 
-        public IActionResult ExaminerForm()
+        public async Task<IActionResult> ExaminerForm()
         {
-            return PartialView("Modal/_ExaminerFormModal");
+            return await Task.FromResult(PartialView("Modal/_ExaminerFormModal"));
         }
 
-        public List<ExaminerType> ExaminerTypeList()
+        public async Task<List<ExaminerType>> ExaminerTypeList()
         {
-            return _examinerTypeService.GetExaminerTypeList();
+            return await _examinerTypeService.GetExaminerTypeList();
         }
 
         [HttpPost]
@@ -91,7 +91,7 @@ namespace ExaminerWebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditExaminer(ExaminerModel model)
+        public async Task<ActionResult> EditExaminer(ExaminerModel model)
         {
             if (ModelState.IsValid)
             {
@@ -110,7 +110,7 @@ namespace ExaminerWebApp.Controllers
                     ModifiedBy = "1",
                     ModifiedDate = DateTime.Now,
                 };
-                _examinerService.UpdateExaminer(obj);
+              await  _examinerService.UpdateExaminer(obj);
                 return Json(new { success = true });
             }
             else

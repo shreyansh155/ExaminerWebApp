@@ -26,10 +26,11 @@ namespace ExaminerWebApp.Repository.Implementation
             return _object;
         }
 
-        public void Update(Step _object)
+        public async Task<bool> Update(Step _object)
         {
             _context.Steps.Update(_object);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> Delete(int id)

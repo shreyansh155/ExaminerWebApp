@@ -75,7 +75,12 @@ namespace ExaminerWebApp.Repository.Implementation
             return _object;
         }
 
-        public void Update(ApplicationTypeTemplatePhase _object) { }
+        public async Task<bool> Update(ApplicationTypeTemplatePhase _object)
+        {
+            _context.ApplicationTypeTemplatePhases.Update(_object);
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
         public async Task<bool> Delete(int id)
         {

@@ -7,17 +7,22 @@
         dataSource: {
             transport: {
                 read: function (options) {
-                    var page = options.data.page || 1;
-                    var pageSize = options.data.pageSize || 10;
+
+                    var gridData = {
+                        Skip: options.data.skip,
+                        Take: options.data.pageSize || 10,
+                        Page: options.data.page || 1,
+                        PageSize: options.data.pageSize || 10,
+                        Sort: options.data.sort,
+                        Filter: options.data.filter
+                    };
 
                     $.ajax({
                         url: "/Phase/GetAll",
-                        type: "GET",
+                        type: "POST",
+                        contentType: "application/json",
                         dataType: "json",
-                        data: {
-                            pageNumber: page,
-                            pageSize: pageSize
-                        },
+                        data: JSON.stringify(gridData),
                         success: function (data) {
                             options.success(data);
                         },
@@ -26,18 +31,15 @@
                             alert('Error fetching data.');
                         }
                     });
-                },
-                parameterMap: function (data, type) {
-                    if (type === "read") {
-                        return kendo.stringify(data);
-                    }
-                    return data;
                 }
             },
+            page: 1,
             pageSize: 10,
             serverPaging: true,
+            serverSorting: true,
+            serverFiltering: true,
             schema: {
-                total: "totalItems",
+                total: "totalCount",
                 data: "items",
                 model: {
                     fields: {
@@ -85,7 +87,7 @@
             url: "/Phase/AddPhaseSteps",
             type: "GET",
             data: {
-                phaseId: dataItem.phaseId,
+                phaseId: dataItem.id,
             },
             success: function (result) {
                 $('#displayModal').html(result);
@@ -100,11 +102,12 @@
     function EditPhase(e) {
         var tr = $(e.target).closest("tr");
         var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
+        console.log(dataItem);
         $.ajax({
             url: "/Phase/Edit",
             type: "GET",
             data: {
-                id: dataItem.phaseId,
+                id: dataItem.id,
             },
             success: function (result) {
                 $('#displayModal').html(result);
@@ -124,7 +127,7 @@
                 url: "/Phase/Delete",
                 type: "POST",
                 data: {
-                    id: dataItem.phaseId,
+                    id: dataItem.id,
                 },
                 success: function (result) {
                     $("#refreshButton").trigger("click");
@@ -144,24 +147,36 @@
             dataSource: {
                 transport: {
                     read: function (options) {
+                        var gridData = {
+                            Skip: options.data.skip,
+                            Take: options.data.pageSize || 10,
+                            Page: options.data.page || 1,
+                            PageSize: options.data.pageSize || 10,
+                            Sort: options.data.sort,
+                            Filter: options.data.filter
+                        };
+                        var pager = JSON.stringify(gridData);
+                        console.log(pager);
                         $.ajax({
-                            url: "Step/GetAll",
-                            type: "GET",
+                            url: "/Step/GetAll?phaseId=" + dataItem.id,
+                            type: "POST",
+                            contentType: "application/json",
                             dataType: "json",
-                            data: {
-                                phaseId: dataItem.phaseId,
-                            },
+                            data: pager,
                             success: function (data) {
+                                console.log(data);
                                 options.success(data);
                             },
                             error: function (error) {
-                                console.log(error);
-                                alert('Error fetching data.');
-                            }
+                                console.error(error);
+                                alert("Error fetching data.");
+                            },
                         });
-                    },
+                    }
                 },
                 schema: {
+                    total: "totalCount",
+                    data: "items",
                     model: {
                         id: "id",
                         fields: {
@@ -270,12 +285,11 @@
                     var formData = new FormData($("#phaseForm")[0]);
                     formData.append("Name", this.phasename());
                     formData.append("Description", this.phasedescription());
-                    if (data.phaseId) {
-                        formData.append("PhaseId", data.phaseId);
+                    if (data.id) {
+                        formData.append("Id", data.id);
                     }
 
-                    var link = data && data.phaseId ? '/Phase/EditPhase' : '/Phase/CreatePhase';
-
+                    var link = data && data.id ? '/Phase/EditPhase' : '/Phase/CreatePhase';
                     $.ajax({
                         url: link,
                         type: 'POST',

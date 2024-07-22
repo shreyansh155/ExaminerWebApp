@@ -19,8 +19,8 @@
                 <form id="add-edit-step-form">
                     <div id="errorBody" class="text-danger"></div>
                     <div class="form-group required row">
-                        <label for="stepname" class="col-form-label control-label col-sm-2">Step</label>
-                        <div class="col-sm-10">
+                        <label for="stepname" class="col-form-label control-label col-sm-4">Step</label>
+                        <div class="col-sm-8">
                             <kendo-dropdownlist id="stepname" name="steptype"
                                                 data-text-field="name"
                                                 data-value-field="id"
@@ -45,8 +45,8 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="steptypeid" class="col-form-label col-sm-2">Step Type</label>
-                        <div class="col-sm-10">
+                        <label for="steptypeid" class="col-form-label col-sm-4">Step Type</label>
+                        <div class="col-sm-8">
                             <kendo-dropdownlist id="steptypeid" name="steptype"
                                                 dataTextField="name"
                                                 dataValueField="id"
@@ -62,8 +62,8 @@
                         </div>
                     </div>
                     <div class="form-group required row">
-                        <label for="ordinal" class="col-form-label control-label col-sm-2">Ordinal</label>
-                        <div class="col-sm-10">
+                        <label for="ordinal" class="col-form-label control-label col-sm-4">Ordinal</label>
+                        <div class="col-sm-8">
                             <kendo-numerictextbox id="ordinal"
                                                   name="ordinal"
                                                   min="1"
@@ -77,12 +77,37 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="stepinstruction" class="col-form-label col-sm-2">Instruction</label>
-                        <div class="col-sm-10">
+                        <label class="col-form-label col-sm-4"></label>
+                        <div class="d-inline-flex justify-content-start col-sm-8">
+                            <kendo-radiobutton id="required" class="mx-2" name="radioBtn" label="Required"></kendo-radiobutton>
+                            <kendo-radiobutton id="optional" class="mx-2" name="radioBtn" label="Optional"></kendo-radiobutton>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="stepinstruction" class="col-form-label col-sm-4">Instruction</label>
+                        <div class="col-sm-8">
                             <kendo-textarea name="stepinstruction"
                                             rows="3"
                                             data-bind="kendoEditor: stepinstruction, valueUpdate: 'afterkeydown'">
                             </kendo-textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-4">Require Applicant to Provide Document Proof</label>
+                        <div class="d-inline-flex justify-content-start col-sm-8">
+                            <kendo-checkbox id="document-proof" size=ComponentSize.Medium rounded=Rounded.Small class="mx-1" name="document-proof"></kendo-checkbox>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-4">In-house Scheduling</label>
+                        <div class="d-inline-flex justify-content-start col-sm-8">
+                            <kendo-checkbox id="in-house-scheduling" size=ComponentSize.Medium rounded=Rounded.Small class="mx-1" name="in-house-scheduling"></kendo-checkbox>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-4">Is Notification Required?</label>
+                        <div class="d-inline-flex justify-content-start col-sm-8">
+                            <kendo-checkbox id="notification" size=ComponentSize.Medium rounded=Rounded.Small class="mx-1" name="notification"></kendo-checkbox>
                         </div>
                     </div>
                     <div class="d-flex justify-content-start flex-row-reverse modal-footer">

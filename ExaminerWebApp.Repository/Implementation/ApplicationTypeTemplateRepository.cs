@@ -35,10 +35,11 @@ namespace ExaminerWebApp.Repository.Implementation
             return model;
         }
 
-        public void Update(ApplicationTypeTemplate _object)
+        public async Task<bool> Update(ApplicationTypeTemplate _object)
         {
             _context.ApplicationTypeTemplates.Update(_object);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> Delete(int id)

@@ -56,14 +56,14 @@ namespace ExaminerWebApp.Service.Implementation
             return true;
         }
 
-        public bool UpdateApplicant(Entities.Entities.Applicant model)
+        public async Task<bool> UpdateApplicant(Entities.Entities.Applicant model)
         {
             if (model.FormFile != null && model.FormFile.Length > 0)
             {
                 model.FilePath = SaveFile(model.FormFile);
             }
             var result = _mapper.Map<Repository.DataModels.Applicant>(model);
-            _applicantRepository.Update(result);
+            await _applicantRepository.Update(result);
             return true;
         }
 
@@ -85,7 +85,7 @@ namespace ExaminerWebApp.Service.Implementation
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                    formFile.CopyTo(fileStream);
+                formFile.CopyTo(fileStream);
             }
 
             return uniqueFileName;

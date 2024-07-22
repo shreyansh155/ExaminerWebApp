@@ -26,10 +26,11 @@ namespace ExaminerWebApp.Repository.Implementation
             return phase;
         }
 
-        public void Update(Phase phase)
+        public async Task<bool> Update(Phase phase)
         {
             _context.Phases.Update(phase);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> Delete(int id)

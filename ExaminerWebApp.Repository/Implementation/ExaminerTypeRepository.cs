@@ -1,6 +1,7 @@
 ﻿using ExaminerWebApp.Repository.DataContext;
 using ExaminerWebApp.Repository.DataModels;
 using ExaminerWebApp.Repository.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExaminerWebApp.Repository.Implementation
 {
@@ -13,9 +14,9 @@ namespace ExaminerWebApp.Repository.Implementation
             _context = context;
         }
      
-        public List<ExaminerType> GetList()
+        public async Task<List<ExaminerType>> GetList()
         {
-            return _context.ExaminerTypes.ToList();
+            return await _context.ExaminerTypes.ToListAsync();
         }
     }
 }

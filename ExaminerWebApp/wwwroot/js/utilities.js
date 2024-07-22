@@ -55,4 +55,5 @@ var patternsRegex = {
 };
 $("#refreshButton").on("click", function () {
     $("#errorBody").empty();
+
 });

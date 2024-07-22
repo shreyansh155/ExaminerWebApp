@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ExaminerWebApp.Composition.Helpers
+namespace ExaminerWebApp.ViewHelpers
 {
     public class DateNotInFuture : ValidationAttribute
     {

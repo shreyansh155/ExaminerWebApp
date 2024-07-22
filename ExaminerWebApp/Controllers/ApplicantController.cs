@@ -17,9 +17,9 @@ namespace ExaminerWebApp.Controllers
             _applicantTypeService = applicantTypeService;
         }
 
-        public IActionResult ApplicantIndex()
+        public async Task<IActionResult> ApplicantIndex()
         {
-            return View("Grid/Grid");
+            return await Task.FromResult(View("Grid/Grid"));
         }
 
         public async Task<ActionResult> GetAll(int pageSize, int pageNumber)
@@ -31,9 +31,9 @@ namespace ExaminerWebApp.Controllers
             return Json(await Pagination<ApplicantViewModel>.CreateAsync(result, pageNumber, pageSize));
         }
 
-        public IActionResult ApplicantForm()
+        public async Task<IActionResult> ApplicantForm()
         {
-            return PartialView("Modal/_ApplicationFormModal");
+            return await Task.FromResult(PartialView("Modal/_ApplicationFormModal"));
         }
 
         public List<ApplicantType> ApplicantTypeList()
@@ -92,7 +92,7 @@ namespace ExaminerWebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditApplicant(ApplicantViewModel model)
+        public async Task<ActionResult> EditApplicant(ApplicantViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -111,7 +111,7 @@ namespace ExaminerWebApp.Controllers
                     FileName = model.FormFile?.FileName,
                 };
 
-                _applicantService.UpdateApplicant(obj);
+                await _applicantService.UpdateApplicant(obj);
                 return Json(new { success = true });
             }
             else

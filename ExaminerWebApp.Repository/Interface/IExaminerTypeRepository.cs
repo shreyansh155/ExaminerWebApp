@@ -9,6 +9,6 @@ namespace ExaminerWebApp.Repository.Interface
 {
     public interface IExaminerTypeRepository
     {
-        List<ExaminerType> GetList();
+        Task<List<ExaminerType>> GetList();
     }
 }

@@ -18,7 +18,7 @@ namespace ExaminerWebApp.Service.Interface
      
         Task<bool> DeleteTemplate(int id);
 
-        bool Update(ApplicationTypeTemplate model);
+        Task<bool> Update(ApplicationTypeTemplate model);
       
         Task<object> GetPhaseStepsByTemplateAsync(int templateId, int phaseId);
 

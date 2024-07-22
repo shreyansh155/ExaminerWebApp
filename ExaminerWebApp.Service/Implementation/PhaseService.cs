@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
+using ExaminerWebApp.Composition.Helpers;
 using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.Repository.Interface;
 using ExaminerWebApp.Service.Interface;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using System.Linq.Dynamic.Core;
 
 namespace ExaminerWebApp.Service.Implementation
 {
-    public class PhaseService : IPhaseService
+    public class PhaseService : BaseService<Repository.DataModels.Phase>, IPhaseService
     {
         public readonly IPhaseRepository _phaseRepository;
 
@@ -17,11 +21,35 @@ namespace ExaminerWebApp.Service.Implementation
             _phaseRepository = phaseRepository;
         }
 
-        public IQueryable<Phase> GetAll()
+        public async Task<PaginationSet<Phase>> GetAll(PaginationSet<Phase> pager)
         {
             IQueryable<Repository.DataModels.Phase> list = _phaseRepository.GetAll();
+
+            //filtering as per field names
+            if (pager.Filter != null && pager.Filter.Filters != null && pager.Filter.Filters.Count > 0)
+            {
+                foreach (var filter in pager.Filter.Filters)
+                {
+                    list = ApplyFilter(list, filter);
+                }
+            }
+
+            //sorting ascending descending
+            if (pager.Sort != null && pager.Sort.Count > 0)
+            {
+                foreach (var sort in pager.Sort)
+                {
+                    list = ApplySorting(list, sort);
+                }
+            }
+
             IQueryable<Phase> phases = _mapper.ProjectTo<Phase>(list);
-            return phases;
+
+            pager.Items = await phases.Skip(pager.Skip).Take(pager.Take).ToListAsync();
+
+            pager.TotalCount = await phases.CountAsync();
+
+            return pager;
         }
 
         public async Task<Phase> GetPhaseById(int id)
@@ -33,6 +61,8 @@ namespace ExaminerWebApp.Service.Implementation
 
         public async Task<Phase> CreatePhase(Phase model)
         {
+            model.CreatedDate = DateTime.UtcNow;
+            model.CreatedBy = "System";
             Repository.DataModels.Phase phase = _mapper.Map<Repository.DataModels.Phase>(model);
             await _phaseRepository.Create(phase);
             return model;
@@ -47,7 +77,7 @@ namespace ExaminerWebApp.Service.Implementation
         public async Task<bool> UpdatePhase(Phase model)
         {
             Repository.DataModels.Phase phase = _mapper.Map<Repository.DataModels.Phase>(model);
-            await Task.Run(() => _phaseRepository.Update(phase));
+            await _phaseRepository.Update(phase);
             return true;
         }
 

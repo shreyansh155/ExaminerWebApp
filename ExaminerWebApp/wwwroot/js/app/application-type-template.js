@@ -255,7 +255,7 @@ $(function () {
                 this.name = ko.observable(data.name || "").extend({ required: "Please enter application name" });
                 this.description = ko.observable(data.description || "");
                 this.instruction = ko.observable(data.instruction || "");
-                 
+                this.validName = "";
                 this.submitTemplate = function () {
                     this.name.validate();
 
@@ -758,6 +758,7 @@ $(function () {
                 viewModel.ordinal.subscribe(function (newValue) {
                     ordinalNumericTextBox.value(newValue);
                 });
+
                 //step name binding
                 $("#stepname").data("kendoDropDownList").value(viewModel.stepid());
 
@@ -784,6 +785,7 @@ $(function () {
                         }
                     });
                 })
+
                 viewModel.steptypeid.subscribe(function (newValue) {
                     $("#steptypeid").data("kendoDropDownList").value(newValue);
                 });

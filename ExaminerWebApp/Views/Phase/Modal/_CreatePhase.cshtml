@@ -1,4 +1,4 @@
-﻿@model CreatePhaseModel
+﻿@model ExaminerWebApp.Entities.Entities.Phase;
 @{
     var showGrid = ViewBag.ShowGrid ?? false;
     var serializedData = Json.Serialize(Model);
@@ -52,6 +52,7 @@
                     <div class="d-flex justify-content-start flex-row-reverse modal-footer">
                         <div class="mx-2">
                             <kendo-button name="primaryTextButton"
+                                          type="button"
                                           data-bind="click: submitForm"
                                           theme-color="ThemeColor.Primary">
                                 Save
@@ -59,6 +60,7 @@
                         </div>
                         <div class="mx-2">
                             <kendo-button name="cancelButton"
+                                          type="button"
                                           data-bs-dismiss="modal"
                                           theme-color="ThemeColor.Secondary">
                                 Close

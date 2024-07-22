@@ -24,7 +24,7 @@ namespace PracticeWebApp.Service.Implementation
             _mapper = mapper;
             _config = config;
         }
-     
+
         public async Task<ExaminerWebApp.Entities.Entities.Examiner> GetExaminerById(int id)
         {
             ExaminerWebApp.Repository.DataModels.Examiner result = await _examinerRepository.GetById(id);
@@ -63,14 +63,14 @@ namespace PracticeWebApp.Service.Implementation
             return true;
         }
 
-        public bool UpdateExaminer(ExaminerWebApp.Entities.Entities.Examiner model)
+        public async Task<bool> UpdateExaminer(ExaminerWebApp.Entities.Entities.Examiner model)
         {
             if (model.FormFile != null && model.FormFile.Length > 0)
             {
                 model.FilePath = SaveFile(model.FormFile);
             }
             var result = _mapper.Map<ExaminerWebApp.Repository.DataModels.Examiner>(model);
-            _examinerRepository.Update(result);
+            await _examinerRepository.Update(result);
             return true;
         }
 
@@ -97,7 +97,7 @@ namespace PracticeWebApp.Service.Implementation
 
             return uniqueFileName;
         }
-      
+
         public bool CheckEmailIfExists(string email)
         {
             return _examinerRepository.CheckEmail(email);

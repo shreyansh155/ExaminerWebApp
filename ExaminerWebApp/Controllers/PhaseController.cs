@@ -15,21 +15,19 @@ namespace ExaminerWebApp.Controllers
             _phaseService = phaseService;
         }
 
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return await Task.FromResult(View());
         }
 
-        public async Task<ActionResult> GetAll(int pageSize, int pageNumber)
+        public async Task<ActionResult> GetAll([FromBody] PaginationSet<Phase> pager)
         {
-            IQueryable<Phase> data = _phaseService.GetAll();
-            IQueryable<PhaseViewModel> result = GetPhase(data);
-            return Json(await Pagination<PhaseViewModel>.CreateAsync(result, pageNumber, pageSize));
+            return Json(await _phaseService.GetAll(pager));
         }
 
-        public IActionResult AddPhase()
+        public async Task<IActionResult> AddPhase()
         {
-            return PartialView("Modal/_CreatePhase");
+            return await Task.FromResult(PartialView("Modal/_CreatePhase"));
         }
 
         public async Task<IActionResult> AddPhaseSteps(int phaseId)
@@ -42,22 +40,17 @@ namespace ExaminerWebApp.Controllers
                 PhaseId = phaseId,
             };
             ViewBag.ShowGrid = true;
-            return PartialView("Modal/_CreatePhase", model);
+            return PartialView("Modal/_CreatePhase", phase);
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreatePhase(CreatePhaseModel model)
+        public async Task<ActionResult> CreatePhase(Phase model)
         {
             if (ModelState.IsValid)
             {
                 if (await _phaseService.CheckIfPhaseExists(model.Name) != true)
                 {
-                    Phase phase = new()
-                    {
-                        Name = model.Name,
-                        Description = model.Description,
-                    };
-                    await _phaseService.CreatePhase(phase);
+                    await _phaseService.CreatePhase(model);
                     return Json(new { success = true });
                 }
                 else
@@ -67,39 +60,25 @@ namespace ExaminerWebApp.Controllers
             }
             else
             {
-                var errors = ModelStateErrorSerializer(ModelState);
-                return Json(new { success = false, errors });
+
+                return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
             }
         }
 
         public async Task<ActionResult> Edit(int id)
         {
             Phase phase = await _phaseService.GetPhaseById(id);
-            CreatePhaseModel model = new()
-            {
-                PhaseId = phase.Id,
-                Name = phase.Name,
-                Description = phase.Description,
-            };
-            return PartialView("Modal/_CreatePhase", model);
+            return PartialView("Modal/_CreatePhase", phase);
         }
 
         [HttpPost]
-        public async Task<ActionResult> EditPhase(CreatePhaseModel model)
+        public async Task<ActionResult> EditPhase(Phase model)
         {
             if (ModelState.IsValid)
             {
-                if (await _phaseService.CheckPhaseOnUpdateExists(model.Name, model.PhaseId) != true)
+                if (await _phaseService.CheckPhaseOnUpdateExists(model.Name, model.Id) != true)
                 {
-                    Phase phase = new()
-                    {
-                        Id = model.PhaseId,
-                        Name = model.Name,
-                        Description = model.Description,
-                        ModifiedBy = "2",
-                        ModifiedDate = DateTime.UtcNow,
-                    };
-                    await _phaseService.UpdatePhase(phase);
+                    await _phaseService.UpdatePhase(model);
                     return Json(new { success = true });
                 }
                 else
@@ -109,8 +88,7 @@ namespace ExaminerWebApp.Controllers
             }
             else
             {
-                var errors = ModelStateErrorSerializer(ModelState);
-                return Json(new { success = false, errors });
+                return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
             }
         }
 

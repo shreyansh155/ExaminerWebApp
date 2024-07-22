@@ -1,4 +1,5 @@
-﻿using ExaminerWebApp.Entities.Entities;
+﻿using ExaminerWebApp.Composition.Helpers;
+using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.Service.Interface;
 using ExaminerWebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,9 @@ namespace ExaminerWebApp.Controllers
             _stepService = stepService;
         }
 
-        public async Task<ActionResult> GetAll(int phaseId)
+        public async Task<ActionResult> GetAll([FromQuery] int phaseId, [FromBody] PaginationSet<Step> pager)
         {
-            IQueryable<Step> data = _stepService.GetAll(phaseId);
-            IQueryable<StepViewModel> result = await Task.Run(() => GetSteps(data));
-            return Json(result);
-        }
-
-        public async Task<ActionResult> GetAllSteps(int phaseId)
-        {
-            IQueryable<Step> data = _stepService.GetAll(phaseId);
-            IQueryable<StepsList> result = await Task.Run(() => GetAllSteps(data));
-            return Json(result);
+            return Json(await _stepService.GetAll(phaseId, pager));
         }
 
         [HttpPost]
@@ -86,7 +78,7 @@ namespace ExaminerWebApp.Controllers
             }
             else
             {
-                return BadRequest(ModelState);
+                return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
             }
         }
 

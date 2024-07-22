@@ -14,6 +14,6 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<bool> DeleteApplicant(int id);
 
-        bool UpdateApplicant(Applicant model);
+        Task<bool> UpdateApplicant(Applicant model);
     }
 }

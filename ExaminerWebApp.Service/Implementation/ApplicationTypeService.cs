@@ -63,11 +63,11 @@ namespace ExaminerWebApp.Service.Implementation
             return await _applicationTypeRepository.Delete(id);
         }
 
-        public bool Update(ApplicationTypeTemplate model)
+        public async Task<bool> Update(ApplicationTypeTemplate model)
         {
             Repository.DataModels.ApplicationTypeTemplate obj = _mapper.Map<Repository.DataModels.ApplicationTypeTemplate>(model);
 
-            _applicationTypeRepository.Update(obj);
+            await _applicationTypeRepository.Update(obj);
 
             return true;
         }

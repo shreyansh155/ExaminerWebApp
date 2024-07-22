@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ExaminerWebApp.Composition.Helpers;
 using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.Repository.Interface;
 using ExaminerWebApp.Service.Interface;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExaminerWebApp.Service.Implementation
 {
-    public class StepService : IStepService
+    public class StepService : BaseService<Repository.DataModels.Step>, IStepService
     {
         public readonly IStepRepository _stepRepository;
 
@@ -18,14 +19,34 @@ namespace ExaminerWebApp.Service.Implementation
             _mapper = mapper;
         }
 
-        public IQueryable<Step> GetAll(int phaseId)
+        public async Task<PaginationSet<Step>> GetAll(int phaseId, PaginationSet<Step> pager)
         {
             IQueryable<Repository.DataModels.Step> step =
                 _stepRepository.GetAllSteps(phaseId)
                 .Include(x => x.StepType)
                 .AsQueryable();
             IQueryable<Step> steps = _mapper.ProjectTo<Step>(step);
-            return steps;
+
+            //filtering as per field names
+            if (pager.Filter != null && pager.Filter.Filters != null && pager.Filter.Filters.Count > 0)
+            {
+                foreach (var filter in pager.Filter.Filters)
+                {
+                    step = ApplyFilter(step, filter);
+                }
+            }
+
+            //sorting ascending descending
+            if (pager.Sort != null && pager.Sort.Count > 0)
+            {
+                foreach (var sort in pager.Sort)
+                {
+                    step = ApplySorting(step, sort);
+                }
+            }
+            pager.TotalCount = await steps.CountAsync();
+            pager.Items = await steps.Skip(pager.Skip).Take(pager.Take).ToListAsync();
+            return pager;
         }
 
         public async Task<Step> GetStepById(int id)
@@ -47,10 +68,10 @@ namespace ExaminerWebApp.Service.Implementation
             return await _stepRepository.Delete(id);
         }
 
-        public bool UpdateStep(Step step)
+        public async Task<bool> UpdateStep(Step step)
         {
             Repository.DataModels.Step steps = _mapper.Map<Repository.DataModels.Step>(step);
-            _stepRepository.Update(steps);
+            await _stepRepository.Update(steps);
             return true;
         }
 
@@ -72,7 +93,7 @@ namespace ExaminerWebApp.Service.Implementation
         {
             return await _stepRepository.CheckIfStepExists(phaseId, stepName);
         }
-      
+
         public async Task<bool> CheckIfEditStepExists(int phaseId, int? stepId, string stepName)
         {
             return await _stepRepository.CheckIfEditStepExists(phaseId, stepId, stepName);

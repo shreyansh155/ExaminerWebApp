@@ -19,8 +19,8 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<IQueryable<Step>> GetStepByPhaseId(int phaseId);
 
-        Task<bool> CheckIfStepExists(int phaseId, string stepName);
+        Task<bool> CheckIfStepExists(Step model);
 
-        Task<bool> CheckIfEditStepExists(int phaseId, int? stepId, string stepName);
+        Task<bool> CheckIfEditStepExists(Step step);
     }
 }

@@ -11,11 +11,9 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<ApplicationTypeTemplate> Add(ApplicationTypeTemplate model);
 
-        bool ApplicationTemplateExists(string applicationName);
+        Task<bool> ApplicationTemplateExists(string applicationName);
 
         Task<bool> EditApplicationTemplateExists(int? id, string applicationName);
-
-        Task<bool> Delete(int id);
 
         Task<bool> DeleteTemplate(int id);
 
@@ -27,7 +25,7 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<PaginationSet<object>> GetPhaseByTemplate(int templateId, PaginationSet<object> pager);
 
-        IQueryable<Phase> PhaseList(int templateId);
+        Task<IQueryable<Phase>> PhaseList(int templateId);
 
         Task<List<Step>> StepList(int? templatePhaseStepId);
 

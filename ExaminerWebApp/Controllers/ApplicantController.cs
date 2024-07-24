@@ -17,18 +17,14 @@ namespace ExaminerWebApp.Controllers
             _applicantTypeService = applicantTypeService;
         }
 
-        public async Task<IActionResult> ApplicantIndex()
+        public async Task<IActionResult> Index()
         {
-            return await Task.FromResult(View("Grid/Grid"));
+            return await Task.FromResult(View());
         }
 
-        public async Task<ActionResult> GetAll(int pageSize, int pageNumber)
+        public async Task<ActionResult> GetAll([FromBody] PaginationSet<Applicant> pager)
         {
-            IQueryable<Applicant> data = await Task.Run(() => _applicantService.GetAllApplicants());
-
-            IQueryable<ApplicantViewModel> result = GetApplicantViewModels(data);
-
-            return Json(await Pagination<ApplicantViewModel>.CreateAsync(result, pageNumber, pageSize));
+            return Json(await _applicantService.GetAllApplicants(pager));
         }
 
         public async Task<IActionResult> ApplicantForm()
@@ -36,9 +32,9 @@ namespace ExaminerWebApp.Controllers
             return await Task.FromResult(PartialView("Modal/_ApplicationFormModal"));
         }
 
-        public List<ApplicantType> ApplicantTypeList()
+        public async Task<List<ApplicantType>> ApplicantTypeList()
         {
-            return _applicantTypeService.GetApplicantTypeList();
+            return await _applicantTypeService.GetApplicantTypeList();
         }
 
         [HttpPost]
@@ -46,7 +42,7 @@ namespace ExaminerWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_applicantService.CheckEmailIfExists(model.Email))
+                if (await _applicantService.CheckEmailIfExists(model.Email))
                 {
                     return Json(new { success = false, errors = "Email already exists!" });
                 }

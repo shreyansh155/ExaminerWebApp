@@ -1,4 +1,5 @@
-﻿using ExaminerWebApp.Entities.Entities;
+﻿using ExaminerWebApp.Composition.Helpers;
+using ExaminerWebApp.Entities.Entities;
 
 namespace ExaminerWebApp.Service.Interface
 {
@@ -6,7 +7,7 @@ namespace ExaminerWebApp.Service.Interface
     {
         Task<Examiner> GetExaminerById(int id);
 
-        IQueryable<Examiner> GetAllExaminer();
+        Task<PaginationSet<Examiner>> GetAllExaminer(PaginationSet<Examiner> pager);
 
         Task<Examiner> AddExaminer(Examiner model);
 

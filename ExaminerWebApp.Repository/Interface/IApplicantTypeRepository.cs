@@ -4,6 +4,6 @@ namespace ExaminerWebApp.Repository.Interface
 {
     public interface IApplicantTypeRepository
     {
-        List<ApplicantType> GetList();
+        Task<List<ApplicantType>> GetList();
     }
 }

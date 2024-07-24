@@ -31,26 +31,20 @@ namespace ExaminerWebApp.Controllers
             return await Task.FromResult(PartialView("Modal/_TemplateModal"));
         }
 
-        public async Task<IActionResult> AddTemplate(ApplicationTypeTemplateModel model)
+        public async Task<IActionResult> AddTemplate(ApplicationTypeTemplate model)
         {
             if (ModelState.IsValid)
             {
-                if (_applicationTypeService.ApplicationTemplateExists(model.Name))
+                if (await _applicationTypeService.ApplicationTemplateExists(model.Name))
                 {
                     return Json(new { success = false, errors = "This application template already exists" });
                 }
                 else
                 {
-                    ApplicationTypeTemplate applicationType = new()
-                    {
-                        Name = model.Name,
-                        Description = model.Description,
-                        Instruction = model.Instruction,
-                        CreatedBy = "1",
-                        CreatedDate = DateTime.UtcNow,
-                    };
+                    model.CreatedBy = "1";
+                    model.CreatedDate = DateTime.UtcNow;
 
-                    await _applicationTypeService.Add(applicationType);
+                    await _applicationTypeService.Add(model);
                     return Json(new { success = true });
                 }
             }

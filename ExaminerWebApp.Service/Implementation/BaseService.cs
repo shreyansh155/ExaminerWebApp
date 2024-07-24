@@ -5,7 +5,7 @@ using System.Linq.Dynamic.Core;
 
 namespace ExaminerWebApp.Service.Implementation
 {
-    public class BaseService<T>
+    public class BaseService
     {
         protected static IQueryable<T> ApplyFilter<T>(IQueryable<T> query, GridFilter filter)
         {
@@ -25,7 +25,7 @@ namespace ExaminerWebApp.Service.Implementation
             return query;
         }
 
-        protected static IQueryable<T> ApplySorting(IQueryable<T> query, GridSort sort)
+        protected static IQueryable<T> ApplySorting<T>(IQueryable<T> query, GridSort sort)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(parameter, sort.Field);

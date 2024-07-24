@@ -52,18 +52,19 @@ namespace ExaminerWebApp.Repository.Implementation
             return await _context.StepTypes.OrderBy(x => x.Id).ToListAsync();
         }
 
-        public async Task<bool> CheckIfStepExists(int phaseId, string stepName)
+        public async Task<bool> CheckIfStepExists(Step step)
         {
-            return await _context.Steps.Where(x => x.PhaseId == phaseId && x.Name.ToLower() == stepName.ToLower()).AnyAsync();
+            return await _context.Steps.Where(x => x.PhaseId == step.PhaseId && x.Name.ToLower() == step.Name.ToLower()).AnyAsync();
         }
 
-        public async Task<bool> CheckIfEditStepExists(int phaseId, int? stepId, string stepName)
+        public async Task<bool> CheckIfEditStepExists(Step step)
         {
-            return await _context.Steps.Where(x => x.PhaseId == phaseId && x.Id != stepId && x.Name.ToLower() == stepName.ToLower()).AnyAsync();
+            return await _context.Steps.Where(x => x.PhaseId == step.PhaseId && x.Id != step.Id && x.Name.ToLower() == step.Name.ToLower()).AnyAsync();
         }
+
         public async Task<bool> UpdateInstruction(int? stepId, string instruction)
         {
-            Step step = await _context.Steps.FirstOrDefaultAsync(x => x.Id == stepId);
+            Step? step = await _context.Steps.FirstOrDefaultAsync(x => x.Id == stepId);
             step.Instruction = instruction;
             await _context.SaveChangesAsync();
             return true;

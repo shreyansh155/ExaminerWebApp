@@ -4,6 +4,6 @@ namespace ExaminerWebApp.Service.Interface
 { 
     public interface IApplicantTypeService
     {
-        List<ApplicantType> GetApplicantTypeList();
+        Task<List<ApplicantType>> GetApplicantTypeList();
     }
 }

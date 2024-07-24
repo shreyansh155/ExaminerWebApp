@@ -11,7 +11,7 @@
 <div class="container-fluid card bg-light justify-content-center">
     <form id="templateForm">
         <div class="card-header">
-            <h3>Edit Application Type Template: <strong>@Model.Name</strong></h3>
+            <h3>Edit Application Type Template: <strong class="mx-1">@Model.Name</strong></h3>
         </div>
         <div id="errorBody" class="text-danger"></div>
         <div class="form-group">
@@ -50,13 +50,10 @@
             </div>
         </div>
     </form>
-
     <div id="grid" class="mt-1"></div>
-
 </div>
 
 <div id="displayModal"></div>
-
 <button id="refreshButton" type="button" hidden></button>
 
 <script id="custom-toolbar-template" type="text/x-kendo-template">

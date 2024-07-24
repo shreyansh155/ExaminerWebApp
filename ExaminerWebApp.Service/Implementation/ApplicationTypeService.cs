@@ -4,13 +4,11 @@ using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.Repository.Interface;
 using ExaminerWebApp.Service.Interface;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq.Dynamic.Core;
-using System.Linq.Expressions;
 
 namespace ExaminerWebApp.Service.Implementation
 {
-    public class ApplicationTypeService : BaseService<Repository.DataModels.ApplicationTypeTemplate>, IApplicationTypeService
+    public class ApplicationTypeService : BaseService, IApplicationTypeService
     {
         private readonly IMapper _mapper;
         private readonly IApplicationTypeTemplateRepository _applicationTypeRepository;
@@ -30,6 +28,8 @@ namespace ExaminerWebApp.Service.Implementation
         public async Task<PaginationSet<ApplicationTypeTemplate>> GetAll(PaginationSet<ApplicationTypeTemplate> pager)
         {
             var list = _applicationTypeRepository.GetAll().AsQueryable();
+
+            //filtering based on search fields
             if (pager.Filter != null && pager.Filter.Filters != null && pager.Filter.Filters.Count > 0)
             {
                 foreach (var filter in pager.Filter.Filters)
@@ -72,19 +72,14 @@ namespace ExaminerWebApp.Service.Implementation
             return model;
         }
 
-        public bool ApplicationTemplateExists(string applicationName)
+        public async Task<bool> ApplicationTemplateExists(string applicationName)
         {
-            return _applicationTypeRepository.ApplicationTemplateExists(applicationName);
+            return await _applicationTypeRepository.ApplicationTemplateExists(applicationName);
         }
 
         public async Task<bool> EditApplicationTemplateExists(int? id, string applicationName)
         {
             return await _applicationTypeRepository.EditApplicationTemplateExists(id, applicationName);
-        }
-
-        public async Task<bool> Delete(int id)
-        {
-            return await _templatePhaseRepository.Delete(id);
         }
 
         public async Task<bool> DeleteTemplate(int id)
@@ -101,19 +96,17 @@ namespace ExaminerWebApp.Service.Implementation
             return true;
         }
 
-        public IQueryable<Phase> PhaseList(int templateId)
+        public async Task<IQueryable<Phase>> PhaseList(int templateId)
         {
-            var templatePhaseIds = _templatePhaseRepository.GetAllTemplates(templateId)
+            var templatePhaseIds = await _templatePhaseRepository.GetAllTemplates(templateId)
                 .Select(tp => tp.PhaseId)
-                .ToList();  
+                .ToListAsync();
 
             IQueryable<Repository.DataModels.Phase> filteredPhases = _phaseRepository
                 .GetAll()
                 .Where(p => !templatePhaseIds.Contains(p.Id));
 
-            IQueryable<Phase> list = _mapper.ProjectTo<Phase>(filteredPhases);
-
-            return list;
+            return _mapper.ProjectTo<Phase>(filteredPhases);
         }
 
         public async Task<PaginationSet<object>> GetPhaseByTemplate(int templateId, PaginationSet<object> pager)
@@ -126,10 +119,10 @@ namespace ExaminerWebApp.Service.Implementation
             {
                 foreach (var sort in pager.Sort)
                 {
-                    templatePhaseList = ApplySortings(templatePhaseList, sort);
+                    templatePhaseList = ApplySorting(templatePhaseList, sort);
                 }
             }
-            pager.Items = await templatePhaseList.Skip(pager.Skip).Take(pager.Take).ToDynamicListAsync();
+            pager.Items = await templatePhaseList.Skip(pager.Skip).Take(pager.Take).ToListAsync();
 
             pager.TotalCount = templatePhaseList.Count();
 
@@ -166,24 +159,6 @@ namespace ExaminerWebApp.Service.Implementation
             List<Repository.DataModels.Step> steps = await _phaseStepRepository.GetPhaseStepList(templatePhaseId);
             List<Step> step = _mapper.Map<List<Step>>(steps);
             return step;
-        }
-
-        protected static IQueryable<ApplicationTypeTemplatePhase> ApplySortings(IQueryable<ApplicationTypeTemplatePhase> query, GridSort sort)
-        {
-            var parameter = Expression.Parameter(typeof(ApplicationTypeTemplatePhase), "x");
-            var property = Expression.Property(parameter, sort.Field);
-            var lambda = Expression.Lambda(property, parameter);
-
-            string methodName = sort.Dir == "asc" ? "OrderBy" : "OrderByDescending";
-            var resultExpression = Expression.Call(
-                typeof(Queryable),
-                methodName,
-                new Type[] { query.ElementType, property.Type },
-                query.Expression,
-                Expression.Quote(lambda)
-            );
-
-            return query.Provider.CreateQuery<ApplicationTypeTemplatePhase>(resultExpression);
         }
     }
 }

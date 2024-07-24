@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Hosting;
 using System.Net.Mail;
 using System.Net;
 using Microsoft.Extensions.Configuration;
+using ExaminerWebApp.Composition.Helpers;
+using ExaminerWebApp.Service.Implementation;
 
 namespace PracticeWebApp.Service.Implementation
 {
-    public class ExaminerService : IExaminerService
+    public class ExaminerService : BaseService, IExaminerService
     {
         private readonly IExaminerRepository _examinerRepository;
         private readonly IMapper _mapper;
@@ -31,15 +33,35 @@ namespace PracticeWebApp.Service.Implementation
             return _mapper.Map<ExaminerWebApp.Entities.Entities.Examiner>(result);
         }
 
-        public IQueryable<ExaminerWebApp.Entities.Entities.Examiner> GetAllExaminer()
+        public async Task<PaginationSet<ExaminerWebApp.Entities.Entities.Examiner>> GetAllExaminer(PaginationSet<ExaminerWebApp.Entities.Entities.Examiner> pager)
         {
 
             IQueryable<ExaminerWebApp.Repository.DataModels.Examiner> list = _examinerRepository.GetAll()
             .Include(x => x.ExaminerNavigation)
             .Include(x => x.Status)
             .AsQueryable();
+            if (pager.Filter != null && pager.Filter.Filters != null && pager.Filter.Filters.Count > 0)
+            {
+                foreach (var filter in pager.Filter.Filters)
+                {
+                    list = ApplyFilter(list, filter);
+                }
+            }
+
+            //sorting ascending descending
+            if (pager.Sort != null && pager.Sort.Count > 0)
+            {
+                foreach (var sort in pager.Sort)
+                {
+                    list = ApplySorting(list, sort);
+                }
+            }
             IQueryable<ExaminerWebApp.Entities.Entities.Examiner> obj = _mapper.ProjectTo<ExaminerWebApp.Entities.Entities.Examiner>(list);
-            return obj;
+
+            pager.Items = await obj.Skip(pager.Skip).Take(pager.Take).ToListAsync();
+
+            pager.TotalCount = obj.Count();
+            return pager;
 
         }
 

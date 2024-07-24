@@ -1,7 +1,6 @@
 ﻿using ExaminerWebApp.Composition.Helpers;
 using ExaminerWebApp.Entities.Entities;
 using ExaminerWebApp.Service.Interface;
-using ExaminerWebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExaminerWebApp.Controllers
@@ -21,65 +20,31 @@ namespace ExaminerWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateStep([FromBody] StepViewModel model)
+        public async Task<IActionResult> CreateStep([FromBody] Step model)
         {
             if (ModelState.IsValid)
             {
-                if (model.Name != null && await _stepService.CheckIfStepExists(model.PhaseId, model.Name) != true)
-                {
-                    Step step = new()
-                    {
-                        PhaseId = model.PhaseId,
-                        Name = model.Name,
-                        Description = model.Description,
-                        Instruction = model.Instruction,
-                        StepTypeId = model.TypeId,
-                        CreatedDate = DateTime.UtcNow,
-                        CreatedBy = "1",
-                    };
-                    await _stepService.CreateStep(step);
-
-                    return Json(new { success = true });
-                }
-                else
-                {
+                if (!await _stepService.CheckIfStepExists(model))
                     return Json(new { success = false, errors = "Step already exists." });
-                }
+
+                await _stepService.CreateStep(model);
+                return Json(new { success = true });
             }
-            else
-            {
-                return BadRequest(ModelState);
-            }
+            return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditStep([FromBody] StepViewModel model)
+        public async Task<IActionResult> EditStep([FromBody] Step model)
         {
             if (ModelState.IsValid)
             {
-                if (await _stepService.CheckIfEditStepExists(model.PhaseId, model.Id, model.Name))
-                {
+                if (!await _stepService.CheckIfEditStepExists(model))
                     return Json(new { success = false, errors = "Step already exists." });
-                }
-                Step step = new()
-                {
-                    Id = model.Id,
-                    PhaseId = model.PhaseId,
-                    Name = model.Name ?? "",
-                    Description = model.Description,
-                    Instruction = model.Instruction,
-                    StepTypeId = model.TypeId,
-                    ModifiedDate = DateTime.UtcNow,
-                    ModifiedBy = "2",
-                };
-                _stepService.UpdateStep(step);
 
+                await _stepService.UpdateStep(model);
                 return Json(new { success = true });
             }
-            else
-            {
-                return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
-            }
+            return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
         }
 
         public async Task<List<StepType>> StepTypeList()

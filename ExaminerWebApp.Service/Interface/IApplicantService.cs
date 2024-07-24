@@ -1,4 +1,5 @@
-﻿using ExaminerWebApp.Entities.Entities;
+﻿using ExaminerWebApp.Composition.Helpers;
+using ExaminerWebApp.Entities.Entities;
 
 namespace ExaminerWebApp.Service.Interface
 {
@@ -6,11 +7,11 @@ namespace ExaminerWebApp.Service.Interface
     {
         Task<Applicant> GetApplicantById(int id);
 
-        IQueryable<Applicant> GetAllApplicants();
+        Task<PaginationSet<Entities.Entities.Applicant>> GetAllApplicants(PaginationSet<Applicant> pager);
 
         Task<Applicant> AddApplicant(Applicant model);
 
-        bool CheckEmailIfExists(string email);
+        Task<bool> CheckEmailIfExists(string email);
 
         Task<bool> DeleteApplicant(int id);
 

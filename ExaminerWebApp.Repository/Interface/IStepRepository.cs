@@ -8,9 +8,9 @@ namespace ExaminerWebApp.Repository.Interface
 
         Task<List<StepType>> GetStepTypeList();
 
-        Task<bool> CheckIfStepExists(int phaseId, string stepName);
+        Task<bool> CheckIfStepExists(Step step);
 
-        Task<bool> CheckIfEditStepExists(int phaseId, int? stepId, string stepName);
+        Task<bool> CheckIfEditStepExists(Step step);
 
         Task<bool> UpdateInstruction(int? stepId,string instruction);
     }

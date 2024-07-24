@@ -83,7 +83,6 @@ namespace ExaminerWebApp.Repository.Implementation
             {
                 item.IsDeleted = true;
             }
-
             await _context.SaveChangesAsync();
             return true;
         }

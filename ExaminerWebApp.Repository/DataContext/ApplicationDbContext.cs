@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ExaminerWebApp.Repository.DataModels;
+﻿using ExaminerWebApp.Repository.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -31,6 +29,10 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<ApplicationTypeTemplate> ApplicationTypeTemplates { get; set; }
 
     public virtual DbSet<ApplicationTypeTemplatePhase> ApplicationTypeTemplatePhases { get; set; }
+
+    public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
+
+    public virtual DbSet<EmailTemplateType> EmailTemplateTypes { get; set; }
 
     public virtual DbSet<Examiner> Examiners { get; set; }
 
@@ -150,6 +152,58 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.TemplateId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fkey_template_id");
+        });
+
+        modelBuilder.Entity<EmailTemplate>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("email_template_pkey");
+
+            entity.ToTable("email_template");
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.CreatedBy)
+                .HasDefaultValueSql("1")
+                .HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate).HasColumnName("created_date");
+            entity.Property(e => e.Description)
+                .HasMaxLength(500)
+                .HasColumnName("description");
+            entity.Property(e => e.EmailTemplateType).HasColumnName("email_template_type");
+            entity.Property(e => e.IsDefault).HasColumnName("is_default");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_deleted");
+            entity.Property(e => e.ModifiedBy)
+                .HasDefaultValueSql("1")
+                .HasColumnName("modified_by");
+            entity.Property(e => e.ModifiedDate).HasColumnName("modified_date");
+            entity.Property(e => e.Name)
+                .HasColumnType("character varying")
+                .HasColumnName("name");
+            entity.Property(e => e.Template)
+                .HasColumnType("character varying")
+                .HasColumnName("template");
+
+            entity.HasOne(d => d.EmailTemplateTypeNavigation).WithMany(p => p.EmailTemplates)
+                .HasForeignKey(d => d.EmailTemplateType)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkey_email_template_type_id");
+        });
+
+        modelBuilder.Entity<EmailTemplateType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("email_template_type_pkey");
+
+            entity.ToTable("email_template_type");
+
+            entity.Property(e => e.Id)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<Examiner>(entity =>

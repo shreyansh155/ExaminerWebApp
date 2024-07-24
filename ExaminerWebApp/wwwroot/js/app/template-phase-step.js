@@ -32,6 +32,7 @@
                         success: function (response) {
                             if (response.success) {
                                 $("#refreshButton").trigger("click");
+                                location.reload();
                                 $('#add-phase').modal('hide');
                             } else {
                                 var errorsHtml = '<ul>';
@@ -53,19 +54,19 @@
                     });
                 }
             }
-
             this.deleteTemplate = function () {
                 if (confirm("Are you sure you want to delete this template?")) {
+
                     $.ajax({
-                        url: "/TemplatePhaseStep/DeleteTemplate",
+                        url: "/ApplicationTypeTemplate/DeleteTemplate",
                         type: 'POST',
                         data: {
                             id: data.id,
                         },
                         success: function (result) {
-                            $("#refreshButton").trigger("click");
                             alert("Application Type Template has been deleted successfully");
-                            window.location.replace('/TemplatePhaseStep/Index');
+                            window.location.replace('/ApplicationTypeTemplate/Index');
+                            $("#refreshButton").trigger("click");
                         },
                         error: function (error) {
                             console.log(error);
@@ -138,7 +139,7 @@
                             };
                         });
                     },
-                    
+
                     model: {
                         fields: {
                             id: { type: "number" },
@@ -169,7 +170,11 @@
                 }
             ],
             dataBound: function () {
-                this.expandRow(this.tbody.find("tr.k-master-row").first());
+                var grid = this;
+                grid.tbody.find("tr").each(function () {
+                    grid.expandRow($(this));
+                });
+
                 $('.k-grid-add').off("click");
                 $('.k-grid-add').on("click", function () {
                     $.ajax({
@@ -196,7 +201,6 @@
                 { field: "steps", title: "Steps", width: "200px" },
                 {
                     command: [
-
                         {
                             text: "Add Steps",
                             click: AddStep
@@ -233,7 +237,7 @@
         //Steps Grid    
         function PhaseRow(e) {
             var dataItem = e.data;
-            stepGrid = $("<div/>").appendTo(e.detailCell).kendoGrid({
+            stepGrid = $("<div class='innerGrid' />").appendTo(e.detailCell).kendoGrid({
                 dataSource: {
                     transport: {
                         read: function (options) {
@@ -280,7 +284,7 @@
                     pageSize: 10,
                 },
                 scrollable: true,
-                sortable: true,
+                sortable: false,
                 pageable: false,
                 editable: false,
                 columns: [
@@ -444,7 +448,7 @@
         });
 
         $("#back-btn").on("click", function () {
-            window.location.replace("/TemplatePhaseStep/Index")
+            window.location.replace("/ApplicationTypeTemplate/Index")
         })
 
         $(document).on("click", "#collapse", function () {

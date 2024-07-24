@@ -1,4 +1,5 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExaminerWebApp.Entities.Entities
@@ -11,6 +12,8 @@ namespace ExaminerWebApp.Entities.Entities
 
         public int? StepId { get; set; }
 
+        [Range(1, int.MaxValue)]
+        [Required(ErrorMessage = "Please enter a valid ordinal number")]
         public int? Ordinal { get; set; }
 
         public bool? IsInTemplatePhaseSteps { get; set; }

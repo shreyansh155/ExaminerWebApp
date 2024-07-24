@@ -4,8 +4,8 @@ namespace ExaminerWebApp.Repository.Interface
 {
     public interface IApplicantRepository : IBaseRepository<Applicant>
     {
-        public bool CheckEmail(string email);
-     
-        public IQueryable<Applicant> GetAll();
+        Task<bool> CheckEmail(string email);
+
+        IQueryable<Applicant> GetAll();
     }
 }

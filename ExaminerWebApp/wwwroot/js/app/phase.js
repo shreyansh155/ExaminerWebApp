@@ -78,6 +78,12 @@
                 width: "300px",
             }
         ],
+        dataBound: function (e) {
+            var grid = this;
+            grid.tbody.find("tr").each(function () {
+                grid.expandRow($(this));
+            });
+        }
     }).data("kendoGrid");
 
     function AddSteps(e) {
@@ -104,7 +110,7 @@
         var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
         console.log(dataItem);
         $.ajax({
-            url: "/Phase/Edit",
+            url: "/Phase/EditPhase",
             type: "GET",
             data: {
                 id: dataItem.id,
@@ -143,7 +149,7 @@
     function PhaseRow(e) {
         var dataItem = e.data;
 
-        $("<div/>").appendTo(e.detailCell).kendoGrid({
+        $("<div class='innerGrid' />").appendTo(e.detailCell).kendoGrid({
             dataSource: {
                 transport: {
                     read: function (options) {
@@ -183,7 +189,6 @@
                             id: { editable: false, nullable: true },
                             name: { type: "string" },
                             description: { type: "string" },
-                            instruction: { type: "string", encoded: false },
                             typeId: { type: "number" },
                             stepType: { type: "string" }
                         }
@@ -197,18 +202,9 @@
             editable: false,
             columns: [
                 { field: "id", title: "Step Id", width: "125px", hidden: true },
-                { field: "name", title: "Step Name", width: "130px" },
-                { field: "description", title: "Description", width: "130px" },
-                {
-                    field: "instruction",
-                    title: "Instruction",
-                    width: "130px",
-                    encoded: false,
-                    template: function (dataItem) {
-                        return dataItem.instruction;
-                    },
-                },
-                { field: "stepType", title: "Step Type", width: "150px" },
+                { field: "name", title: "Step Name", width: "300px"  },
+                { field: "description", title: "Description" },
+                { field: "stepType", title: "Step Type", width: "300px" },
             ],
         });
     }
@@ -216,7 +212,7 @@
     // Event handlers for custom toolbar buttons
     $(document).on("click", "#add", function () {
         $.ajax({
-            url: "/Phase/AddPhase",
+            url: "/Phase/CreatePhase",
             type: 'GET',
             success: function (result) {
                 $('#displayModal').html(result);
@@ -243,6 +239,9 @@
             grid.collapseRow(this);
         });
     });
+    $(document).on("ready", function () {
+        $("#expand").trigger("click");
+    })
     $("#refreshButton").on("click", function () {
         grid.dataSource.read();
     });

@@ -40,16 +40,15 @@ namespace ExaminerWebApp.Service.Implementation
             return true;
         }
 
-        public TemplatePhaseStep GetTemplatePhaseStep(int id)
+        public async Task<TemplatePhaseStep> GetTemplatePhaseStep(int id)
         {
-            Repository.DataModels.TemplatePhaseStep templatePhaseStep = _phaseStepRepository.GetTemplatePhaseStep(id);
-            TemplatePhaseStep obj = _mapper.Map<TemplatePhaseStep>(templatePhaseStep);
-            return obj;
+            Repository.DataModels.TemplatePhaseStep templatePhaseStep = await _phaseStepRepository.GetTemplatePhaseStep(id);
+            return _mapper.Map<TemplatePhaseStep>(templatePhaseStep);
         }
 
-        public int GetStepTypeId(int stepId)
+        public async Task<int> GetStepTypeId(int stepId)
         {
-            return _phaseStepRepository.GetStepTypeId(stepId);
+            return await _phaseStepRepository.GetStepTypeId(stepId);
         }
 
         public async Task<TemplatePhaseStep> AddTemplatePhaseStep(TemplatePhaseStep templatePhaseStep)

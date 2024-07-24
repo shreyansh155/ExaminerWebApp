@@ -55,39 +55,5 @@ namespace ExaminerWebApp.Controllers
                 Status = entity.Status,
             });
         }
-        
-        protected IQueryable<ApplicationTypeTemplateModel> GetApplicationTemplates(IQueryable<ApplicationTypeTemplate> entities)
-        {
-            return entities.Select(entity => new ApplicationTypeTemplateModel
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Description = entity.Description,
-            });
-        }
-        
-        
-        protected IQueryable<StepViewModel> GetSteps(IQueryable<Step> entities)
-        {
-            return entities.Select(entity => new StepViewModel
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Description = entity.Description,
-                Instruction = entity.Instruction,
-                TypeId = entity.StepTypeId,
-                PhaseId = entity.PhaseId,
-                StepType = entity.StepType,
-            });
-        }
-        
-        protected IQueryable<StepsList> GetAllSteps(IQueryable<Step> entities)
-        {
-            return entities.Select(entity => new StepsList
-            {
-                StepTypeId = (int)entity.Id,
-                Name = entity.Name,
-            });
-        }
     }
 }

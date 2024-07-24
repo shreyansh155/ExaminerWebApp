@@ -1,5 +1,4 @@
 ﻿$(function () {
-
     var grid = $("#grid").kendoGrid({
         dataSource: {
             transport: {
@@ -92,8 +91,9 @@
             }
         ],
         dataBound: function (e) {
-            $('.k-grid-add').off("click");
-            $('.k-grid-add').on("click", function () {
+           
+            // Bind click event to the add button
+            $('.k-grid-add').off("click").on("click", function () {
                 $.ajax({
                     url: "/ApplicationTypeTemplate/ShowTemplateModal",
                     type: 'GET',
@@ -107,7 +107,7 @@
                     }
                 });
             });
-        },
+        }
     }).data("kendoGrid");
 
     function EditEntry(e) {
@@ -121,7 +121,7 @@
             data: { id: dataItem.id },
             success: function (result) {
                 if (result.redirectUrl) {
-                    window.location.href = result.redirectUrl;  
+                    window.location.href = result.redirectUrl;
                 }
                 else {
                     console.log('No redirect URL found in response.');

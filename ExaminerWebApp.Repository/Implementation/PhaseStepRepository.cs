@@ -142,29 +142,30 @@ namespace ExaminerWebApp.Repository.Implementation
             return stepsNotInTemplatePhaseStep;
         }
 
-        public TemplatePhaseStep GetTemplatePhaseStep(int id)
+        public async Task<TemplatePhaseStep> GetTemplatePhaseStep(int id)
         {
-            return _context.TemplatePhaseSteps.Include(tps => tps.Step).First(x => x.Id == id);
+            return await _context.TemplatePhaseSteps.Include(tps => tps.Step).FirstAsync(x => x.Id == id);
         }
 
-        public int GetStepTypeId(int stepId)
+        public async Task<int> GetStepTypeId(int stepId)
         {
-            return _context.Steps.First(x => x.Id == stepId).StepTypeId;
+            Step step = await _context.Steps.FirstOrDefaultAsync(x => x.Id == stepId);
+            return step.StepTypeId;
         }
 
         public async Task<TemplatePhaseStep> AddPhaseStep(TemplatePhaseStep templatePhaseStep)
         {
             UpdateOrdinal(templatePhaseStep);
-          
+
             ApplicationTypeTemplatePhase? templatePhase = await _context.ApplicationTypeTemplatePhases
                 .FirstOrDefaultAsync(x => x.Id == templatePhaseStep.TemplatePhaseId);
-            
+
             templatePhase.StepCount++;
-            
+
             await _context.TemplatePhaseSteps.AddAsync(templatePhaseStep);
-            
+
             await _context.SaveChangesAsync();
-            
+
             return templatePhaseStep;
         }
         public async Task<TemplatePhaseStep> UpdatePhaseStep(TemplatePhaseStep templatePhaseStep)

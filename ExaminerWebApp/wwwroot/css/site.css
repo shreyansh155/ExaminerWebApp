@@ -28,3 +28,6 @@
 #add-edit-step {
     width: 100vw;
 }
+.innerGrid .k-grid-header {
+    display: none;
+}

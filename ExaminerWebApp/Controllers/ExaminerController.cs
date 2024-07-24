@@ -17,17 +17,14 @@ namespace ExaminerWebApp.Controllers
             _examinerTypeService = examinerTypeService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return await Task.FromResult(View());
         }
 
-        public async Task<ActionResult> GetAll(int pageSize, int pageNumber)
+        public async Task<ActionResult> GetAll([FromBody]PaginationSet<Examiner> pager) 
         {
-            IQueryable<Examiner> data = await Task.Run(() => _examinerService.GetAllExaminer());
-            var result = GetExaminerModels(data);
-
-            return Json(await Pagination<ExaminerModel>.CreateAsync(result, pageNumber, pageSize));
+            return Json(await _examinerService.GetAllExaminer(pager));
         }
 
         public async Task<IActionResult> ExaminerForm()

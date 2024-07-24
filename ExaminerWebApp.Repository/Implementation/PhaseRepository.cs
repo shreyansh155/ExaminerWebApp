@@ -16,7 +16,7 @@ namespace ExaminerWebApp.Repository.Implementation
 
         public IQueryable<Phase> GetAll()
         {
-            return _context.Phases.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
+            return _context.Phases.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable() ;
         }
 
         public async Task<Phase> Create(Phase phase)

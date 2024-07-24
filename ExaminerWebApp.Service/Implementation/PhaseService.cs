@@ -9,7 +9,7 @@ using System.Linq.Dynamic.Core;
 
 namespace ExaminerWebApp.Service.Implementation
 {
-    public class PhaseService : BaseService<Repository.DataModels.Phase>, IPhaseService
+    public class PhaseService : BaseService, IPhaseService
     {
         public readonly IPhaseRepository _phaseRepository;
 
@@ -34,7 +34,7 @@ namespace ExaminerWebApp.Service.Implementation
                 }
             }
 
-            //sorting ascending descending
+            //sorting: ascending descending
             if (pager.Sort != null && pager.Sort.Count > 0)
             {
                 foreach (var sort in pager.Sort)
@@ -62,7 +62,7 @@ namespace ExaminerWebApp.Service.Implementation
         public async Task<Phase> CreatePhase(Phase model)
         {
             model.CreatedDate = DateTime.UtcNow;
-            model.CreatedBy = "System";
+            model.CreatedBy = "System"; //change it to int id = 1
             Repository.DataModels.Phase phase = _mapper.Map<Repository.DataModels.Phase>(model);
             await _phaseRepository.Create(phase);
             return model;
@@ -70,8 +70,7 @@ namespace ExaminerWebApp.Service.Implementation
 
         public async Task<bool> DeletePhase(int id)
         {
-            await _phaseRepository.Delete(id);
-            return true;
+            return await _phaseRepository.Delete(id);
         }
 
         public async Task<bool> UpdatePhase(Phase model)

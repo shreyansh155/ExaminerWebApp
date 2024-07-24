@@ -6,6 +6,7 @@ namespace ExaminerWebApp.ViewModels
     public class PhaseViewModel
     {
         public ApplicationTypeTemplatePhase? TemplatePhase { get; set; }
+       
         public int? PhaseId { get; set; }
       
         public int Ordinal { get; set; }
@@ -21,7 +22,7 @@ namespace ExaminerWebApp.ViewModels
 
     public class GridDataItem
     {
-        public int Id { get; set; }
+        public int Id { get; set; } //Step Id
         
         public int? TemplatePhaseId { get; set; }
         

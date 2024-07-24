@@ -8,9 +8,9 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<bool> UpdateOrdinal(int templatePhaseId, int ordinal);
 
-        TemplatePhaseStep GetTemplatePhaseStep(int id);
+        Task<TemplatePhaseStep> GetTemplatePhaseStep(int id);
 
-        public int GetStepTypeId(int stepId);
+        Task<int> GetStepTypeId(int stepId);
 
         Task<TemplatePhaseStep> AddTemplatePhaseStep(TemplatePhaseStep templatePhaseStep);
         Task<TemplatePhaseStep> EditTemplatePhaseStep(TemplatePhaseStep templatePhaseStep);

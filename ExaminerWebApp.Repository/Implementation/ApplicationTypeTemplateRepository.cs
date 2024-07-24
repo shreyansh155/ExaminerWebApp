@@ -19,9 +19,9 @@ namespace ExaminerWebApp.Repository.Implementation
             return _context.ApplicationTypeTemplates.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
         }
 
-        public bool ApplicationTemplateExists(string name)
+        public async Task<bool> ApplicationTemplateExists(string name)
         {
-            return _context.ApplicationTypeTemplates.Where(x => x.Name == name && x.IsDeleted != true).Any();
+            return await _context.ApplicationTypeTemplates.Where(x => x.Name == name && x.IsDeleted != true).AnyAsync();
         }
         public async Task<bool> EditApplicationTemplateExists(int? id, string name)
         {

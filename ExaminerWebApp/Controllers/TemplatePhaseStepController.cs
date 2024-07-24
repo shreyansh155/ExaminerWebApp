@@ -34,8 +34,9 @@ namespace ExaminerWebApp.Controllers
                 model.ModifiedDate = DateTime.UtcNow;
                 model.ModifiedBy = "2";
                 await _applicationTypeService.Update(model);
+                return Json(new { success = true });
             }
-            return View(model);
+            return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
         }
 
         public async Task<ActionResult> GetPhase(int templateId, [FromBody] PaginationSet<object> pager)
@@ -59,22 +60,22 @@ namespace ExaminerWebApp.Controllers
 
         public async Task<IActionResult> OpenTemplatePhase(int templateId)
         {
-            int ordinal = await _templatePhaseService.GetNewPhaseOrdinal(templateId);
             PhaseViewModel model = new()
             {
                 TemplateId = templateId,
-                Ordinal = ordinal,
+                Ordinal = await _templatePhaseService.GetNewPhaseOrdinal(templateId),
             };
+            Console.WriteLine(model);
             return PartialView("Modal/_AddPhase", model);
         }
 
         public async Task<IQueryable<Phase>> PhaseList(int templateId)
         {
-            return await Task.FromResult(_applicationTypeService.PhaseList(templateId));
+            return await _applicationTypeService.PhaseList(templateId);
         }
 
         [HttpPost]
-        public IActionResult AddTemplatePhase([FromBody] PhaseViewModel model)
+        public async Task<IActionResult> AddTemplatePhase([FromBody] PhaseViewModel model)
         {
             if (model == null)
             {
@@ -98,7 +99,7 @@ namespace ExaminerWebApp.Controllers
                     StepCount = gridDataItems != null ? gridDataItems.Count : 0,
                     TemplatePhaseSteps = gridDataItems
                 };
-                _templatePhaseService.AddTemplatePhase(obj);
+                await _templatePhaseService.AddTemplatePhase(obj);
                 return Json(new { success = true });
             }
             else
@@ -107,7 +108,7 @@ namespace ExaminerWebApp.Controllers
             }
         }
 
-        public IActionResult EditPhase(int templatePhaseId, int ordinal, string phaseName)
+        public async Task<IActionResult> EditPhase(int templatePhaseId, int ordinal, string phaseName)
         {
             EditPhase model = new()
             {
@@ -115,7 +116,7 @@ namespace ExaminerWebApp.Controllers
                 Ordinal = ordinal,
                 PhaseName = phaseName
             };
-            return PartialView("Modal/_EditPhase", model);
+            return await Task.FromResult(PartialView("Modal/_EditPhase", model));
         }
 
         public async Task<IActionResult> EditTemplatePhase([FromBody] EditPhase model)
@@ -138,9 +139,9 @@ namespace ExaminerWebApp.Controllers
             return PartialView("Modal/_AddStep", model);
         }
 
-        public IActionResult EditStep(int id)
+        public async Task<IActionResult> EditStep(int id)
         {
-            TemplatePhaseStep templatePhaseStep = _templatePhaseService.GetTemplatePhaseStep(id);
+            TemplatePhaseStep templatePhaseStep = await _templatePhaseService.GetTemplatePhaseStep(id);
 
             return PartialView("Modal/_AddStep", templatePhaseStep);
         }
@@ -160,12 +161,12 @@ namespace ExaminerWebApp.Controllers
             return await _applicationTypeService.PhaseStepList(templatePhaseId);
         }
 
-        public ActionResult GetStepTypeId(int stepId)
+        public async Task<ActionResult> GetStepTypeId(int stepId)
         {
             var stepTypeId = 0;
             if (stepId != 0)
             {
-                stepTypeId = _templatePhaseService.GetStepTypeId(stepId);
+                stepTypeId = await _templatePhaseService.GetStepTypeId(stepId);
             }
             return Json(new { stepTypeId });
         }
@@ -192,11 +193,12 @@ namespace ExaminerWebApp.Controllers
             return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
         }
 
-        public async Task<IActionResult> DeleteTemplatePhase(int templatePhaseId)
+        [HttpPost]
+        public async Task<IActionResult> DeleteTemplatePhase(int id)
         {
             return Json(new
             {
-                success = await _applicationTypeService.Delete(templatePhaseId)
+                success = await _applicationTypeService.DeleteTemplate(id)
             });
         }
     }

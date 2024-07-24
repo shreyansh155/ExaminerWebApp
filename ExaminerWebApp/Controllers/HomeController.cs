@@ -4,9 +4,9 @@ namespace ExaminerWebApp.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return await Task.FromResult(View());
         }
     }
 }

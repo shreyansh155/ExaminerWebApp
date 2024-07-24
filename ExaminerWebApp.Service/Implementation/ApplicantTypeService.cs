@@ -15,9 +15,9 @@ namespace ExaminerWebApp.Service.Implementation
             _dropdown = dropdown;
         }
 
-        public List<ApplicantType> GetApplicantTypeList()
+        public async Task<List<ApplicantType>> GetApplicantTypeList()
         {
-            List<Repository.DataModels.ApplicantType> applicantTypes = _dropdown.GetList();
+            List<Repository.DataModels.ApplicantType> applicantTypes = await _dropdown.GetList();
             List<ApplicantType> obj = _mapper.Map<List<ApplicantType>>(applicantTypes);
             return obj;
         }

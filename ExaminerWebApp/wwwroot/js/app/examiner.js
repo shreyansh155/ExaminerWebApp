@@ -3,17 +3,21 @@
         dataSource: {
             transport: {
                 read: function (options) {
-                    var page = options.data.page || 1;
-                    var pageSize = options.data.pageSize || 10;
-
+                    var gridData = {
+                        Skip: options.data.skip,
+                        Take: options.data.pageSize || 10,
+                        Page: options.data.page || 1,
+                        PageSize: options.data.pageSize || 10,
+                        Sort: options.data.sort,
+                        Filter: options.data.filter
+                    };
+                    var pager = JSON.stringify(gridData);
                     $.ajax({
                         url: "/Examiner/GetAll",
-                        type: "GET",
+                        type: "POST",
+                        contentType: "application/json",
                         dataType: "json",
-                        data: {
-                            pageNumber: page,
-                            pageSize: pageSize
-                        },
+                        data: pager,
                         success: function (data) {
                             options.success(data);
                         },
@@ -32,9 +36,25 @@
             },
             pageSize: 10,
             serverPaging: true,
+            serverPaging: true,
+            serverSorting: true,
             schema: {
-                total: "totalItems",
-                data: "items",
+                total: "totalCount",
+                data: function (response) {
+                    return response.items.map(function (item) {
+                        return {
+                            id: item.id,
+                            firstname: item.firstName,
+                            lastname: item.lastName,
+                            dateofbirth: item.dateOfBirth,
+                            phone: item.phone,
+                            email: item.email,
+                            examinerTypeName: item.examinerTypeName,
+                            status: item.status,
+                            filepath: item.filePath,
+                        };
+                    });
+                },
                 model: {
                     fields: {
                         id: { editable: false },
@@ -70,9 +90,9 @@
 
             { field: "email", title: "Email", width: "250px" },
 
-            { field: "examinerTypeName", title: "Examiner Type", width: "200px" },
+            { field: "examinerTypeName", title: "Examiner Type", width: "200px", sortable: false },
 
-            { field: "status", title: "Status", width: "100px" },
+            { field: "status", title: "Status", width: "100px", sortable: false },
             {
                 command: [
                     { text: "View", click: OpenFile },
@@ -137,7 +157,7 @@
             alert("No file found!");
             return;
         }
-        var filePath = `UploadedFiles/${dataItem.filepath}`;
+        var filePath = `/UploadedFiles/${dataItem.filepath}`;
         window.open(filePath, '_blank');
     }
 

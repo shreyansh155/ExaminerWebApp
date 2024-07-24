@@ -14,9 +14,9 @@ namespace ExaminerWebApp.Repository.Interface
       
         Task<List<Step>> GetPhaseStepList(int? templatePhaseId);
 
-        TemplatePhaseStep GetTemplatePhaseStep(int id);
+        Task<TemplatePhaseStep> GetTemplatePhaseStep(int id);
 
-        int GetStepTypeId(int stepId);
+        Task<int> GetStepTypeId(int stepId);
 
         Task<TemplatePhaseStep> AddPhaseStep(TemplatePhaseStep templatePhaseStep);
         Task<TemplatePhaseStep> UpdatePhaseStep(TemplatePhaseStep templatePhaseStep);

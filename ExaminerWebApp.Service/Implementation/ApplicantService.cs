@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using ExaminerWebApp.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using ExaminerWebApp.Composition.Helpers;
 
 namespace ExaminerWebApp.Service.Implementation
 {
-    public class ApplicantService : IApplicantService
+    public class ApplicantService : BaseService, IApplicantService
     {
         private readonly IApplicantRepository _applicantRepository;
         private readonly IMapper _mapper;
@@ -22,47 +23,69 @@ namespace ExaminerWebApp.Service.Implementation
 
         public async Task<Entities.Entities.Applicant> GetApplicantById(int id)
         {
-            ExaminerWebApp.Repository.DataModels.Applicant result = await _applicantRepository.GetById(id);
+            Repository.DataModels.Applicant result = await _applicantRepository.GetById(id);
             return _mapper.Map<Entities.Entities.Applicant>(result);
         }
 
-        public IQueryable<Entities.Entities.Applicant> GetAllApplicants()
+        public async Task<PaginationSet<Entities.Entities.Applicant>> GetAllApplicants(PaginationSet<Entities.Entities.Applicant> pager)
         {
-            var list = _applicantRepository.GetAll().Include(x => x.ApplicantType).AsQueryable();
+            IQueryable<Repository.DataModels.Applicant> list = _applicantRepository.GetAll();
+
+            if (pager.Filter != null && pager.Filter.Filters != null && pager.Filter.Filters.Count > 0)
+            {
+                foreach (var filter in pager.Filter.Filters)
+                {
+                    list = ApplyFilter<Repository.DataModels.Applicant>(list, filter);
+                }
+            }
+
+            //sorting ascending descending
+            if (pager.Sort != null && pager.Sort.Count > 0)
+            {
+                foreach (var sort in pager.Sort)
+                {
+                    list = ApplySorting<Repository.DataModels.Applicant>(list, sort);
+                }
+            }
+
             var obj = _mapper.ProjectTo<Entities.Entities.Applicant>(list);
-            return obj;
+
+            pager.Items = await obj.Skip(pager.Skip).Take(pager.Take).ToListAsync();
+
+            pager.TotalCount = obj.Count();
+
+            return pager;
         }
 
-        public async Task<Entities.Entities.Applicant> AddApplicant(Entities.Entities.Applicant model)
+        public async Task<Entities.Entities.Applicant> AddApplicant(Entities.Entities.Applicant applicant)
         {
 
-            var obj = _mapper.Map<Repository.DataModels.Applicant>(model);
-            if (model.FormFile != null && model.FormFile.Length != 0)
+            var obj = _mapper.Map<Repository.DataModels.Applicant>(applicant);
+            if (applicant.FormFile != null && applicant.FormFile.Length != 0)
             {
-                obj.FilePath = SaveFile(model.FormFile);
+                obj.FilePath = SaveFile(applicant.FormFile);
             }
             await _applicantRepository.Create(obj);
-            return model;
+            return applicant;
         }
 
-        public bool CheckEmailIfExists(string email)
+        public async Task<bool> CheckEmailIfExists(string email)
         {
-            return _applicantRepository.CheckEmail(email);
+            return await _applicantRepository.CheckEmail(email);
         }
 
         public async Task<bool> DeleteApplicant(int id)
         {
-            await _applicantRepository.Delete(id);
-            return true;
+            return await _applicantRepository.Delete(id);
         }
 
-        public async Task<bool> UpdateApplicant(Entities.Entities.Applicant model)
+        public async Task<bool> UpdateApplicant(Entities.Entities.Applicant applicant)
         {
-            if (model.FormFile != null && model.FormFile.Length > 0)
+            if (applicant.FormFile != null && applicant.FormFile.Length > 0)
             {
-                model.FilePath = SaveFile(model.FormFile);
+                applicant.FilePath = SaveFile(applicant.FormFile);
             }
-            var result = _mapper.Map<Repository.DataModels.Applicant>(model);
+            var result = _mapper.Map<Repository.DataModels.Applicant>(applicant);
             await _applicantRepository.Update(result);
             return true;
         }
@@ -73,7 +96,7 @@ namespace ExaminerWebApp.Service.Implementation
             {
                 return null;
             }
-            var rootPath = "PracticeApp/PracticeWebAppSLN/PracticeWebApp/wwwroot/UploadedFiles";
+            var rootPath = "UploadedFiles";
             var uploadsFolder = Path.Combine(_environment.WebRootPath, rootPath);
             var uniqueFileName = Guid.NewGuid().ToString() + "_" + formFile.FileName;
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
@@ -87,7 +110,6 @@ namespace ExaminerWebApp.Service.Implementation
             {
                 formFile.CopyTo(fileStream);
             }
-
             return uniqueFileName;
         }
     }

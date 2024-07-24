@@ -33,7 +33,8 @@ namespace ExaminerWebApp.Repository.Implementation
 
         public IQueryable<Applicant> GetAll()
         {
-            return _context.Applicants.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
+            var obj = _context.Applicants.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
+            return obj;
         }
 
         public async Task<Applicant> GetById(int id)
@@ -59,9 +60,9 @@ namespace ExaminerWebApp.Repository.Implementation
             return true;
         }
 
-        public bool CheckEmail(string email)
+        public async Task<bool> CheckEmail(string email)
         {
-            return _context.Applicants.Where(x => x.Email == email && x.IsDeleted != true).Any();
+            return await _context.Applicants.Where(x => x.Email == email && x.IsDeleted != true).AnyAsync();
         }
     }
 }

@@ -32,7 +32,6 @@
             });
     }
 
-
     function kendoEditor(container, options) {
         $('<textarea name="' + options.field + '"></textarea>')
             .appendTo(container)
@@ -111,7 +110,18 @@
             serverFiltering: true,
             schema: {
                 total: "totalCount",
-                data: "items",
+                data: function (response) {
+                    return response.items.map(function (item) {
+                        return {
+                            id: item.id,
+                            name: item.name,
+                            description: item.description,
+                            instruction: item.instruction,
+                            typeId: item.stepTypeId,
+                            stepType: item.stepType,
+                        };
+                    });
+                },
                 model: {
                     id: "id",
                     fields: {
@@ -162,7 +172,7 @@
         toolbar: [
             {
                 name: "create",
-                text: "Add",
+                text: "Add Step",
             },
         ],
         columns: [
@@ -181,7 +191,7 @@
                     );
                 },
             },
-            { field: "typeId", title: "Step Type", width: "200px", editor: stepTypeDropDownEditor, template: "#= stepType #" },
+            { field: "typeId", title: "Step Type", width: "200px", editor: stepTypeDropDownEditor, template: "#= stepType #", sortable: false },
             { command: ["edit", "destroy"], title: "Actions", width: "220px" },
         ],
         save: function (e) {
@@ -233,8 +243,9 @@
             Name: data.name,
             Description: data.description,
             Instruction: data.instruction,
-            TypeId: data.typeId,
+            StepTypeId: data.typeId,
         };
+
         $.ajax({
             url: "/Step/CreateStep",
             type: "POST",
@@ -257,11 +268,11 @@
 
     function EditStep(data) {
         var formData = {
-            PhaseId: data.phaseId,
+            PhaseId: phaseId,
             Name: data.name,
             Description: data.description,
             Instruction: data.instruction,
-            TypeId: data.typeId,
+            StepTypeId: data.typeId,
             Id: data.id,
         };
         $.ajax({

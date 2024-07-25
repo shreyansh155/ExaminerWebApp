@@ -392,13 +392,15 @@
             var tr = $(e.target).closest("tr");
             var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
 
+            console.log(dataItem);
+
             $.ajax({
                 url: "/TemplatePhaseStep/EditPhase",
                 type: "GET",
                 data: {
-                    templatePhaseId: dataItem.templatePhaseId,
+                    templatePhaseId: dataItem.id,
                     ordinal: dataItem.ordinal,
-                    phaseName: dataItem.phase
+                    phaseName: dataItem.phaseName
                 },
                 success: function (result) {
                     $('#displayModal').html(result);
@@ -587,26 +589,27 @@
                     var phasegrid = $("#phaseGrid").data("kendoGrid");
                     var isValidGrid = true;
 
-                    var gridData = phasegrid.dataSource.view().map(function (item) {
-                        var ordinal = phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[name="ordinal"]').data("kendoNumericTextBox").value();
-                        var isChecked = phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[type="checkbox"]').is(":checked");
+                    var gridData = phasegrid.dataSource
+                        .view()
+                        .map(function (item) {
+                            var ordinal = phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[name="ordinal"]').data("kendoNumericTextBox").value();
+                            var isChecked = phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[type="checkbox"]').is(":checked");
 
-                        if (isChecked && !ordinal) {
-                            isValidGrid = false;
-                            var ordinalBox = phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[name="ordinal"]');
-                            ordinalBox.addClass("k-invalid");
-                            $("<span class='k-input k-textbox k-input-solid k-input-md k-rounded-md k-invalid'>Ordinal is required</span>").insertAfter(ordinalBox);
-                            console.log(ordinalBox);
-                        }
+                            if (isChecked && !ordinal) {
+                                isValidGrid = false;
+                                var ordinalBox = phasegrid.tbody.find('tr[data-uid="' + item.uid + '"]').find('input[name="ordinal"]');
+                                ordinalBox.addClass("k-invalid");
+                                $("<span class='k-input k-textbox k-input-solid k-input-md k-rounded-md k-invalid'>Ordinal is required</span>").insertAfter(ordinalBox);
+                            }
 
-                        return {
-                            Id: item.id,
-                            TemplatePhaseId: item.templatePhaseId,
-                            Name: item.name,
-                            Ordinal: ordinal,
-                            IsInTemplatePhaseSteps: isChecked
-                        };
-                    });
+                            return {
+                                Id: item.id,
+                                TemplatePhaseId: item.templatePhaseId,
+                                Name: item.name,
+                                Ordinal: ordinal,
+                                IsInTemplatePhaseSteps: isChecked
+                            };
+                        });
 
                     if (!isValidGrid) return;
 
@@ -614,7 +617,8 @@
                         PhaseId: this.phaseid(),
                         Ordinal: this.ordinal(),
                         TemplateId: data.templateId,
-                        GridData: gridData
+                        StepCount: gridData.length,
+                        TemplatePhaseSteps: gridData
                             .filter(item => item.IsInTemplatePhaseSteps)
                             .map(item => ({
                                 Id: item.Id,
@@ -625,7 +629,6 @@
                                 IsInTemplatePhaseSteps: item.IsInTemplatePhaseSteps
                             }))
                     };
-
                     $.ajax({
                         url: '/TemplatePhaseStep/AddTemplatePhase',
                         type: 'POST',
@@ -891,9 +894,8 @@
             data = data || {};
 
             this.phasename = ko.observable(data.phaseName || "");
-            this.templatephaseid = data.templatePhaseId;
+            this.id = data.id;
             this.ordinal = ko.observable(data.ordinal || "").extend({ required: "Please enter ordinal number" });
-
             this.isValid = function () {
                 return !this.ordinal.hasError();
             };
@@ -901,7 +903,7 @@
                 this.ordinal.validate();
                 if (this.isValid()) {
                     var formdata = {
-                        TemplatePhaseId: this.templatephaseid,
+                        Id: this.id,
                         Ordinal: this.ordinal(),
                     };
 

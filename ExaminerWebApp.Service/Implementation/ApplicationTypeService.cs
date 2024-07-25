@@ -67,33 +67,30 @@ namespace ExaminerWebApp.Service.Implementation
 
         public async Task<ApplicationTypeTemplate> Add(ApplicationTypeTemplate model)
         {
+            model.CreatedBy = "1";
+            model.CreatedDate = DateTime.UtcNow;
             Repository.DataModels.ApplicationTypeTemplate obj = _mapper.Map<Repository.DataModels.ApplicationTypeTemplate>(model);
             await _applicationTypeRepository.Create(obj);
             return model;
         }
-
-        public async Task<bool> ApplicationTemplateExists(string applicationName)
+ 
+        public async Task<bool> CheckIfExists(int? id, string applicationName)
         {
-            return await _applicationTypeRepository.ApplicationTemplateExists(applicationName);
+            return await _applicationTypeRepository.CheckIfExists(id, applicationName);
         }
 
-        public async Task<bool> EditApplicationTemplateExists(int? id, string applicationName)
-        {
-            return await _applicationTypeRepository.EditApplicationTemplateExists(id, applicationName);
-        }
-
-        public async Task<bool> DeleteTemplate(int id)
+        public async Task<int> DeleteTemplate(int id)
         {
             return await _applicationTypeRepository.Delete(id);
         }
 
-        public async Task<bool> Update(ApplicationTypeTemplate model)
+        public async Task<ApplicationTypeTemplate> Update(ApplicationTypeTemplate model)
         {
             Repository.DataModels.ApplicationTypeTemplate obj = _mapper.Map<Repository.DataModels.ApplicationTypeTemplate>(model);
 
             await _applicationTypeRepository.Update(obj);
 
-            return true;
+            return model;
         }
 
         public async Task<IQueryable<Phase>> PhaseList(int templateId)
@@ -122,7 +119,7 @@ namespace ExaminerWebApp.Service.Implementation
                     templatePhaseList = ApplySorting(templatePhaseList, sort);
                 }
             }
-            pager.Items = await templatePhaseList.Skip(pager.Skip).Take(pager.Take).ToListAsync();
+            pager.Items = await templatePhaseList.Skip(pager.Skip).Take(pager.Take).ToDynamicListAsync();
 
             pager.TotalCount = templatePhaseList.Count();
 

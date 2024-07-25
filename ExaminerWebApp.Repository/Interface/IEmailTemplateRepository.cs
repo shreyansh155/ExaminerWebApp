@@ -2,10 +2,9 @@
 
 namespace ExaminerWebApp.Repository.Interface
 {
-    public interface IPhaseRepository : IBaseRepository<Phase>
+    public interface IEmailTemplateRepository : IBaseRepository<EmailTemplate>
     {
-        IQueryable<Phase> GetAll();
-
+        IQueryable<EmailTemplate> GetAll();
         Task<bool> CheckIfExists(int? id, string name);
     }
 }

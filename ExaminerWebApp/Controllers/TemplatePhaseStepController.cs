@@ -27,7 +27,7 @@ namespace ExaminerWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (await _applicationTypeService.EditApplicationTemplateExists(model.Id, model.Name))
+                if (await _applicationTypeService.CheckIfExists(model.Id, model.Name))
                 {
                     return Json(new { success = false, errors = "This application template already exists" });
                 }
@@ -60,7 +60,7 @@ namespace ExaminerWebApp.Controllers
 
         public async Task<IActionResult> OpenTemplatePhase(int templateId)
         {
-            PhaseViewModel model = new()
+            ApplicationTypeTemplatePhase model = new()
             {
                 TemplateId = templateId,
                 Ordinal = await _templatePhaseService.GetNewPhaseOrdinal(templateId),
@@ -75,55 +75,33 @@ namespace ExaminerWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddTemplatePhase([FromBody] PhaseViewModel model)
-        {
-            if (model == null)
-            {
-                return Json(new { success = false, errors = "Model is null" });
-            }
-
+        public async Task<IActionResult> AddTemplatePhase([FromBody] ApplicationTypeTemplatePhase model)
+        { 
             if (ModelState.IsValid)
             {
-                List<TemplatePhaseStep>? gridDataItems = model.GridData?.Where(x => x.IsInTemplatePhaseSteps == true).Select(data => new TemplatePhaseStep
-                {
-                    StepId = data.Id,
-                    Ordinal = data.Ordinal,
-                    IsInTemplatePhaseSteps = data.IsInTemplatePhaseSteps
-                }).ToList();
-
-                ApplicationTypeTemplatePhase obj = new()
-                {
-                    TemplateId = model.TemplateId,
-                    Ordinal = model.Ordinal,
-                    PhaseId = model.PhaseId,
-                    StepCount = gridDataItems != null ? gridDataItems.Count : 0,
-                    TemplatePhaseSteps = gridDataItems
-                };
-                await _templatePhaseService.AddTemplatePhase(obj);
+                await _templatePhaseService.AddTemplatePhase(model);
                 return Json(new { success = true });
             }
-            else
-            {
-                return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
-            }
+            return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
         }
 
         public async Task<IActionResult> EditPhase(int templatePhaseId, int ordinal, string phaseName)
         {
-            EditPhase model = new()
+            ApplicationTypeTemplatePhase model = new()
             {
-                TemplatePhaseId = templatePhaseId,
+                Id = templatePhaseId,
                 Ordinal = ordinal,
                 PhaseName = phaseName
             };
+
             return await Task.FromResult(PartialView("Modal/_EditPhase", model));
         }
 
-        public async Task<IActionResult> EditTemplatePhase([FromBody] EditPhase model)
+        public async Task<IActionResult> EditTemplatePhase([FromBody] ApplicationTypeTemplatePhase model)
         {
             if (ModelState.IsValid)
             {
-                await _templatePhaseService.UpdateOrdinal(model.TemplatePhaseId, model.Ordinal);
+                await _templatePhaseService.UpdateOrdinal(model.Id, model.Ordinal);
                 return Json(new { success = true });
             }
             return Json(new { success = false });

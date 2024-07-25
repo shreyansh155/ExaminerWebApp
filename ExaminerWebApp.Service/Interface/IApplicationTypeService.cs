@@ -11,13 +11,11 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<ApplicationTypeTemplate> Add(ApplicationTypeTemplate model);
 
-        Task<bool> ApplicationTemplateExists(string applicationName);
+        Task<bool> CheckIfExists(int? id, string applicationName);
 
-        Task<bool> EditApplicationTemplateExists(int? id, string applicationName);
+        Task<int> DeleteTemplate(int id);
 
-        Task<bool> DeleteTemplate(int id);
-
-        Task<bool> Update(ApplicationTypeTemplate model);
+        Task<ApplicationTypeTemplate> Update(ApplicationTypeTemplate model);
 
         Task<object> GetPhaseStepsByTemplateAsync(int templateId, int phaseId);
 

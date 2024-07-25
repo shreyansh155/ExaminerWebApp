@@ -20,6 +20,38 @@
     return target;
 };
 
+ko.extenders.maxLength = function (target, options) {
+    var maxLength = options.maxLength || 0;
+    var overrideMessage = options.overrideMessage;
+
+    target.hasError = ko.observable(false);
+    target.validationMessage = ko.observable();
+    target.validationTriggered = ko.observable(false);
+
+    function validate(newValue) {
+        if (target.validationTriggered()) {
+            if (newValue.length > maxLength) {
+                target.hasError(true);
+                target.validationMessage(overrideMessage || `Max length allowed is ${maxLength}`);
+            } else {
+                target.hasError(false);
+                target.validationMessage("");
+            }
+        }
+    }
+
+    target.subscribe(validate);
+
+    target.validate = function () {
+        target.validationTriggered(true);
+        validate(target());
+    };
+
+    return target;
+};
+
+
+
 ko.extenders.pattern = function (target, options) {
     target.hasError = ko.observable(false);
     target.validationMessage = ko.observable();

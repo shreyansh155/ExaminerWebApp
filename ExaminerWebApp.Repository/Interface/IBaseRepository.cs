@@ -4,9 +4,9 @@
     {
         public Task<T> Create(T _object);
      
-        public Task<bool> Update(T _object);
+        public Task<T> Update(T _object);
         
-        public Task<bool> Delete(int id);
+        public Task<int> Delete(int id);
         
         public Task<T> GetById(int id);
     }

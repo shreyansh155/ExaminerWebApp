@@ -68,26 +68,22 @@ namespace ExaminerWebApp.Service.Implementation
             return model;
         }
 
-        public async Task<bool> DeletePhase(int id)
+        public async Task<int> DeletePhase(int id)
         {
             return await _phaseRepository.Delete(id);
         }
 
-        public async Task<bool> UpdatePhase(Phase model)
+        public async Task<Phase> UpdatePhase(Phase model)
         {
             Repository.DataModels.Phase phase = _mapper.Map<Repository.DataModels.Phase>(model);
             await _phaseRepository.Update(phase);
-            return true;
+            return model;
         }
 
-        public Task<bool> CheckIfPhaseExists(string phaseName)
-        {
-            return _phaseRepository.CheckIfPhaseExists(phaseName);
-        }
 
-        public Task<bool> CheckPhaseOnUpdateExists(string phaseName, int? phaseId)
+        public Task<bool> CheckIfExists(int? id, string name)
         {
-            return _phaseRepository.CheckPhaseOnUpdateExists(phaseName, phaseId);
+            return _phaseRepository.CheckIfExists(id, name);
         }
     }
 }

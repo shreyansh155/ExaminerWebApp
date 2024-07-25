@@ -79,13 +79,12 @@ namespace PracticeWebApp.Service.Implementation
             return model;
         }
 
-        public async Task<bool> DeleteExaminer(int id)
+        public async Task<int> DeleteExaminer(int id)
         {
-            await _examinerRepository.Delete(id);
-            return true;
+            return await _examinerRepository.Delete(id);
         }
 
-        public async Task<bool> UpdateExaminer(ExaminerWebApp.Entities.Entities.Examiner model)
+        public async Task<ExaminerWebApp.Entities.Entities.Examiner> UpdateExaminer(ExaminerWebApp.Entities.Entities.Examiner model)
         {
             if (model.FormFile != null && model.FormFile.Length > 0)
             {
@@ -93,7 +92,7 @@ namespace PracticeWebApp.Service.Implementation
             }
             var result = _mapper.Map<ExaminerWebApp.Repository.DataModels.Examiner>(model);
             await _examinerRepository.Update(result);
-            return true;
+            return model;
         }
 
         private string? SaveFile(IFormFile? formFile)

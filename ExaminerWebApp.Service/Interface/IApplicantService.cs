@@ -13,8 +13,8 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<bool> CheckEmailIfExists(string email);
 
-        Task<bool> DeleteApplicant(int id);
+        Task<int> DeleteApplicant(int id);
 
-        Task<bool> UpdateApplicant(Applicant model);
+        Task<Applicant> UpdateApplicant(Applicant model);
     }
 }

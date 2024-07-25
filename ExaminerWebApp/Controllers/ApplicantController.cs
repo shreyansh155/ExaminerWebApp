@@ -59,7 +59,6 @@ namespace ExaminerWebApp.Controllers
                 };
 
                 await _applicantService.AddApplicant(applicant);
-                ModelState.Clear();
                 return Json(new { success = true });
             }
             else

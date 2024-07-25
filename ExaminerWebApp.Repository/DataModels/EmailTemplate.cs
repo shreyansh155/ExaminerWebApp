@@ -13,7 +13,7 @@ public partial class EmailTemplate
 
     public string? Template { get; set; }
 
-    public bool? IsDefault { get; set; }
+    public bool IsDefault { get; set; }
 
     public int CreatedBy { get; set; }
 
@@ -23,9 +23,5 @@ public partial class EmailTemplate
 
     public DateTime? ModifiedDate { get; set; }
 
-    public int EmailTemplateType { get; set; }
-
     public bool? IsDeleted { get; set; }
-
-    public virtual EmailTemplateType EmailTemplateTypeNavigation { get; set; } = null!;
 }

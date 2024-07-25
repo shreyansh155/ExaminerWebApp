@@ -176,7 +176,7 @@ namespace ExaminerWebApp.Repository.Implementation
             return templatePhaseStep;
         }
 
-        public async Task<bool> DeleteStep(int id)
+        public async Task<int> DeleteStep(int id)
         {
             TemplatePhaseStep templatePhaseStep = await _context.TemplatePhaseSteps.FirstAsync(x => x.Id == id);
 
@@ -188,7 +188,7 @@ namespace ExaminerWebApp.Repository.Implementation
 
             await _context.SaveChangesAsync();
 
-            return true;
+            return id;
         }
 
         public async Task<int> GetNewPhaseOrdinal(int templateId)

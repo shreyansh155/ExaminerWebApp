@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Error";
+    var exceptionMessage = ViewBag.ExceptionMessage as string;
+}
+<div class="card">
+    <div class="card-header">
+        <h1>Error</h1>
+    </div>
+    <div class="card-body">
+        <p>Sorry, something went wrong. Please try again later.</p>
+
+        @if (!string.IsNullOrEmpty(exceptionMessage))
+        {
+            <div>
+                <h3>Exception Details:</h3>
+                <p>@exceptionMessage</p>
+            </div>
+        }
+    </div>
+</div>

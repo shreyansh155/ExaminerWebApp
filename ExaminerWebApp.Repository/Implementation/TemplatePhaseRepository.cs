@@ -66,14 +66,14 @@ namespace ExaminerWebApp.Repository.Implementation
             return _object;
         }
 
-        public async Task<bool> Update(ApplicationTypeTemplatePhase _object)
+        public async Task<ApplicationTypeTemplatePhase> Update(ApplicationTypeTemplatePhase _object)
         {
             _context.ApplicationTypeTemplatePhases.Update(_object);
             await _context.SaveChangesAsync();
-            return true;
+            return _object;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<int> Delete(int id)
         {
             ApplicationTypeTemplatePhase templatePhase = await _context.ApplicationTypeTemplatePhases.Where(x => x.Id == id).FirstAsync();
             templatePhase.IsDeleted = true;
@@ -84,7 +84,7 @@ namespace ExaminerWebApp.Repository.Implementation
                 item.IsDeleted = true;
             }
             await _context.SaveChangesAsync();
-            return true;
+            return id;
         }
 
         public async Task<ApplicationTypeTemplatePhase> GetById(int id)

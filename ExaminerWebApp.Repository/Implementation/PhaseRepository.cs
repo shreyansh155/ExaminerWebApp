@@ -16,7 +16,7 @@ namespace ExaminerWebApp.Repository.Implementation
 
         public IQueryable<Phase> GetAll()
         {
-            return _context.Phases.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable() ;
+            return _context.Phases.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
         }
 
         public async Task<Phase> Create(Phase phase)
@@ -26,20 +26,20 @@ namespace ExaminerWebApp.Repository.Implementation
             return phase;
         }
 
-        public async Task<bool> Update(Phase phase)
+        public async Task<Phase> Update(Phase phase)
         {
             _context.Phases.Update(phase);
             await _context.SaveChangesAsync();
-            return true;
+            return phase;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<int> Delete(int id)
         {
             Phase phase = await _context.Phases.FirstAsync(x => x.Id == id);
             phase.IsDeleted = true;
             _context.Phases.Update(phase);
             await _context.SaveChangesAsync();
-            return true;
+            return id;
         }
 
         public async Task<Phase> GetById(int id)
@@ -47,14 +47,13 @@ namespace ExaminerWebApp.Repository.Implementation
             return await _context.Phases.FirstAsync(x => x.Id == id); ;
         }
 
-        public Task<bool> CheckIfPhaseExists(string phaseName)
+        public Task<bool> CheckIfExists(int? id, string name)
         {
-            return _context.Phases.Where(x => x.Name.ToLower() == phaseName.ToLower() && x.IsDeleted != true).AnyAsync();
-        }
-
-        public Task<bool> CheckPhaseOnUpdateExists(string phaseName, int? phaseId)
-        {
-            return _context.Phases.Where(x => x.Name.ToLower() == phaseName.ToLower() && x.Id != phaseId && x.IsDeleted != true).AnyAsync();
+            if (id != null)
+            {
+                return _context.Phases.Where(x => x.Name.ToLower() == name.ToLower() && x.Id != id && x.IsDeleted != true).AnyAsync();
+            }
+            return _context.Phases.Where(x => x.Name.ToLower() == name.ToLower() && x.IsDeleted != true).AnyAsync();
         }
     }
 }

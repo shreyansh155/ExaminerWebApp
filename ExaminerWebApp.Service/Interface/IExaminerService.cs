@@ -11,10 +11,10 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<Examiner> AddExaminer(Examiner model);
 
-        Task<bool> DeleteExaminer(int id);
+        Task<int> DeleteExaminer(int id);
 
-
-        Task<bool> UpdateExaminer(Examiner model);
+        Task<Examiner> UpdateExaminer(Examiner model);
+       
         bool CheckEmailIfExists(string email);
     }
 }

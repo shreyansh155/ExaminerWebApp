@@ -21,14 +21,14 @@ namespace ExaminerWebApp.Repository.Implementation
             return model;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<int> Delete(int id)
         {
             var applicant = await _context.Applicants.FirstAsync(x => x.Id == id);
             applicant.IsDeleted = true;
 
             _context.Applicants.Update(applicant);
             await _context.SaveChangesAsync();
-            return true;
+            return id;
         }
 
         public IQueryable<Applicant> GetAll()
@@ -42,7 +42,7 @@ namespace ExaminerWebApp.Repository.Implementation
             return await _context.Applicants.FirstAsync(x => x.Id == id);
         }
 
-        public async Task<bool> Update(Applicant model)
+        public async Task<Applicant> Update(Applicant model)
         {
             var applicant = _context.Applicants.First(x => x.Id == model.Id);
 
@@ -57,7 +57,7 @@ namespace ExaminerWebApp.Repository.Implementation
 
             _context.Applicants.Update(applicant);
             await _context.SaveChangesAsync();
-            return true;
+            return model;
         }
 
         public async Task<bool> CheckEmail(string email)

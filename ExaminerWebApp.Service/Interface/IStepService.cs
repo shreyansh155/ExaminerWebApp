@@ -11,16 +11,14 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<Step> CreateStep(Step model);
 
-        Task<bool> DeleteStep(int id);
+        Task<int> DeleteStep(int id);
 
-        Task<bool> UpdateStep(Step model);
+        Task<Step> UpdateStep(Step model);
 
         Task<List<StepType>> GetStepTypeList();
 
         Task<IQueryable<Step>> GetStepByPhaseId(int phaseId);
 
-        Task<bool> CheckIfStepExists(Step model);
-
-        Task<bool> CheckIfEditStepExists(Step step);
+        Task<bool> CheckIfExists(int? id, string name);
     }
 }

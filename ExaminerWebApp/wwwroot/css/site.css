@@ -28,6 +28,11 @@
 #add-edit-step {
     width: 100vw;
 }
+
 .innerGrid .k-grid-header {
     display: none;
+}
+
+.err {
+    border: solid 1px #dc3545 !important;
 }

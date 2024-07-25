@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Email Template";
+    Layout = "_Layout";
+}
+<div id="email-template-grid">
+    <div class="card">
+        <div class="card-header d-inline-flex justify-content-start align-items-end">
+            <h3><strong>Email Templates</strong></h3>
+            <h6 class="mx-2">Provides abilty to manage Email Templates</h6>
+        </div>
+        <div class="card-body">
+            <div id="grid"></div>
+        </div>
+    </div>
+    <button id="refreshButton" type="button" hidden></button>
+    <script src="~/js/app/email-template.js"></script>
+</div>

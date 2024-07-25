@@ -13,9 +13,10 @@ namespace ExaminerWebApp.Service.Interface
         Task<int> GetStepTypeId(int stepId);
 
         Task<TemplatePhaseStep> AddTemplatePhaseStep(TemplatePhaseStep templatePhaseStep);
+      
         Task<TemplatePhaseStep> EditTemplatePhaseStep(TemplatePhaseStep templatePhaseStep);
 
-        Task<bool> DeleteStep(int id);
+        Task<int> DeleteStep(int id);
 
         Task<int> GetNewPhaseOrdinal(int templateId);
 

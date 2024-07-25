@@ -19,13 +19,15 @@ namespace ExaminerWebApp.Repository.Implementation
             return _context.ApplicationTypeTemplates.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
         }
 
-        public async Task<bool> ApplicationTemplateExists(string name)
+       
+
+        public async Task<bool> CheckIfExists(int? id, string name)
         {
+            if (id != null)
+            {
+                return await _context.ApplicationTypeTemplates.Where(x => x.Id != id && x.Name == name && x.IsDeleted != true).AnyAsync();
+            }
             return await _context.ApplicationTypeTemplates.Where(x => x.Name == name && x.IsDeleted != true).AnyAsync();
-        }
-        public async Task<bool> EditApplicationTemplateExists(int? id, string name)
-        {
-            return await _context.ApplicationTypeTemplates.Where(x => x.Id != id && x.Name == name && x.IsDeleted != true).AnyAsync();
         }
 
         public async Task<ApplicationTypeTemplate> Create(ApplicationTypeTemplate model)
@@ -35,19 +37,19 @@ namespace ExaminerWebApp.Repository.Implementation
             return model;
         }
 
-        public async Task<bool> Update(ApplicationTypeTemplate _object)
+        public async Task<ApplicationTypeTemplate> Update(ApplicationTypeTemplate _object)
         {
             _context.ApplicationTypeTemplates.Update(_object);
             await _context.SaveChangesAsync();
-            return true;
+            return _object;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<int> Delete(int id)
         {
             var applicationType = await _context.ApplicationTypeTemplates.FirstAsync(x => x.Id == id);
             applicationType.IsDeleted = true;
             await _context.SaveChangesAsync();
-            return true;
+            return id;
         }
 
         public async Task<ApplicationTypeTemplate> GetById(int id)

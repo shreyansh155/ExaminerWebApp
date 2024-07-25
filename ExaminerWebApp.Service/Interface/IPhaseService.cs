@@ -11,12 +11,10 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<Phase> CreatePhase(Phase model);
 
-        Task<bool> DeletePhase(int id);
+        Task<int> DeletePhase(int id);
 
-        Task<bool> UpdatePhase(Phase model);
+        Task<Phase> UpdatePhase(Phase model);
 
-        Task<bool> CheckIfPhaseExists(string phaseName);
-
-        Task<bool> CheckPhaseOnUpdateExists(string phaseName, int? phaseId);
+        Task<bool> CheckIfExists(int? id,string phaseName);
     }
 }

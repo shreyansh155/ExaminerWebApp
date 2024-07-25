@@ -65,18 +65,18 @@ namespace ExaminerWebApp.Service.Implementation
             return model;
         }
 
-        public async Task<bool> DeleteStep(int id)
+        public async Task<int> DeleteStep(int id)
         {
             return await _stepRepository.Delete(id);
         }
 
-        public async Task<bool> UpdateStep(Step model)
+        public async Task<Step> UpdateStep(Step model)
         {
             model.ModifiedDate = DateTime.UtcNow;
             model.ModifiedBy = "2";
             Repository.DataModels.Step step = _mapper.Map<Repository.DataModels.Step>(model);
             await _stepRepository.Update(step);
-            return true;
+            return model;
         }
 
         public async Task<List<StepType>> GetStepTypeList()
@@ -93,16 +93,9 @@ namespace ExaminerWebApp.Service.Implementation
             return obj;
         }
 
-        public async Task<bool> CheckIfStepExists(Step model)
+        public async Task<bool> CheckIfExists(int? id, string name)
         {
-            Repository.DataModels.Step step = _mapper.Map<Repository.DataModels.Step>(model);
-            return await _stepRepository.CheckIfStepExists(step);
-        }
-
-        public async Task<bool> CheckIfEditStepExists(Step model)
-        {
-            Repository.DataModels.Step step = _mapper.Map<Repository.DataModels.Step>(model);
-            return await _stepRepository.CheckIfEditStepExists(step);
+            return await _stepRepository.CheckIfExists(id, name); 
         }
     }
 }

@@ -35,7 +35,7 @@ namespace ExaminerWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!await _phaseService.CheckIfPhaseExists(model.Name))
+                if (await _phaseService.CheckIfExists(null, model.Name))
                     return Json(new { success = false, errors = "Phase already exists." });
 
                 await _phaseService.CreatePhase(model);
@@ -53,8 +53,7 @@ namespace ExaminerWebApp.Controllers
 
         public async Task<ActionResult> EditPhase(int id)
         {
-            Phase phase = await _phaseService.GetPhaseById(id);
-            return PartialView("Modal/_CreatePhase", phase);
+            return PartialView("Modal/_CreatePhase", await _phaseService.GetPhaseById(id));
         }
 
         [HttpPost]
@@ -62,7 +61,7 @@ namespace ExaminerWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!await _phaseService.CheckPhaseOnUpdateExists(model.Name, model.Id))
+                if (await _phaseService.CheckIfExists(model.Id, model.Name))
                     return Json(new { success = false, errors = "Phase already exists." });
 
                 await _phaseService.UpdatePhase(model);

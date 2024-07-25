@@ -21,13 +21,13 @@ namespace ExaminerWebApp.Repository.Implementation
             return model;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<int> Delete(int id)
         {
             var applicant = await _context.Examiners.FirstAsync(x => x.Id == id);
             applicant.IsDeleted = true;
             _context.Examiners.Update(applicant);
             await _context.SaveChangesAsync();
-            return true;
+            return id;
         }
 
         public IQueryable<Examiner> GetAll()
@@ -40,11 +40,11 @@ namespace ExaminerWebApp.Repository.Implementation
             return await _context.Examiners.FirstAsync(x => x.Id == id);
         }
 
-        public async Task<bool> Update(Examiner model)
+        public async Task<Examiner> Update(Examiner model)
         {
             _context.Examiners.Update(model);
             await _context.SaveChangesAsync();
-            return true;
+            return model;
         }
 
         public bool CheckEmail(string email)

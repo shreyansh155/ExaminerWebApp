@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExaminerWebApp.Entities.Entities
@@ -7,7 +8,7 @@ namespace ExaminerWebApp.Entities.Entities
     {
         public int Id { get; set; }
 
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = null!;
 
         public string? LastName { get; set; }
 
@@ -27,10 +28,10 @@ namespace ExaminerWebApp.Entities.Entities
 
         [NotMapped]
         public IFormFile? FormFile { get; set; }
-       
+
         [NotMapped]
         public string ApplicantType { get; set; } = null!;
-      
+
         public virtual ApplicantType Setting { get; set; } = null!;
     }
 }

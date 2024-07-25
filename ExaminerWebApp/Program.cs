@@ -30,6 +30,7 @@ builder.Services.AddTransient<IPhaseRepository, PhaseRepository>();
 builder.Services.AddTransient<IStepRepository, StepRepository>();
 builder.Services.AddTransient<ITemplatePhaseRepository, TemplatePhaseRepository>();
 builder.Services.AddTransient<IPhaseStepRepository, PhaseStepRepository>();
+builder.Services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
 // Registered services
 builder.Services.AddScoped<IApplicantService, ApplicantService>();
@@ -40,6 +41,7 @@ builder.Services.AddScoped<IApplicationTypeService, ApplicationTypeService>();
 builder.Services.AddScoped<IPhaseService, PhaseService>();
 builder.Services.AddScoped<IStepService, StepService>();
 builder.Services.AddScoped<ITemplatePhaseService, TemplatePhaseService>();
+builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 
 builder.Services.AddDataProtection();
 
@@ -52,6 +54,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseStaticFiles();
 

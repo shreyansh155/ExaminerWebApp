@@ -8,5 +8,14 @@ namespace ExaminerWebApp.Controllers
         {
             return await Task.FromResult(View());
         }
+
+        [Route("Error")]
+        public IActionResult ErrorPage()
+        {
+            var exceptionMessage = HttpContext.Items["ExceptionMessage"]?.ToString();
+            ViewBag.ExceptionMessage = exceptionMessage;
+
+            return View();
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace ExaminerWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!await _stepService.CheckIfStepExists(model))
+                if (await _stepService.CheckIfExists(null, model.Name))
                     return Json(new { success = false, errors = "Step already exists." });
 
                 await _stepService.CreateStep(model);
@@ -38,7 +38,7 @@ namespace ExaminerWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!await _stepService.CheckIfEditStepExists(model))
+                if (await _stepService.CheckIfExists(null, model.Name))
                     return Json(new { success = false, errors = "Step already exists." });
 
                 await _stepService.UpdateStep(model);

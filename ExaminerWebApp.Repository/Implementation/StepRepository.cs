@@ -26,20 +26,20 @@ namespace ExaminerWebApp.Repository.Implementation
             return _object;
         }
 
-        public async Task<bool> Update(Step _object)
+        public async Task<Step> Update(Step _object)
         {
             _context.Steps.Update(_object);
             await _context.SaveChangesAsync();
-            return true;
+            return _object;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<int> Delete(int id)
         {
             Step step = await _context.Steps.Where(x => x.Id == id).FirstAsync();
             step.IsDeleted = true;
             _context.Steps.Update(step);
             await _context.SaveChangesAsync();
-            return true;
+            return id;
         }
 
         public async Task<Step> GetById(int id)
@@ -52,14 +52,13 @@ namespace ExaminerWebApp.Repository.Implementation
             return await _context.StepTypes.OrderBy(x => x.Id).ToListAsync();
         }
 
-        public async Task<bool> CheckIfStepExists(Step step)
+        public Task<bool> CheckIfExists(int? id, string name)
         {
-            return await _context.Steps.Where(x => x.PhaseId == step.PhaseId && x.Name.ToLower() == step.Name.ToLower()).AnyAsync();
-        }
-
-        public async Task<bool> CheckIfEditStepExists(Step step)
-        {
-            return await _context.Steps.Where(x => x.PhaseId == step.PhaseId && x.Id != step.Id && x.Name.ToLower() == step.Name.ToLower()).AnyAsync();
+            if (id != null)
+            {
+                return _context.Steps.Where(x => x.Name.ToLower() == name.ToLower() && x.Id != id && x.IsDeleted != true).AnyAsync();
+            }
+            return _context.Steps.Where(x => x.Name.ToLower() == name.ToLower() && x.IsDeleted != true).AnyAsync();
         }
 
         public async Task<bool> UpdateInstruction(int? stepId, string instruction)

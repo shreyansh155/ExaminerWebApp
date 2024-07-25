@@ -74,20 +74,19 @@ namespace ExaminerWebApp.Service.Implementation
             return await _applicantRepository.CheckEmail(email);
         }
 
-        public async Task<bool> DeleteApplicant(int id)
+        public async Task<int> DeleteApplicant(int id)
         {
             return await _applicantRepository.Delete(id);
         }
 
-        public async Task<bool> UpdateApplicant(Entities.Entities.Applicant applicant)
+        public async Task<Entities.Entities.Applicant> UpdateApplicant(Entities.Entities.Applicant applicant)
         {
             if (applicant.FormFile != null && applicant.FormFile.Length > 0)
             {
                 applicant.FilePath = SaveFile(applicant.FormFile);
             }
             var result = _mapper.Map<Repository.DataModels.Applicant>(applicant);
-            await _applicantRepository.Update(result);
-            return true;
+            return _mapper.Map<Entities.Entities.Applicant>(await _applicantRepository.Update(result));
         }
 
         private string? SaveFile(IFormFile? formFile)

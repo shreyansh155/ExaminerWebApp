@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace ExaminerWebApp.ViewHelpers
+namespace ExaminerWebApp.Composition.Helpers
 {
     public class FileValidationAttribute : ValidationAttribute
     {

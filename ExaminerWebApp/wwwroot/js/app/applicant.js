@@ -155,7 +155,6 @@
             return;
         }
         var filePath = `/UploadedFiles/${dataItem.filepath}`;
-        console.log(filePath);
         window.open(filePath, '_blank');
     }
 

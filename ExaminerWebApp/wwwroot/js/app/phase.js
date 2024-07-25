@@ -108,7 +108,6 @@
     function EditPhase(e) {
         var tr = $(e.target).closest("tr");
         var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
-        console.log(dataItem);
         $.ajax({
             url: "/Phase/EditPhase",
             type: "GET",
@@ -170,7 +169,6 @@
                             dataType: "json",
                             data: pager,
                             success: function (data) {
-                                console.log(data);
                                 options.success(data);
                             },
                             error: function (error) {

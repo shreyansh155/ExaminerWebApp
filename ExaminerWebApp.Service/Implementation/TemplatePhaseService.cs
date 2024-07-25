@@ -73,7 +73,7 @@ namespace ExaminerWebApp.Service.Implementation
             return templatePhaseStep;
         }
 
-        public async Task<bool> DeleteStep(int id)
+        public async Task<int> DeleteStep(int id)
         {
             return await _phaseStepRepository.DeleteStep(id);
         }

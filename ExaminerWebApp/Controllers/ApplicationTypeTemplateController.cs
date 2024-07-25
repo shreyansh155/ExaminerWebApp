@@ -35,20 +35,14 @@ namespace ExaminerWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (await _applicationTypeService.ApplicationTemplateExists(model.Name))
-                {
-                    return Json(new { success = false, errors = "This application template already exists" });
-                }
-                else
-                {
-                    model.CreatedBy = "1";
-                    model.CreatedDate = DateTime.UtcNow;
+                if (await _applicationTypeService.CheckIfExists(null, model.Name))
 
-                    await _applicationTypeService.Add(model);
-                    return Json(new { success = true });
-                }
+                    return Json(new { success = false, errors = "This application template already exists" });
+ 
+                await _applicationTypeService.Add(model);
+                return Json(new { success = true });
             }
-            return View(model);
+            return PartialView("Modal/_TemplateModal", model);
         }
 
         public async Task<IActionResult> DeleteTemplate(int id)

@@ -1,25 +1,22 @@
-﻿@model ExaminerWebApp.Entities.Entities.EmailTemplate ;
+﻿@model ExaminerWebApp.Entities.Entities.EmailTemplate
 
 @{
     ViewData["Title"] = "Edit Template";
-    var serializedData = Json.Serialize(Model);
+
 }
-<div id="email-template-page">
-    <script type="text/javascript">
-        window.initialData = @Html.Raw(serializedData);
-    </script>
-    <div class="container-fluid card bg-light justify-content-center">
+<div id="email-template-page" data-bind="with: model">
+    <div class="container-fluid card d-block bg-light justify-content-center">
         <form id="emailTemplateForm">
             <div class="card-header d-inline-flex justify-content-start align-items-end">
                 <h3><strong>Email Templates</strong></h3>
-                <h6 class="mx-2">Provides abilty to manage Email Templates</h6>
+                <h6 class="mx-2">Provides ability to manage Email Templates</h6>
             </div>
             <div class="card-body">
-                <div id="errorBody" class="text-danger"></div>
+                <div id="errorBody" class="text-danger d-block"></div>
                 <div class="form-group required row">
                     <label for="name" class="col-form-label control-label col-sm-2">Name</label>
                     <div class="col-sm-10">
-                        <input id="name" name="name" data-bind="kendoMaskedTextBox: { value: name }, css: { 'err': name.hasError }" />
+                        <kendo-textbox id="name" name="name" data-bind="value: name, css: { 'err': name.hasError }" />
                         <span class="text-danger"
                               data-bind="visible: name.hasError, text: name.validationMessage">
                         </span>
@@ -28,52 +25,53 @@
                 <div class="form-group required row">
                     <label for="description" class="col-form-label control-label col-sm-2">Description</label>
                     <div class="col-sm-10">
-                        <textarea id="description"
-                                  rows="3"
-                                  name="description"
-                                  data-bind="kendoMaskedTextBox: { value: description }, css: { 'err': description.hasError }">
-                               </textarea>
+                        <kendo-textarea id="description"
+                                        rows="3"
+                                        name="description"
+                                        data-bind="value: description, css: { 'err': description.hasError }">
+                        </kendo-textarea>
                         <span class="text-danger"
                               data-bind="visible: description.hasError, text: description.validationMessage">
                         </span>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="description" class="col-form-label col-sm-2">Template</label>
+                    <label for="template" class="col-form-label col-sm-2">Template</label>
                     <div class="col-sm-10">
                         <textarea rows="3"
-                                  id="description"
-                                  name="description"
-                                  data-bind="kendoEditor: { value: template }">
+                                  id="templateField"
+                                  data-bind="value: template">
                         </textarea>
                     </div>
                 </div>
                 <div class="form-group row d-flex">
                     <label class="col-form-label col-sm-2">Default</label>
                     <div class="justify-content-start col-sm-10">
-                        <input type="checkbox" id="isDefault"
+                        <input type="checkbox"
+                               id="isDefault"
                                data-bind="checked: isDefault, value: isDefault"
                                class="mx-1 k-checkbox k-checkbox-sm k-rounded-md"
-                               name="isDefault">
+                               name="isDefault" />
                     </div>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
                     <div class="mx-2">
                         <kendo-button name="submit-btn"
-                                      data-bind="click: submitTemplate"
+                                      data-bind="click: $root.submitTemplate"
                                       theme-color="ThemeColor.Primary">
                             Save
                         </kendo-button>
                     </div>
                     <div class="mx-2">
                         <kendo-button name="back-btn"
+                                      data-bind="click: $root.backBtn"
                                       theme-color="ThemeColor.Secondary">
                             Back
                         </kendo-button>
                     </div>
                     <div class="mx-2">
                         <kendo-button name="delete-btn"
-                                      data-bind="click: deleteTemplate, visible: hasId"
+                                      data-bind="click: $root.deleteTemplate,visible:$root.hasId"
                                       theme-color="ThemeColor.Error">
                             Delete
                         </kendo-button>
@@ -82,5 +80,14 @@
             </div>
         </form>
     </div>
-    <script src="~/js/app/email-template.js"></script>
 </div>
+
+@section scripts {
+    <script>
+        var src = 'emailtemplate';
+        require(['require-config', src], function (s, EmailTemplate) {
+            var emailTemplate = new EmailTemplate(@Html.Raw(Json.Serialize(Model)));
+            new emailTemplate.init();
+        });
+    </script>
+}

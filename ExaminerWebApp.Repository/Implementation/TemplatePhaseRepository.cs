@@ -87,9 +87,12 @@ namespace ExaminerWebApp.Repository.Implementation
             return id;
         }
 
-        public async Task<ApplicationTypeTemplatePhase> GetById(int id)
+        public async Task<ApplicationTypeTemplatePhase?> GetById(int id)
         {
-            return await _context.ApplicationTypeTemplatePhases.Where(x => x.Id == id).FirstAsync();
+            ApplicationTypeTemplatePhase applicationTypeTemplatePhase = await _context.ApplicationTypeTemplatePhases.Where(x => x.Id == id).FirstAsync();
+            if (applicationTypeTemplatePhase.IsDeleted == true)
+                return null;
+            return applicationTypeTemplatePhase;
         }
 
         public IQueryable<ApplicationTypeTemplatePhase> GetAllTemplates(int templateId)

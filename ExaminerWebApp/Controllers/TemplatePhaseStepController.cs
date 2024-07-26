@@ -76,7 +76,7 @@ namespace ExaminerWebApp.Controllers
 
         [HttpPost]
         public async Task<IActionResult> AddTemplatePhase([FromBody] ApplicationTypeTemplatePhase model)
-        { 
+        {
             if (ModelState.IsValid)
             {
                 await _templatePhaseService.AddTemplatePhase(model);
@@ -141,7 +141,7 @@ namespace ExaminerWebApp.Controllers
 
         public async Task<ActionResult> GetStepTypeId(int stepId)
         {
-            var stepTypeId = 0;
+            int? stepTypeId = 0;
             if (stepId != 0)
             {
                 stepTypeId = await _templatePhaseService.GetStepTypeId(stepId);

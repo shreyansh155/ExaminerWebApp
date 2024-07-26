@@ -8,6 +8,6 @@
         
         public Task<int> Delete(int id);
         
-        public Task<T> GetById(int id);
+        public Task<T?> GetById(int id);
     }
 }

@@ -57,14 +57,10 @@ namespace ExaminerWebApp.Repository.Implementation
             return id;
         }
 
-        public async Task<EmailTemplate> GetById(int id)
+        public async Task<EmailTemplate?> GetById(int id)
         {
-            EmailTemplate emailTemplate= await _context.EmailTemplates.FirstAsync(x => x.Id == id);
-            if(emailTemplate.IsDeleted == true)
-            {
-                return null;
-            }
-            return emailTemplate;
+            EmailTemplate emailTemplate = await _context.EmailTemplates.FirstAsync(x => x.Id == id);
+            return emailTemplate.IsDeleted == true ? null : emailTemplate;
         }
 
         public async static Task UpdateDefaultTemplate(List<EmailTemplate> emailTemplates)

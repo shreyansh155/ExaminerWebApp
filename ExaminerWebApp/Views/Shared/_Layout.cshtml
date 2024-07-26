@@ -9,7 +9,6 @@
     <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-
     @* BOOTSTRAP JS *@
     <script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -41,6 +40,7 @@
     <script src="/lib/knockout-kendo/knockout-kendo.js"></script>
 
     <script src="/js/utilities.js"></script>
+    <script src="/js/kendo-ui-license.js"></script>
 
     <script src="~/lib/Knockout-Validation/Dist/knockout.validation.min.js"></script>
 </head>
@@ -92,7 +92,7 @@
                         </li>
                         <li class="nav-item d-none d-sm-inline-block">
                             <a href="@Url.Action("Index", "Applicant")" class="nav-link">Applicant</a>
-                        </li> 
+                        </li>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -129,10 +129,13 @@
         </aside>
         <!-- /.control-sidebar -->
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.3.0/browser/overlayscrollbars.browser.es6.min.js" integrity="sha256-H2VM7BKda+v2Z4+DRy69uknwxjyDRhszjXFhsL4gD3w=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha256-whL0tQWoY1Ku1iskqPFvmZ+CHsvmRWx/PIoEvIeWh4I=" crossorigin="anonymous"></script>
     <!-- ./wrapper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha256-YMa+wAM6QkVyz999odX7lPRxkoYAan8suedu4k2Zur8=" crossorigin="anonymous"></script>
+
+
     <script src="~/WebCore/plugins/chart.js/Chart.min.js"></script>
     <!-- Sparkline -->
     <script src="~/WebCore/plugins/sparklines/sparkline.js"></script>
@@ -157,7 +160,9 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/knockout-kendo/knockout-kendo.js"></script>
-    @*  @await Component.InvokeAsync("Notyf") *@
+
+    <script src="~/lib/require/dist/require.js"></script>
+    <script src="~/js/require-config.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

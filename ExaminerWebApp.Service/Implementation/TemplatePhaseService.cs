@@ -28,7 +28,7 @@ namespace ExaminerWebApp.Service.Implementation
 
             Repository.DataModels.ApplicationTypeTemplatePhase tempPhase = _templatePhaseRepository.AddPhaseWithOrdinal(obj);
 
-            _phaseStepRepository.AddStepsWithOrdinal(templatePhaseStep, tempPhase);
+            await _phaseStepRepository.AddStepsWithOrdinal(templatePhaseStep, tempPhase);
 
             return model;
         }
@@ -46,7 +46,7 @@ namespace ExaminerWebApp.Service.Implementation
             return _mapper.Map<TemplatePhaseStep>(templatePhaseStep);
         }
 
-        public async Task<int> GetStepTypeId(int stepId)
+        public async Task<int?> GetStepTypeId(int stepId)
         {
             return await _phaseStepRepository.GetStepTypeId(stepId);
         }
@@ -73,7 +73,7 @@ namespace ExaminerWebApp.Service.Implementation
             return templatePhaseStep;
         }
 
-        public async Task<int> DeleteStep(int id)
+        public async Task<int?> DeleteStep(int id)
         {
             return await _phaseStepRepository.DeleteStep(id);
         }

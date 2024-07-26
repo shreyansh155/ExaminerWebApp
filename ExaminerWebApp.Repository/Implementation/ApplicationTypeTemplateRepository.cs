@@ -19,7 +19,7 @@ namespace ExaminerWebApp.Repository.Implementation
             return _context.ApplicationTypeTemplates.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
         }
 
-       
+
 
         public async Task<bool> CheckIfExists(int? id, string name)
         {
@@ -52,10 +52,10 @@ namespace ExaminerWebApp.Repository.Implementation
             return id;
         }
 
-        public async Task<ApplicationTypeTemplate> GetById(int id)
+        public async Task<ApplicationTypeTemplate?> GetById(int id)
         {
-            return await _context.ApplicationTypeTemplates.Where(x => x.Id == id).FirstAsync();
-
+            ApplicationTypeTemplate applicationTypeTemplate = await _context.ApplicationTypeTemplates.Where(x => x.Id == id).FirstAsync();
+            return applicationTypeTemplate.IsDeleted == true ? null : applicationTypeTemplate;
         }
     }
 }

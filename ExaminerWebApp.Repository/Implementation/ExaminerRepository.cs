@@ -35,9 +35,10 @@ namespace ExaminerWebApp.Repository.Implementation
             return _context.Examiners.Where(x => x.IsDeleted != true).OrderBy(x => x.Id).AsQueryable();
         }
 
-        public async Task<Examiner> GetById(int id)
+        public async Task<Examiner?> GetById(int id)
         {
-            return await _context.Examiners.FirstAsync(x => x.Id == id);
+            Examiner examiner = await _context.Examiners.FirstAsync(x => x.Id == id);
+            return examiner.IsDeleted == true ? null : examiner;
         }
 
         public async Task<Examiner> Update(Examiner model)

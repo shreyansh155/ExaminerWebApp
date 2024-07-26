@@ -8,20 +8,20 @@ namespace ExaminerWebApp.Repository.Interface
 
         Task<object> GetPhaseStepsByTemplateAsync(IEnumerable<ApplicationTypeTemplatePhase> templatePhases, int templateId, int phaseId);
 
-        List<TemplatePhaseStep> AddStepsWithOrdinal(List<TemplatePhaseStep> model, ApplicationTypeTemplatePhase tempPhase);
+        Task<List<TemplatePhaseStep>> AddStepsWithOrdinal(List<TemplatePhaseStep> model, ApplicationTypeTemplatePhase tempPhase);
 
         Task<List<Step>> GetStepList(int? templatePhaseStepId);
-      
+
         Task<List<Step>> GetPhaseStepList(int? templatePhaseId);
 
         Task<TemplatePhaseStep> GetTemplatePhaseStep(int id);
 
-        Task<int> GetStepTypeId(int stepId);
+        Task<int?> GetStepTypeId(int stepId);
 
-        Task<TemplatePhaseStep> AddPhaseStep(TemplatePhaseStep templatePhaseStep);
+        Task<TemplatePhaseStep?> AddPhaseStep(TemplatePhaseStep templatePhaseStep);
         Task<TemplatePhaseStep> UpdatePhaseStep(TemplatePhaseStep templatePhaseStep);
 
-        Task<int> DeleteStep(int id);
+        Task<int?> DeleteStep(int id);
 
         Task<int> GetNewPhaseOrdinal(int templateId);
 

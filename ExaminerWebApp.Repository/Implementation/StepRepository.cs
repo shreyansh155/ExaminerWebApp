@@ -42,9 +42,14 @@ namespace ExaminerWebApp.Repository.Implementation
             return id;
         }
 
-        public async Task<Step> GetById(int id)
+        public async Task<Step?> GetById(int id)
         {
-            return await _context.Steps.FirstAsync(x => x.Id == id);
+            Step step = await _context.Steps.FirstAsync(x => x.Id == id);
+
+            if (step.IsDeleted == true)
+                return null;
+
+            return step.IsDeleted == true ? null : step;
         }
 
         public async Task<List<StepType>> GetStepTypeList()
@@ -63,7 +68,7 @@ namespace ExaminerWebApp.Repository.Implementation
 
         public async Task<bool> UpdateInstruction(int? stepId, string instruction)
         {
-            Step? step = await _context.Steps.FirstOrDefaultAsync(x => x.Id == stepId);
+            Step step = await _context.Steps.FirstAsync(x => x.Id == stepId);
             step.Instruction = instruction;
             await _context.SaveChangesAsync();
             return true;

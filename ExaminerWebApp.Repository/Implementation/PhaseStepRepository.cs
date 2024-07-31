@@ -63,6 +63,7 @@ namespace ExaminerWebApp.Repository.Implementation
 
             var allSteps = await _context.Steps
                 .Where(s => s.IsDeleted != true && s.PhaseId == phaseId)
+                .OrderBy(s=>s.Name)
                 .ToListAsync();
 
             var phaseSteps = await _context.TemplatePhaseSteps

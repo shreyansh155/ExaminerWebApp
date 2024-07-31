@@ -1,4 +1,5 @@
 using ExaminerWebApp.Composition.MappingProfile;
+using ExaminerWebApp.CustomMiddlewares;
 using ExaminerWebApp.Repository.DataContext;
 using ExaminerWebApp.Repository.Implementation;
 using ExaminerWebApp.Repository.Interface;
@@ -31,6 +32,8 @@ builder.Services.AddTransient<IStepRepository, StepRepository>();
 builder.Services.AddTransient<ITemplatePhaseRepository, TemplatePhaseRepository>();
 builder.Services.AddTransient<IPhaseStepRepository, PhaseStepRepository>();
 builder.Services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
+builder.Services.AddTransient<ITemplatePhaseStepAttachmentRepository, TemplatePhaseStepAttachmentRepository>();
+builder.Services.AddTransient<ITemplatePhaseStepDocumentProofRepository, TemplatePhaseStepDocumentProofRepository>();
 
 // Registered services
 builder.Services.AddScoped<IApplicantService, ApplicantService>();

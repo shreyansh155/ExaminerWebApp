@@ -2,26 +2,18 @@
 using System.Collections.Generic;
 using ExaminerWebApp.Repository.DataModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace ExaminerWebApp.Repository.DataContext;
 
 public partial class ApplicationDbContext : DbContext
 {
-    private readonly IConfiguration _configuration;
-
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration) : base(options)
+    public ApplicationDbContext()
     {
-        _configuration = configuration;
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
     {
-        if (!optionsBuilder.IsConfigured)
-        {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
-            optionsBuilder.UseNpgsql(connectionString);
-        }
     }
 
     public virtual DbSet<Applicant> Applicants { get; set; }
@@ -31,6 +23,8 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<ApplicationTypeTemplate> ApplicationTypeTemplates { get; set; }
 
     public virtual DbSet<ApplicationTypeTemplatePhase> ApplicationTypeTemplatePhases { get; set; }
+
+    public virtual DbSet<DocumentFileType> DocumentFileTypes { get; set; }
 
     public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
 
@@ -47,6 +41,14 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<StepType> StepTypes { get; set; }
 
     public virtual DbSet<TemplatePhaseStep> TemplatePhaseSteps { get; set; }
+
+    public virtual DbSet<TemplatePhaseStepAttachment> TemplatePhaseStepAttachments { get; set; }
+
+    public virtual DbSet<TemplatePhaseStepDocumentProof> TemplatePhaseStepDocumentProofs { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("User ID = postgres;Password=tatvasoft;Server=localhost;Database=demo_db;Integrated Security=true;Pooling=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -154,6 +156,18 @@ public partial class ApplicationDbContext : DbContext
                 .HasConstraintName("fkey_template_id");
         });
 
+        modelBuilder.Entity<DocumentFileType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("document_file_type_pkey");
+
+            entity.ToTable("document_file_type");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
+        });
+
         modelBuilder.Entity<EmailTemplate>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("email_template_pkey");
@@ -170,8 +184,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Description)
                 .HasMaxLength(500)
                 .HasColumnName("description");
-            entity.Property(e => e.IsDefault)
-            .HasColumnName("is_default");
+            entity.Property(e => e.IsDefault).HasColumnName("is_default");
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_deleted");
@@ -366,6 +379,15 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_deleted");
+            entity.Property(e => e.IsInHouseScheduling)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_in_house_scheduling");
+            entity.Property(e => e.IsNotification)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_notification");
+            entity.Property(e => e.IsRequireDocProof)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_require_doc_proof");
             entity.Property(e => e.Ordinal).HasColumnName("ordinal");
             entity.Property(e => e.StepId).HasColumnName("step_id");
             entity.Property(e => e.TemplatePhaseId).HasColumnName("template_phase_id");
@@ -379,6 +401,67 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.TemplatePhaseId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fkey_template_phase_id");
+        });
+
+        modelBuilder.Entity<TemplatePhaseStepAttachment>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("template_phase_step_attachment_pkey");
+
+            entity.ToTable("template_phase_step_attachment");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AttachmentTypeId).HasColumnName("attachment_type_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate).HasColumnName("created_date");
+            entity.Property(e => e.FilePath)
+                .HasMaxLength(500)
+                .HasColumnName("file_path");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_deleted");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.ModifiedDate).HasColumnName("modified_date");
+            entity.Property(e => e.Ordinal).HasColumnName("ordinal");
+            entity.Property(e => e.TemplatePhaseStepId).HasColumnName("template_phase_step_id");
+            entity.Property(e => e.Title)
+                .HasMaxLength(100)
+                .HasColumnName("title");
+
+            entity.HasOne(d => d.AttachmentType).WithMany(p => p.TemplatePhaseStepAttachments)
+                .HasForeignKey(d => d.AttachmentTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkey_attachment_file_type");
+        });
+
+        modelBuilder.Entity<TemplatePhaseStepDocumentProof>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("template_phase_step_document_proof_pkey");
+
+            entity.ToTable("template_phase_step_document_proof");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate).HasColumnName("created_date");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .HasColumnName("description");
+            entity.Property(e => e.DocumentFileType).HasColumnName("document_file_type");
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValueSql("false")
+                .HasColumnName("is_deleted");
+            entity.Property(e => e.IsRequired).HasColumnName("is_required");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.ModifiedDate).HasColumnName("modified_date");
+            entity.Property(e => e.Ordinal).HasColumnName("ordinal");
+            entity.Property(e => e.TemplatePhaseStepId).HasColumnName("template_phase_step_id");
+            entity.Property(e => e.Title)
+                .HasMaxLength(100)
+                .HasColumnName("title");
+
+            entity.HasOne(d => d.DocumentFileTypeNavigation).WithMany(p => p.TemplatePhaseStepDocumentProofs)
+                .HasForeignKey(d => d.DocumentFileType)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkey_document_file_type");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -1,0 +1,75 @@
+﻿<script>
+    window.attachmentModel = @Html.Raw(Json.Serialize(Model))
+</script>
+<div class="modal fade" id="attachment-modal" tabindex="-1" role="dialog" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bind="with: model">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Attachment(s)</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="add-attachment-form" enctype="multipart/form-data">
+                    <div class="form-group required row">
+                        <label for="title" class="col-form-label control-label col-sm-2">Title</label>
+                        <div class="col-sm-10">
+                            <kendo-textbox name="title"
+                                           required="required"
+                                           data-bind="value: title, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                            </kendo-textbox>
+                            <span class="text-danger" data-bind="visible: title.hasError, text: title.validationMessage"> </span>
+                        </div>
+                    </div>
+                    <div class="form-group required row">
+                        <label for="fileType" class="col-form-label control-label col-sm-2">File Type</label>
+                        <div class="col-sm-10">
+                            <kendo-dropdownlist id="fileType" name="fileType"
+                                                dataTextField="name"
+                                                dataValueField="id"
+                                                data-bind="value: attachmentTypeId"
+                                                option-label="Select File type">
+                                <datasource>
+                                    <transport>
+                                        <read url="/TemplatePhaseStep/GetDocumentTypeList" />
+                                    </transport>
+                                </datasource>
+                            </kendo-dropdownlist>
+                        </div>
+                    </div>
+                    <div class="form-group required row">
+                        <label for="formFile" class="col-form-label control-label col-sm-2">Upload File</label>
+                        <div class="col-sm-10">
+                            <kendo-upload name="formFile"
+                                          data-bind="value: attachmentFile"
+                                          placeholder="Upload File"
+                                          multiple="false"
+                                          showFileList="false"
+                                          async="{ saveUrl: '/TemplatePhaseStep/SaveAttachment', autoUpload: false }">
+                            </kendo-upload>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <div class="d-flex justify-content-start flex-row-reverse modal-footer">
+                            <div class="mx-2">
+                                <kendo-button name="submitBtn"
+                                              data-bind="click: $root.submitForm"
+                                              theme-color="ThemeColor.Primary">
+                                    Save
+                                </kendo-button>
+                            </div>
+                            <div class="mx-2">
+                                <kendo-button name="closeBtn"
+                                              data-bs-dismiss="modal"
+                                              theme-color="ThemeColor.Secondary">
+                                    Close
+                                </kendo-button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

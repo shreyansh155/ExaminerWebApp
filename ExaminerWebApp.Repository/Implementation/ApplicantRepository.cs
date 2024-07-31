@@ -37,7 +37,7 @@ namespace ExaminerWebApp.Repository.Implementation
             return obj;
         }
 
-        public async Task<Applicant?> GetById(int id)
+        public async Task<Applicant?> GetById(int? id)
         { 
             Applicant applicant = await _context.Applicants.FirstAsync(x => x.Id == id);
             return applicant.IsDeleted == true ? null : applicant;

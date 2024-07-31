@@ -1,7 +1,9 @@
 ﻿using ExaminerWebApp.Composition.Helpers;
 using ExaminerWebApp.Entities.Entities;
+using ExaminerWebApp.Service.Implementation;
 using ExaminerWebApp.Service.Interface;
 using ExaminerWebApp.ViewModels;
+using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExaminerWebApp.Controllers
@@ -54,7 +56,6 @@ namespace ExaminerWebApp.Controllers
         public async Task<ActionResult> GetPhaseSteps(int templateId, int phaseId)
         {
             var phases = await _applicationTypeService.GetPhaseStepsByTemplateAsync(templateId, phaseId);
-
             return Json(phases); ;
         }
 
@@ -65,7 +66,6 @@ namespace ExaminerWebApp.Controllers
                 TemplateId = templateId,
                 Ordinal = await _templatePhaseService.GetNewPhaseOrdinal(templateId),
             };
-            Console.WriteLine(model);
             return PartialView("Modal/_AddPhase", model);
         }
 
@@ -114,7 +114,7 @@ namespace ExaminerWebApp.Controllers
                 TemplatePhaseId = templatePhaseId,
                 Ordinal = await _templatePhaseService.GetNewStepOrdinal(templatePhaseId),
             };
-            return PartialView("Modal/_AddStep", model);
+            return await Task.FromResult(PartialView("Modal/_AddStep", model));
         }
 
         public async Task<IActionResult> EditStep(int id)
@@ -150,7 +150,7 @@ namespace ExaminerWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddTemplatePhaseStep([FromBody] TemplatePhaseStep model)
+        public async Task<IActionResult> AddTemplatePhaseStep(TemplatePhaseStep model)
         {
             if (ModelState.IsValid)
             {
@@ -161,7 +161,7 @@ namespace ExaminerWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditTemplatePhaseStep([FromBody] TemplatePhaseStep model)
+        public async Task<IActionResult> EditTemplatePhaseStep(TemplatePhaseStep model)
         {
             if (ModelState.IsValid)
             {
@@ -176,8 +176,92 @@ namespace ExaminerWebApp.Controllers
         {
             return Json(new
             {
-                success = await _applicationTypeService.DeleteTemplate(id)
+                success = await _templatePhaseService.DeletePhase(id)
             });
+        }
+
+        public async Task<ActionResult> GetTemplatePhaseStepAttachment(int? tpsId, [FromBody] PaginationSet<TemplatePhaseStepAttachment> pager)
+        {
+            return Json(await _templatePhaseService.GetAttachments(tpsId, pager));
+        }
+
+        public async Task<ActionResult> GetTemplatePhaseStepDocumentProof(int tpsId, [FromBody] PaginationSet<TemplatePhaseStepDocumentProof> pager)
+        {
+            return Json(await _templatePhaseService.GetDocumentProof(tpsId, pager));
+        }
+
+        public async Task<ActionResult> GetDocumentTypeList()
+        {
+            var obj = Json(await _templatePhaseService.GetDocumentFileTypes());
+            return obj;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTemplatePhaseStepDocumentProof([FromBody] TemplatePhaseStepDocumentProof model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _templatePhaseService.CreateDocumentProof(model);
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditTemplatePhaseStepDocumentProof([FromBody] TemplatePhaseStepDocumentProof model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _templatePhaseService.EditDocumentProof(model);
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteTemplatePhaseStepDocumentProof(int id)
+        {
+            await _templatePhaseService.DeleteDocumentProof(id);
+            return Json(new { success = true });
+        }
+
+        public async Task<IActionResult> OpenAttachmentModal(int tpsId)
+        {
+            TemplatePhaseStepAttachment model = new()
+            {
+                TemplatePhaseStepId = tpsId,
+            };
+            return await Task.FromResult(PartialView("Modal/_AttachmentModal", model));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAttachment(TemplatePhaseStepAttachment model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _templatePhaseService.CreateAttachment(model);
+                return Json(new { success = true });
+            }
+
+            return Json(new { success = false });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditTemplatePhaseStepAttachment([FromBody] TemplatePhaseStepAttachment model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _templatePhaseService.EditAttachment(model);
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteTemplatePhaseStepAttachment(int id)
+        {
+            await _templatePhaseService.DeleteAttachment(id);
+            return Json(new { success = true });
         }
     }
 }

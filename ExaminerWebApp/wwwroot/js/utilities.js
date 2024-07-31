@@ -50,8 +50,6 @@ ko.extenders.maxLength = function (target, options) {
     return target;
 };
 
-
-
 ko.extenders.pattern = function (target, options) {
     target.hasError = ko.observable(false);
     target.validationMessage = ko.observable();
@@ -73,6 +71,7 @@ ko.extenders.pattern = function (target, options) {
 
     return target;
 };
+
 function formatDate(dateString) {
     if (dateString) {
         var date = new Date(dateString);
@@ -85,6 +84,11 @@ var patternsRegex = {
     phone: /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,
     email: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
 };
+
 $("#refreshButton").on("click", function () {
     $("#errorBody").empty();
 });
+
+const DisplayErrorMessages = () => {
+    console.log("error halder function triggered");
+}

@@ -9,7 +9,7 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<EmailTemplate> Create(EmailTemplate model);
         
-        Task<EmailTemplate> GetEmailTemplate(int id);
+        Task<EmailTemplate> GetEmailTemplate(int? id);
 
         Task<EmailTemplate> Update(EmailTemplate model);
 

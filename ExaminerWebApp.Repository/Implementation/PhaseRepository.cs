@@ -42,7 +42,7 @@ namespace ExaminerWebApp.Repository.Implementation
             return id;
         }
 
-        public async Task<Phase?> GetById(int id)
+        public async Task<Phase?> GetById(int? id)
         {
             Phase phase = await _context.Phases.FirstAsync(x => x.Id == id);
             return phase.IsDeleted == true ? null : phase;

@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Edit Template";
-
 }
 <div id="email-template-page" data-bind="with: model">
     <div class="container-fluid card d-block bg-light justify-content-center">
@@ -16,10 +15,8 @@
                 <div class="form-group required row">
                     <label for="name" class="col-form-label control-label col-sm-2">Name</label>
                     <div class="col-sm-10">
-                        <kendo-textbox id="name" name="name" data-bind="value: name, css: { 'err': name.hasError }" />
-                        <span class="text-danger"
-                              data-bind="visible: name.hasError, text: name.validationMessage">
-                        </span>
+                        <kendo-textbox id="name" name="name" data-bind="value: name"></kendo-textbox>
+                        <span data-bind="validationMessage: name" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group required row">
@@ -30,9 +27,7 @@
                                         name="description"
                                         data-bind="value: description, css: { 'err': description.hasError }">
                         </kendo-textarea>
-                        <span class="text-danger"
-                              data-bind="visible: description.hasError, text: description.validationMessage">
-                        </span>
+                        <span data-bind="validationMessage: description" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group row">

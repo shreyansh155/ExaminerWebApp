@@ -87,7 +87,7 @@ namespace ExaminerWebApp.Repository.Implementation
             return id;
         }
 
-        public async Task<ApplicationTypeTemplatePhase?> GetById(int id)
+        public async Task<ApplicationTypeTemplatePhase?> GetById(int? id)
         {
             ApplicationTypeTemplatePhase applicationTypeTemplatePhase = await _context.ApplicationTypeTemplatePhases.Where(x => x.Id == id).FirstAsync();
             if (applicationTypeTemplatePhase.IsDeleted == true)

@@ -237,8 +237,6 @@
                 this.email.validate();
                 this.settingid.validate();
 
-
-
                 if (this.isValid()) {
                     var formData = new FormData($("#addApplicant")[0]);
                     formData.append("Firstname", this.firstName());
@@ -254,7 +252,7 @@
                     if (data.id) {
                         formData.append("Id", data.id);
                     }
-
+                    console.log(formData);
                     var link = data && data.id ? '/Applicant/EditApplicant' : '/Applicant/AddApplicant';
 
                     $.ajax({

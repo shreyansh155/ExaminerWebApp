@@ -1,30 +1,28 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
-
-public class ExceptionHandlingMiddleware
+﻿namespace ExaminerWebApp.CustomMiddlewares
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-
-    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+    public class ExceptionHandlingMiddleware
     {
-        _next = next;
-        _logger = logger;
-    }
+        private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-    public async Task InvokeAsync(HttpContext context)
-    {
-        try
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
-            await _next(context);
+            _next = next;
+            _logger = logger;
         }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Something went wrong: {ex}");
-            context.Items["ExceptionMessage"] = ex.Message;
-            context.Response.Redirect("/Error");
+
+        public async Task InvokeAsync(HttpContext context)
+         {
+            try
+            {
+                await _next(context);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong: {ex}");
+                context.Items["ExceptionMessage"] = ex.Message;
+                context.Response.Redirect("/Error");
+            }
         }
     }
 }

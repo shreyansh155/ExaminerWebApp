@@ -1,14 +1,12 @@
 ﻿@model ExaminerWebApp.Entities.Entities.TemplatePhaseStep;
 @{
-    var serializedData = Json.Serialize(Model);
     var edit = Model?.StepId == null ? true : false;
 }
-
-<script type="text/javascript">
-    window.initialData = @Html.Raw(serializedData);
+<script>
+    window.modelData = @Html.Raw(Json.Serialize(Model))
 </script>
 
-<div class="modal" id="add-edit-step" tabindex="-1">
+<div class="modal" id="add-edit-step" tabindex="-1" data-bs-backdrop="static" data-bind="with: model">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -26,7 +24,7 @@
                                                 data-value-field="id"
                                                 option-label="--Select Step--"
                                                 enable="@edit"
-                                                data-bind="value: stepid"
+                                                data-bind="value: stepId"
                                                 auto-bind="true">
                                 <datasource>
                                     <transport>
@@ -41,7 +39,7 @@
                                     </transport>
                                 </datasource>
                             </kendo-dropdownlist>
-                            <span class="text-danger" data-bind="visible: stepid.hasError, text: stepid.validationMessage"> </span>
+                            <span class="text-danger" data-bind="visible: stepId.hasError, text: stepId.validationMessage"></span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -51,8 +49,8 @@
                                                 dataTextField="name"
                                                 dataValueField="id"
                                                 enable=false
-                                                option-label="Select Step type"
-                                                data-bind="value: steptypeid">
+                                                data-bind="value: $root.stepTypeId"
+                                                option-label="Select Step type">
                                 <datasource>
                                     <transport>
                                         <read url="/Step/StepTypeList" />
@@ -69,11 +67,10 @@
                                                   min="1"
                                                   required="required"
                                                   format="n0"
-                                                  decimals="0"
-                                                  data-bind="value: ordinal, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }">
+                                                  data-bind="value: ordinal, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }"
+                                                  decimals="0">
                             </kendo-numerictextbox>
                             <span class="text-danger" data-bind="visible: ordinal.hasError, text: ordinal.validationMessage"></span>
-
                         </div>
                     </div>
                     <div class="form-group row">
@@ -87,33 +84,69 @@
                         <label for="stepinstruction" class="col-form-label col-sm-4">Instruction</label>
                         <div class="col-sm-8">
                             <kendo-textarea name="stepinstruction"
-                                            rows="3"
-                                            data-bind="kendoEditor: stepinstruction, valueUpdate: 'afterkeydown'">
+                                            data-bind="kendoEditor: stepinstruction, valueUpdate: 'afterkeydown'"
+                                            rows="3">
                             </kendo-textarea>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-sm-4">Require Applicant to Provide Document Proof</label>
                         <div class="d-inline-flex justify-content-start col-sm-8">
-                            <kendo-checkbox id="document-proof" size=ComponentSize.Medium rounded=Rounded.Small class="mx-1" name="document-proof"></kendo-checkbox>
+                            <input type="checkbox"
+                                   id="document-proof"
+                                   data-bind="checked: isRequireDocProof"
+                                   class="mx-1" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-sm-4">In-house Scheduling</label>
                         <div class="d-inline-flex justify-content-start col-sm-8">
-                            <kendo-checkbox id="in-house-scheduling" size=ComponentSize.Medium rounded=Rounded.Small class="mx-1" name="in-house-scheduling"></kendo-checkbox>
+                            <input type="checkbox"
+                                   id="in-house-scheduling"
+                                   data-bind="checked: isInHouseScheduling"
+                                   class="mx-1" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-sm-4">Is Notification Required?</label>
                         <div class="d-inline-flex justify-content-start col-sm-8">
-                            <kendo-checkbox id="notification" size=ComponentSize.Medium rounded=Rounded.Small class="mx-1" name="notification"></kendo-checkbox>
+                            <input type="checkbox"
+                                   id="notification"
+                                   data-bind="checked: isNotification"
+                                   class="mx-1" />
+                        </div>
+                    </div>
+                    <div data-bind="visible: $root.isIdNotNull">
+                        <div class="card my-4">
+                            <div class="card-header justify-content-between">
+                                <div class="float-start">
+                                    <h4>Attachments</h4>
+                                </div>
+                                <div class="float-end">
+                                    <kendo-button name="add-attachment"
+                                                  data-bind="click:$root.attachmentModal"
+                                                  theme-color="ThemeColor.Primary">
+                                        Add Attachment
+                                    </kendo-button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="attachmentsgrid"></div>
+                            </div>
+                        </div>
+                        <div class="card my-4" data-bind="visible: isRequireDocProof">
+                            <div class="card-header">
+                                <h4>Document Proof(s)</h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="documentproofgrid"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="d-flex justify-content-start flex-row-reverse modal-footer">
                         <div class="mx-2">
                             <kendo-button name="primaryTextButton"
-                                          data-bind="click: formSubmit"
+                                          data-bind="click: $root.formSubmit"
                                           theme-color="ThemeColor.Primary">
                                 Save
                             </kendo-button>

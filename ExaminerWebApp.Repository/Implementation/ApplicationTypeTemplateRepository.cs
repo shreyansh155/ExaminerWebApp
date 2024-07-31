@@ -52,7 +52,7 @@ namespace ExaminerWebApp.Repository.Implementation
             return id;
         }
 
-        public async Task<ApplicationTypeTemplate?> GetById(int id)
+        public async Task<ApplicationTypeTemplate?> GetById(int? id)
         {
             ApplicationTypeTemplate applicationTypeTemplate = await _context.ApplicationTypeTemplates.Where(x => x.Id == id).FirstAsync();
             return applicationTypeTemplate.IsDeleted == true ? null : applicationTypeTemplate;

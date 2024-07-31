@@ -200,32 +200,29 @@
                 { field: "phaseName", title: "Phase" },
                 { field: "steps", title: "Steps", width: "200px" },
                 {
+                    title: "Actions",
+                    width: "300px",
                     command: [
                         {
                             text: "Add Steps",
-                            click: AddStep
+                            click: AddStep,
+                            className: "k-button k-primary",
                         },
                         {
                             name: "editPhase",
                             text: "",
                             click: EditPhase,
                             iconClass: ".k-i-pencil",
-                            attributes: {
-                                "class": "k-button k-primary"
-                            },
+                            className: "k-button-solid-base"
                         },
                         {
                             name: "deletePhase",
                             text: "",
                             click: DeletePhase,
                             iconClass: ".k-i-trash",
-                            attributes: {
-                                "class": "k-button k-primary"
-                            },
+                            className: "k-button-solid-error"
                         }
                     ],
-                    title: "Actions",
-                    width: "300px",
                 },
             ]
         }).data("kendoGrid");
@@ -299,18 +296,14 @@
                                 text: " ",
                                 click: EditStep,
                                 iconClass: ".k-i-pencil",
-                                attributes: {
-                                    "class": "k-button k-primary"
-                                },
+                                className: "k-button-solid-base"
                             },
                             {
                                 name: "deleteStep",
                                 text: " ",
                                 click: DeleteStep,
                                 iconClass: ".k-i-trash",
-                                attributes: {
-                                    "class": "k-button k-primary"
-                                },
+                                className: "k-button-solid-error"
                             }
                         ],
                         title: "Actions",
@@ -333,7 +326,6 @@
                 success: function (result) {
                     $('#displayModal').html(result);
                     $('#add-edit-step').modal('show');
-                    AddEditStepViewModal();
                 },
                 error: function (error) {
                     console.log(error);
@@ -344,7 +336,6 @@
         function EditStep(e) {
             var tr = $(e.target).closest("tr");
             var dataItem = stepGrid.data("kendoGrid").dataItem(tr);
-
             $.ajax({
                 url: "/TemplatePhaseStep/EditStep",
                 type: "GET",
@@ -354,7 +345,6 @@
                 success: function (result) {
                     $('#displayModal').html(result);
                     $('#add-edit-step').modal('show');
-                    AddEditStepViewModal();
                 },
                 error: function (error) {
                     console.log(error);
@@ -365,6 +355,7 @@
         function DeleteStep(e) {
             var tr = $(e.target).closest("tr");
             var dataItem = stepGrid.data("kendoGrid").dataItem(tr);
+
             if (confirm("Are you sure you want to delete this entry?")) {
                 $.ajax({
                     url: "/TemplatePhaseStep/DeleteStep",
@@ -391,9 +382,7 @@
         function EditPhase(e) {
             var tr = $(e.target).closest("tr");
             var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
-
-            console.log(dataItem);
-
+ 
             $.ajax({
                 url: "/TemplatePhaseStep/EditPhase",
                 type: "GET",
@@ -416,13 +405,13 @@
         function DeletePhase(e) {
             var tr = $(e.target).closest("tr");
             var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
-
+            console.log(dataItem);
             if (confirm("Are you sure you want to delete this entry?")) {
                 $.ajax({
                     url: "/TemplatePhaseStep/DeleteTemplatePhase",
                     type: 'POST',
                     data: {
-                        templatePhaseId: dataItem.templatePhaseId,
+                        id: dataItem.id,
                     },
                     success: function (result) {
                         $("#refreshButton").trigger("click");
@@ -459,119 +448,6 @@
                 grid.collapseRow(this);
             });
         });
-
-        function AddEditStepViewModal() {
-
-            function AddEditStepModel(data) {
-                data = data || {};
-
-                this.stepid = ko.observable(data.stepId || null).extend({ required: "Please select step" });
-                this.steptypeid = ko.observable(data.stepTypeId || "");
-                this.ordinal = ko.observable(data.ordinal || "").extend({ required: "Please enter ordinal number" });
-                this.stepinstruction = ko.observable(data.step?.instruction || "");
-
-                this.formSubmit = function () {
-
-                    this.stepid.validate();
-                    this.ordinal.validate();
-
-                    if (this.isValid()) {
-
-                        var formdata = {
-                            StepId: this.stepid(),
-                            Ordinal: this.ordinal(),
-                            Instruction: this.stepinstruction(),
-                            TemplatePhaseId: data.templatePhaseId
-                        };
-                        if (data && data.id) {
-                            formdata.Id = data.id;
-                        }
-                        var link = data && data.stepId ? '/TemplatePhaseStep/EditTemplatePhaseStep' : '/TemplatePhaseStep/AddTemplatePhaseStep'
-                        $.ajax({
-                            url: link,
-                            type: 'POST',
-                            contentType: "application/json",
-                            data: JSON.stringify(formdata),
-                            success: function (response) {
-                                if (response.success) {
-                                    $("#add-edit-step").modal('hide');
-                                    $("#refreshButton").trigger("click");
-                                } else {
-                                    var errorsHtml = '<ul>';
-                                    if (typeof (response.errors) === "string") {
-                                        errorsHtml += '<li>' + response.errors + '</li>'
-                                    }
-                                    else {
-                                        $.each(response.errors, function (key, value) {
-                                            errorsHtml += '<li>' + value + '</li>';
-                                        });
-                                    }
-                                    errorsHtml += '</ul>';
-                                    $('#errorBody').html(errorsHtml);
-                                }
-                            },
-                            error: function (error) {
-                                console.log(error);
-                            }
-                        });
-                    }
-                }
-                this.isValid = function () {
-                    return !this.stepid.hasError() && !this.ordinal.hasError();
-                };
-            }
-
-            var viewModel = new AddEditStepModel(window.initialData);
-            ko.applyBindings(viewModel, document.getElementById("add-edit-step-form"));
-
-            var ordinalNumericTextBox = $("#ordinal").data("kendoNumericTextBox");
-
-            ordinalNumericTextBox.value(viewModel.ordinal());
-
-            viewModel.ordinal.subscribe(function (newValue) {
-                ordinalNumericTextBox.value(newValue);
-            });
-
-            //step name binding
-            $("#stepname").data("kendoDropDownList").value(viewModel.stepid());
-
-            viewModel.stepid.subscribe(function (newValue) {
-                $("#stepname").data("kendoDropDownList").value(newValue);
-            });
-
-            //Step type binding
-            $("#steptypeid").data("kendoDropDownList").value(viewModel.steptypeid());
-
-            $("#stepname").on("change", function (e) {
-                var newStepId = e.target.value;
-                $.ajax({
-                    url: "/TemplatePhaseStep/GetStepTypeId",
-                    type: "GET",
-                    data: { stepId: newStepId },
-                    success: function (response) {
-                        if (response && response.stepTypeId) {
-                            $("#steptypeid").data("kendoDropDownList").value(response.stepTypeId);
-                        }
-                    },
-                    error: function () {
-                        console.error("Failed to fetch step type ID.");
-                    }
-                });
-            })
-
-            viewModel.steptypeid.subscribe(function (newValue) {
-                $("#steptypeid").data("kendoDropDownList").value(newValue);
-            });
-
-            //ordinal binding
-            var ordinalNumericTextBox = $("#ordinal").data("kendoNumericTextBox");
-
-            ordinalNumericTextBox.value(viewModel.ordinal());
-
-            viewModel.ordinal.subscribe(function (newValue) {
-                ordinalNumericTextBox.value(newValue);
-            });
-        }
     }
 
     //PHASE WiTH ORDINAL ADDITION MODAL IN EDIT TEMPLATE VIEW // window/add-phase.js
@@ -617,11 +493,11 @@
                         PhaseId: this.phaseid(),
                         Ordinal: this.ordinal(),
                         TemplateId: data.templateId,
-                        StepCount: gridData.length,
+                        StepCount: gridData.filter(item => item.IsInTemplatePhaseSteps).length,
                         TemplatePhaseSteps: gridData
                             .filter(item => item.IsInTemplatePhaseSteps)
                             .map(item => ({
-                                Id: item.Id,
+                                StepId: item.Id,
                                 TemplatePhaseId: item.templatePhaseId,
                                 TemplatePhaseStepId: item.templatePhaseStepId,
                                 Name: item.Name,
@@ -629,6 +505,7 @@
                                 IsInTemplatePhaseSteps: item.IsInTemplatePhaseSteps
                             }))
                     };
+
                     $.ajax({
                         url: '/TemplatePhaseStep/AddTemplatePhase',
                         type: 'POST',
@@ -696,6 +573,7 @@
                                     phaseId
                                 },
                                 success: function (data) {
+                                    console.log(data);
                                     options.success(data);
                                 },
                                 error: function (error) {

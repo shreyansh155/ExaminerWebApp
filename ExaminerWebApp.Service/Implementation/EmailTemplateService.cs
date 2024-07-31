@@ -16,7 +16,7 @@ namespace ExaminerWebApp.Service.Implementation
             _emailTemplateRepository = emailTemplateRepository;
             _mapper = mapper;
         }
-    
+
         public async Task<PaginationSet<Entities.Entities.EmailTemplate>> GetAll(PaginationSet<Entities.Entities.EmailTemplate> pager)
         {
 
@@ -74,7 +74,7 @@ namespace ExaminerWebApp.Service.Implementation
             return await _emailTemplateRepository.Delete(id);
         }
 
-        public async Task<Entities.Entities.EmailTemplate> GetEmailTemplate(int id)
+        public async Task<Entities.Entities.EmailTemplate> GetEmailTemplate(int? id)
         {
             Repository.DataModels.EmailTemplate emailTemplate = await _emailTemplateRepository.GetById(id);
             return _mapper.Map<Entities.Entities.EmailTemplate>(emailTemplate);
@@ -82,7 +82,7 @@ namespace ExaminerWebApp.Service.Implementation
 
         public async Task<bool> CheckIfExists(int? id, string name)
         {
-            return await _emailTemplateRepository.CheckIfExists(id,name);
+            return await _emailTemplateRepository.CheckIfExists(id, name);
         }
     }
 }

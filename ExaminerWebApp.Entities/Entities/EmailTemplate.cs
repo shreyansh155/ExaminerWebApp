@@ -6,16 +6,18 @@ namespace ExaminerWebApp.Entities.Entities
     {
         public int? Id { get; set; }
 
-        [Required(ErrorMessage = "Please enter Email Template name")]
+        [Required(ErrorMessage = "Name is required")]
         [MaxLength(50, ErrorMessage = "Email Template name must be less than 50 characters.")]
         public string Name { get; set; } = null!;
 
-        [Required(ErrorMessage = "Please enter Email Description")]
+        [Required(ErrorMessage = "Description is required")]
+        [MaxLength(500, ErrorMessage = "Description must be less than 500 characters.")]
         public string Description { get; set; } = null!;
 
+        [MaxLength(500, ErrorMessage = "Template must be less than 500 characters.")]
         public string? Template { get; set; }
 
-        public bool IsDefault { get; set; }
+        public bool IsDefault { get; set; } = false;
 
         public int CreatedBy { get; set; }
 

@@ -15,6 +15,12 @@ public partial class TemplatePhaseStep
 
     public bool? IsDeleted { get; set; }
 
+    public bool? IsRequireDocProof { get; set; }
+
+    public bool? IsInHouseScheduling { get; set; }
+
+    public bool? IsNotification { get; set; }
+
     public virtual Step Step { get; set; } = null!;
 
     public virtual ApplicationTypeTemplatePhase TemplatePhase { get; set; } = null!;

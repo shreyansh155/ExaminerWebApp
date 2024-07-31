@@ -31,7 +31,8 @@ namespace ExaminerWebApp.Controllers
 
         public async Task<ActionResult> Create()
         {
-            return await Task.FromResult(View("EmailTemplate"));
+            EmailTemplate model = new();
+            return await Task.FromResult(View("EmailTemplate", model));
         }
 
         [HttpPost]

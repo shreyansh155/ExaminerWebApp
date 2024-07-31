@@ -20,9 +20,17 @@ namespace ExaminerWebApp.Entities.Entities
 
         public bool? IsDeleted { get; set; }
 
+        public bool? IsRequireDocProof { get; set; }
+
+        public bool? IsInHouseScheduling { get; set; }
+
+        public bool? IsNotification { get; set; }
+
         [NotMapped]
         public string? Instruction { get; set; }
 
         public Step? Step { get; set; }
+
+        public virtual ApplicationTypeTemplatePhase TemplatePhase { get; set; } = null!;
     }
 }

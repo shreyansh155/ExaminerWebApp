@@ -23,11 +23,11 @@ namespace ExaminerWebApp.Repository.Implementation
         {
             if (emailTemplate.IsDefault == true)
             {
-                List<EmailTemplate> list = await _context.EmailTemplates
-                    .Where(x => x.IsDeleted != true)
-                    .ToListAsync();
-
-                await UpdateDefaultTemplate(list);
+                EmailTemplate? obj = await _context.EmailTemplates.FirstOrDefaultAsync(x => x.IsDefault == true && x.IsDeleted != true);
+                if (obj != null)
+                {
+                    obj.IsDefault = false;
+                }
             }
             await _context.EmailTemplates.AddAsync(emailTemplate);
             await _context.SaveChangesAsync();
@@ -57,7 +57,7 @@ namespace ExaminerWebApp.Repository.Implementation
             return id;
         }
 
-        public async Task<EmailTemplate?> GetById(int id)
+        public async Task<EmailTemplate?> GetById(int? id)
         {
             EmailTemplate emailTemplate = await _context.EmailTemplates.FirstAsync(x => x.Id == id);
             return emailTemplate.IsDeleted == true ? null : emailTemplate;

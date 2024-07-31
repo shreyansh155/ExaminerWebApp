@@ -42,7 +42,7 @@ namespace ExaminerWebApp.Repository.Implementation
             return id;
         }
 
-        public async Task<Step?> GetById(int id)
+        public async Task<Step?> GetById(int? id)
         {
             Step step = await _context.Steps.FirstAsync(x => x.Id == id);
 

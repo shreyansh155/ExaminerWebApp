@@ -36,3 +36,19 @@
 .err {
     border: solid 1px #dc3545 !important;
 }
+
+.k-checkbox {
+    border: solid 1px #000;
+}
+
+#add-edit-step {
+    z-index: 1050;
+}
+
+#attachment-modal {
+    z-index: 1060;
+}
+
+    #attachment-modal .modal-backdrop {
+        z-index: 1059;
+    }

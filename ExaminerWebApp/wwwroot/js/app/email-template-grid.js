@@ -43,7 +43,6 @@
                         },
                         pageSize: 10,
                         serverPaging: true,
-                        serverPaging: true,
                         serverSorting: true,
                         schema: {
                             total: "totalCount",

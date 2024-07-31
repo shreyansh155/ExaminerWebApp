@@ -7,8 +7,8 @@
 
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
 
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @* BOOTSTRAP JS *@
     <script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -42,7 +42,7 @@
     <script src="/js/utilities.js"></script>
     <script src="/js/kendo-ui-license.js"></script>
 
-    <script src="~/lib/Knockout-Validation/Dist/knockout.validation.min.js"></script>
+    <script src="~/lib/knockout.validation/dist/knockout.validation.js"></script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
@@ -164,5 +164,6 @@
     <script src="~/lib/require/dist/require.js"></script>
     <script src="~/js/require-config.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync("modalScript", required: false)
 </body>
 </html>

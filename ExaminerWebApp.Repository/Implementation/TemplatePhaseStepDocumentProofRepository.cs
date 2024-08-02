@@ -26,6 +26,40 @@ namespace ExaminerWebApp.Repository.Implementation
         public async Task<TemplatePhaseStepDocumentProof> Create(TemplatePhaseStepDocumentProof model)
         {
             await _context.TemplatePhaseStepDocumentProofs.AddAsync(model);
+            var all = GetAll(model.TemplatePhaseStepId)
+                                    .OrderBy(x => x.Ordinal)
+                                    .ToList();
+
+            var upper = all
+                .Where(tp => tp.Ordinal >= model.Ordinal)
+                .ToList();
+
+            var lower = all
+                .Where(tp => tp.Ordinal < model.Ordinal)
+                .ToList();
+
+            for (int i = 0; i < upper.Count; i++)
+            {
+                if (i == 0 && upper[0].Ordinal > model.Ordinal)
+                {
+                    break;
+                }
+                else
+                {
+                    if (i == 0)
+                    {
+                        upper[i].Ordinal++;
+                    }
+                    else if (i > 0 && upper[i - 1].Ordinal == upper[i].Ordinal)
+                    {
+                        upper[i].Ordinal++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
             await _context.SaveChangesAsync();
             return model;
         }
@@ -33,6 +67,41 @@ namespace ExaminerWebApp.Repository.Implementation
         public async Task<TemplatePhaseStepDocumentProof> Update(TemplatePhaseStepDocumentProof model)
         {
             _context.TemplatePhaseStepDocumentProofs.Update(model);
+            var all = GetAll(model.TemplatePhaseStepId)
+                            .Where(x => x.Id != model.Id)
+                            .OrderBy(x => x.Ordinal)
+                            .ToList();
+
+            var upper = all
+                .Where(tp => tp.Ordinal >= model.Ordinal)
+                .ToList();
+
+            var lower = all
+                .Where(tp => tp.Ordinal < model.Ordinal)
+                .ToList();
+
+            for (int i = 0; i < upper.Count; i++)
+            {
+                if (i == 0 && upper[0].Ordinal > model.Ordinal)
+                {
+                    break;
+                }
+                else
+                {
+                    if (i == 0)
+                    {
+                        upper[i].Ordinal++;
+                    }
+                    else if (i > 0 && upper[i - 1].Ordinal == upper[i].Ordinal)
+                    {
+                        upper[i].Ordinal++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
             await _context.SaveChangesAsync();
             return model;
         }

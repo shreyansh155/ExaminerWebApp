@@ -26,11 +26,10 @@ namespace ExaminerWebApp.Entities.Entities
 
         public bool? IsNotification { get; set; }
 
-        [NotMapped]
         public string? Instruction { get; set; }
 
         public Step? Step { get; set; }
 
-        public virtual ApplicationTypeTemplatePhase TemplatePhase { get; set; } = null!;
+        public virtual ApplicationTypeTemplatePhase? TemplatePhase { get; set; } = null!;
     }
 }

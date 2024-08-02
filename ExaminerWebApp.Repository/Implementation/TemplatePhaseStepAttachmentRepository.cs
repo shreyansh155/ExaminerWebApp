@@ -15,7 +15,11 @@ namespace ExaminerWebApp.Repository.Implementation
         }
         public async Task<TemplatePhaseStepAttachment> Create(TemplatePhaseStepAttachment model)
         {
-            var obj = await _context.TemplatePhaseStepAttachments.Where(x => x.IsDeleted != true).OrderByDescending(x => x.Ordinal).FirstOrDefaultAsync();
+            var obj = await _context.TemplatePhaseStepAttachments
+                .Where(x => x.TemplatePhaseStepId == model.TemplatePhaseStepId && x.IsDeleted != true)
+                .OrderByDescending(x => x.Ordinal)
+                .FirstOrDefaultAsync();
+
             if (obj != null)
             {
                 model.Ordinal = obj.Ordinal + 1;
@@ -32,8 +36,49 @@ namespace ExaminerWebApp.Repository.Implementation
 
         public async Task<TemplatePhaseStepAttachment> Update(TemplatePhaseStepAttachment model)
         {
-            var obj = _context.TemplatePhaseStepAttachments.Update(model);
-            await _context.SaveChangesAsync();
+            TemplatePhaseStepAttachment att = await _context.TemplatePhaseStepAttachments.FirstAsync(x => x.Id == model.Id);
+            if (att != null)
+            {
+                att.Title = model.Title;
+                att.AttachmentTypeId = model.AttachmentTypeId;
+                att.Ordinal = model.Ordinal;
+                var all = GetAll(model.TemplatePhaseStepId)
+                                .Where(x => x.Id != att.Id)
+                                .OrderBy(x => x.Ordinal)
+                                .ToList();
+
+                var upper = all
+                    .Where(tp => tp.Ordinal >= model.Ordinal)
+                    .ToList();
+
+                var lower = all
+                    .Where(tp => tp.Ordinal < model.Ordinal)
+                    .ToList();
+
+                for (int i = 0; i < upper.Count; i++)
+                {
+                    if (i == 0 && upper[0].Ordinal > model.Ordinal)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        if (i == 0)
+                        {
+                            upper[i].Ordinal++;
+                        }
+                        else if (i > 0 && upper[i - 1].Ordinal == upper[i].Ordinal)
+                        {
+                            upper[i].Ordinal++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                await _context.SaveChangesAsync();
+            }
             return model;
         }
 

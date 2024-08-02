@@ -35,7 +35,6 @@ namespace ExaminerWebApp.Service.Interface
 
         Task<TemplatePhaseStepDocumentProof> EditDocumentProof(TemplatePhaseStepDocumentProof model);
 
-
         Task<int> DeleteDocumentProof(int id);
 
         Task<TemplatePhaseStepAttachment> CreateAttachment(TemplatePhaseStepAttachment model);

@@ -65,13 +65,5 @@ namespace ExaminerWebApp.Repository.Implementation
             }
             return _context.Steps.Where(x => x.Name.ToLower() == name.ToLower() && x.IsDeleted != true).AnyAsync();
         }
-
-        public async Task<bool> UpdateInstruction(int? stepId, string instruction)
-        {
-            Step step = await _context.Steps.FirstAsync(x => x.Id == stepId);
-            step.Instruction = instruction;
-            await _context.SaveChangesAsync();
-            return true;
-        }
     }
 }

@@ -70,20 +70,18 @@
             {
                 command: [
                     {
-                        text: "Edit",
+                        text: "",
+                        name:"editTemplate",
                         click: EditEntry,
                         iconClass: ".k-i-pencil",
-                        attributes: {
-                            "class": "k-button k-primary"
-                        },
+                        className: "k-button-solid-primary"
                     },
                     {
-                        text: "Delete",
+                        text: "",
+                        name:"deleteTemplate",
                         click: DeleteEntry,
                         iconClass: ".k-i-trash",
-                        attributes: {
-                            "class": "k-button k-primary"
-                        },
+                        className: "k-button-solid-error"
                     }
                 ],
                 title: "Actions",
@@ -91,7 +89,7 @@
             }
         ],
         dataBound: function (e) {
-           
+
             // Bind click event to the add button
             $('.k-grid-add').off("click").on("click", function () {
                 $.ajax({

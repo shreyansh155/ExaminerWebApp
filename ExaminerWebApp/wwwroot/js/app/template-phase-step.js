@@ -9,9 +9,25 @@
 
             data = data || {};
 
-            this.name = ko.observable(data.name || "").extend({ required: "Please enter application template name" });
-            this.description = ko.observable(data.description || "");
-            this.instruction = ko.observable(data.instruction || "");
+            this.name = ko.observable(data.name || "").extend({
+                required: "Please enter application template name",
+                maxLength: {
+                    message: "Max length is 50 characters",
+                    params: 50
+                }
+            });
+            this.description = ko.observable(data.description || "").extend({
+                maxLength: {
+                    message: "Max length is 500 characters",
+                    params: 500
+                }
+            });
+            this.instruction = ko.observable(data.instruction || "").extend({
+                maxLength: {
+                    message: "Max length is 500 characters",
+                    params: 500
+                }
+            });
 
             this.submitTemplate = function () {
                 this.name.validate();
@@ -382,7 +398,7 @@
         function EditPhase(e) {
             var tr = $(e.target).closest("tr");
             var dataItem = $("#grid").data("kendoGrid").dataItem(tr);
- 
+
             $.ajax({
                 url: "/TemplatePhaseStep/EditPhase",
                 type: "GET",

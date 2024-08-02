@@ -2,18 +2,26 @@
 using System.Collections.Generic;
 using ExaminerWebApp.Repository.DataModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace ExaminerWebApp.Repository.DataContext;
 
 public partial class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext()
+    private readonly IConfiguration _configuration;
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration) : base(options)
     {
+        _configuration = configuration;
     }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+            optionsBuilder.UseNpgsql(connectionString);
+        }
     }
 
     public virtual DbSet<Applicant> Applicants { get; set; }
@@ -45,10 +53,6 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<TemplatePhaseStepAttachment> TemplatePhaseStepAttachments { get; set; }
 
     public virtual DbSet<TemplatePhaseStepDocumentProof> TemplatePhaseStepDocumentProofs { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("User ID = postgres;Password=tatvasoft;Server=localhost;Database=demo_db;Integrated Security=true;Pooling=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -388,6 +392,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IsRequireDocProof)
                 .HasDefaultValueSql("false")
                 .HasColumnName("is_require_doc_proof");
+            entity.Property(e => e.Instruction)
+               .HasMaxLength(500)
+               .HasColumnName("instruction");
             entity.Property(e => e.Ordinal).HasColumnName("ordinal");
             entity.Property(e => e.StepId).HasColumnName("step_id");
             entity.Property(e => e.TemplatePhaseId).HasColumnName("template_phase_id");

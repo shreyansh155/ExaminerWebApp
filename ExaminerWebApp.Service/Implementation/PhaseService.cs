@@ -54,7 +54,7 @@ namespace ExaminerWebApp.Service.Implementation
 
         public async Task<Phase> GetPhaseById(int id)
         {
-            Repository.DataModels.Phase dbphase = await _phaseRepository.GetById(id);
+            Repository.DataModels.Phase? dbphase = await _phaseRepository.GetById(id);
             Phase phase = _mapper.Map<Phase>(dbphase);
             return phase;
         }
@@ -79,7 +79,6 @@ namespace ExaminerWebApp.Service.Implementation
             await _phaseRepository.Update(phase);
             return model;
         }
-
 
         public Task<bool> CheckIfExists(int? id, string name)
         {

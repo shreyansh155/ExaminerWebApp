@@ -77,9 +77,9 @@
                             read: function (opt) {
                                 var gridData = {
                                     Skip: opt.data.skip,
-                                    Take: opt.data.pageSize || 10,
+                                    Take: opt.data.pageSize || 3,
                                     Page: opt.data.page || 1,
-                                    PageSize: opt.data.pageSize || 10,
+                                    PageSize: opt.data.pageSize || 3,
                                     Sort: opt.data.sort,
                                     Filter: opt.data.filter
                                 };
@@ -106,7 +106,7 @@
                                 return data;
                             }
                         },
-                        pageSize: 5,
+                        pageSize: 3,
                         serverPaging: true,
                         serverSorting: true,
                         schema: {
@@ -119,6 +119,7 @@
                                         attachmentTypeId: item.attachmentTypeId,
                                         fileType: item.attachmentType.name,
                                         ordinal: item.ordinal,
+                                        filePath: item.filePath
                                     };
                                 });
                             },
@@ -147,7 +148,7 @@
                         { field: "ordinal", title: "Ordinal", width: 125 },
                         {
                             command: [
-                                { name: "edit", text: "", iconClass: ".k-i-pencil" },
+                                { name: "edit", text: { edit: "", update: "", cancel: "" }, iconClass: ".k-i-pencil", className: "k-button-solid-base", },
                                 { name: "download", text: "", iconClass: ".k-i-download", click: DownloadFile },
                                 { name: "destroy", text: "", iconClass: ".k-i-trash", className: "k-button-solid-error", }],
                             title: "Actions",
@@ -166,22 +167,24 @@
                 function DownloadFile(e) {
                     var tr = $(e.target).closest("tr");
                     var dataItem = $("#attachmentsgrid").data("kendoGrid").dataItem(tr);
-                    var filePath = `/UploadedFiles/${dataItem.filePath}`;
 
-                    //creating a temporary anchor tag
+                    // Construct the file path
+                    var filePath = `/UploadedFiles/TPSAttachments/${vm.model.id()}/${dataItem.id}/${encodeURIComponent(dataItem.filePath)}`;
+
+                    // Create an anchor element
                     var link = document.createElement('a');
-
                     link.href = filePath;
+
+                    // Set the download attribute to the encoded file name
                     link.download = dataItem.title;
+
+                    // Append the anchor to the body, trigger a click, and then remove it
                     document.body.appendChild(link);
-
                     link.click();
-
                     document.body.removeChild(link);
                 }
 
                 function UpdateAttachment(e) {
-                    console.log(e);
                     var formData = {
                         Id: e.id,
                         TemplatePhaseStepId: vm.model.id(),
@@ -189,7 +192,6 @@
                         AttachmentTypeId: e.attachmentTypeId,
                         Ordinal: e.ordinal,
                     };
-                    console.log(formData);
                     $.ajax({
                         url: "/TemplatePhaseStep/EditTemplatePhaseStepAttachment",
                         type: "POST",
@@ -235,9 +237,9 @@
                             read: function (opt) {
                                 var gridData = {
                                     Skip: opt.data.skip,
-                                    Take: opt.data.pageSize || 10,
+                                    Take: opt.data.pageSize || 3,
                                     Page: opt.data.page || 1,
-                                    PageSize: opt.data.pageSize || 10,
+                                    PageSize: opt.data.pageSize || 3,
                                     Sort: opt.data.sort,
                                     Filter: opt.data.filter
                                 };
@@ -267,7 +269,7 @@
                             }
                         },
                         page: 1,
-                        pageSize: 5,
+                        pageSize: 3,
                         serverPaging: true,
                         serverSorting: true,
                         serverFiltering: true,
@@ -299,11 +301,30 @@
                                                     input.attr("data-titleValidation-msg", "Title is required.");
                                                     return false;
                                                 }
+
+                                                return true;
+                                            },
+                                            titleMaxlength: function (input) {
+                                                if (input.is("[name='title']") && input.val().length > 50) {
+                                                    input.attr("data-titleMaxlength-msg", "Max length is 50 characters");
+                                                    return false;
+                                                }
                                                 return true;
                                             }
                                         },
                                     },
-                                    description: { type: "string" },
+                                    description: {
+                                        type: "string",
+                                        validation: {
+                                            descriptionMaxlength: function (input) {
+                                                if (input.is("[name='description']") && input.val().length > 250) {
+                                                    input.attr("data-descriptionMaxlength-msg", "Max length is 250 characters");
+                                                    return false;
+                                                }
+                                                return true;
+                                            }
+                                        }
+                                    },
                                     documentFileType: {
                                         type: "number",
                                         validation: {
@@ -344,13 +365,13 @@
                     columns: [
                         { field: "id", hidden: true },
                         { field: "title", title: "Title", width: 150 },
-                        { field: "description", title: "Description", width: 275 },
+                        { field: "description", title: "Description", width: 275, editor: textBox },
                         { field: "documentFileType", title: "File Type", editor: documentTypeDropDown, template: "#= fileType #", width: 200 },
                         { field: "isRequired", title: "Required", template: "#= isRequired === true ? 'Yes' : 'No' #", editor: requiredCheckbox, width: 125 },
                         { field: "ordinal", title: "Ordinal", width: 100 },
                         {
                             command: [
-                                { name: "edit", text: "", iconClass: ".k-i-pencil", className: "k-button-solid-base", },
+                                { name: "edit", text: { edit: "", update: "", cancel: "" }, iconClass: ".k-i-pencil", className: "k-button-solid-base", },
                                 { name: "destroy", text: "", iconClass: ".k-i-trash", className: "k-button-solid-error", }],
                             title: "Actions",
                             width: 150,
@@ -368,6 +389,7 @@
                         DeleteDocumentProof(e.model);
                     },
                 }).data("kendoGrid");
+
                 function requiredCheckbox(container, options) {
                     $('<input type="checkbox" name="isRequired" data-bind="checked: isRequired" />')
                         .appendTo(container)
@@ -375,8 +397,8 @@
                             checked: options.model.isRequired
                         });
                 }
-                function CreateDocumentProof(e) {
 
+                function CreateDocumentProof(e) {
                     var formData = {
                         TemplatePhaseStepId: vm.model.id(),
                         Title: e.title,
@@ -449,6 +471,7 @@
                     });
                 }
             },
+
         };
 
         function documentTypeDropDown(container, options) {
@@ -467,6 +490,11 @@
                 });
         }
 
+        function textBox(container, options) {
+            $('<textarea rows="1" name="' + options.field + '" class="k-textbox form-control" data-bind="value:' + options.field + '"></textarea>')
+                .appendTo(container);
+        }
+
         var documentTypeDataSource = new kendo.data.DataSource({
             transport: {
                 read: {
@@ -480,8 +508,25 @@
         var vm = self.stepVM;
 
         self.init = function () {
-
             vm.model = ko_mapping.fromJS(options);
+
+            vm.model.ordinal.extend({
+                required: { message: "Ordinal is required" },
+                minLength: {
+                    message: "Ordinal must be greater than 0",
+                    params: 1
+                }
+            });
+            vm.model.stepId.extend({
+                required: { message: "Please select a step" },
+            });
+
+            vm.model.instruction.extend({
+                maxLength: {
+                    message: "instruction must be less than 500 letters",
+                    params: 500
+                }
+            });
 
             ko_validation.init({
                 registerExtenders: true,
@@ -495,7 +540,6 @@
             }, true);
 
             var ordinalNumericTextBox = $("#ordinal").data("kendoNumericTextBox");
-
             ordinalNumericTextBox.value(vm.model.ordinal());
 
             vm.model.ordinal.subscribe(function (newValue) {
@@ -503,28 +547,56 @@
             });
 
             $("#stepname").data("kendoDropDownList").value(vm.model.stepId());
-
             vm.model.stepId.subscribe(function (newValue) {
                 $("#stepname").data("kendoDropDownList").value(newValue);
             });
 
             var stepIdDropdown = $("#steptypeid").data("kendoDropDownList");
-
             stepIdDropdown.value(vm.stepTypeId());
 
             vm.stepTypeId.subscribe(function () {
                 stepIdDropdown.value(vm.stepTypeId());
             });
 
-            vm.attachmentGrid();
+            if (vm.model.id() != null) {
+                vm.attachmentGrid();
+                vm.documentProofGrid();
+            }
 
-            vm.documentProofGrid();
+            // Initialize Kendo Editor
+            var instructionElement = $("#instruction");
+
+            if (instructionElement.length) {
+                instructionElement.kendoEditor({ value: vm.model.instruction() || "" });
+
+                // Ensure the Kendo Editor instance is available
+                var editor = instructionElement.data("kendoEditor");
+
+                if (editor) {
+                    // Subscribe to changes in the Knockout observable and update the Kendo Editor
+                    vm.model.instruction.subscribe(function (newValue) {
+                        if (editor.value() !== newValue) {
+                            editor.value() === newValue;
+                        }
+                    });
+
+                    // Update Knockout observable when the Kendo Editor content changes
+                    editor.bind("change", function () {
+                        var newValue = editor.value();
+                        if (vm.model.instruction() !== newValue) {
+                            vm.model.instruction(newValue);
+                        }
+                    });
+                } else {
+                    console.error("Kendo Editor instance not found.");
+                }
+            } else {
+                console.error("#instruction element not found.");
+            }
 
             ko.applyBindings(vm, document.getElementById('add-edit-step'));
-
         };
     };
-
     return AddEditStep;
 })
 
@@ -544,17 +616,3 @@ $("#stepname").on("change", function (e) {
         }
     });
 })
-
-function AddEditStepViewModal() {
-
-    //step name binding
-    $("#stepname").data("kendoDropDownList").value(viewModel.stepid());
-
-    viewModel.stepid.subscribe(function (newValue) {
-        $("#stepname").data("kendoDropDownList").value(newValue);
-    });
-
-    viewModel.steptypeid.subscribe(function (newValue) {
-        $("#steptypeid").data("kendoDropDownList").value(newValue);
-    });
-}

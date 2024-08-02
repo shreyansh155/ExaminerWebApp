@@ -243,7 +243,7 @@ namespace ExaminerWebApp.Controllers
                 return Json(new { success = true });
             }
 
-            return Json(new { success = false });
+            return Json(new { success = false, errors = ModelStateErrorSerializer(ModelState) });
         }
 
         [HttpPost]

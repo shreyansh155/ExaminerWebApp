@@ -1,4 +1,4 @@
-﻿@model ExaminerWebApp.Entities.Entities.TemplatePhaseStep;
+﻿@model TemplatePhaseStep;
 @{
     var edit = Model?.StepId == null ? true : false;
 }
@@ -39,7 +39,7 @@
                                     </transport>
                                 </datasource>
                             </kendo-dropdownlist>
-                            <span class="text-danger" data-bind="visible: stepId.hasError, text: stepId.validationMessage"></span>
+                            <span class="text-danger" data-bind="validationMessage: stepId"></span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -70,7 +70,7 @@
                                                   data-bind="value: ordinal, valueUpdate: 'afterkeydown', attr: { 'aria-required': true }"
                                                   decimals="0">
                             </kendo-numerictextbox>
-                            <span class="text-danger" data-bind="visible: ordinal.hasError, text: ordinal.validationMessage"></span>
+                            <span data-bind="validationMessage: ordinal" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -83,10 +83,12 @@
                     <div class="form-group row">
                         <label for="stepinstruction" class="col-form-label col-sm-4">Instruction</label>
                         <div class="col-sm-8">
-                            <kendo-textarea name="stepinstruction"
-                                            data-bind="kendoEditor: stepinstruction, valueUpdate: 'afterkeydown'"
-                                            rows="3">
-                            </kendo-textarea>
+                            <textarea rows="3"
+                                      id="instruction"
+                                      name="instruction"
+                                      data-bind="value: instruction">
+                            </textarea>
+                            <span class="text-danger" data-bind="validationMessage: instruction"></span>
                         </div>
                     </div>
                     <div class="form-group row">

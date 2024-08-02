@@ -1,4 +1,4 @@
-﻿@model ExaminerWebApp.Entities.Entities.ApplicationTypeTemplate ;
+﻿@model ApplicationTypeTemplate ;
 
 @{
     ViewData["Title"] = "Edit Template";
@@ -14,22 +14,31 @@
             <h3>Edit Application Type Template: <strong class="mx-1">@Model.Name</strong></h3>
         </div>
         <div id="errorBody" class="text-danger"></div>
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input id="name" name="name" data-bind="kendoMaskedTextBox: { value: name }" />
-            <span class="text-danger" data-bind="visible: name.hasError, text: name.validationMessage"></span>
+        <div class="form-group row">
+            <label for="name" class="col-form-label col-sm-2">Name</label>
+            <div class="col-sm-10">
+                <input id="name" name="name" data-bind="kendoMaskedTextBox: { value: name }" />
+                <span class="text-danger" data-bind="visible: name.hasError, text: name.validationMessage"></span>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="description">Description</label>
-            <input id="description" name="description" data-bind="kendoMaskedTextBox: { value: description }" />
+        <div class="form-group row">
+            <label for="description" class="col-form-label col-sm-2">Description</label>
+            <div class="col-sm-10">
+                <kendo-textarea id="description"
+                                name="description"
+                                data-bind="kendoMaskedTextBox: { value: description }">
+                </kendo-textarea>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="description">Instruction</label>
-            <textarea rows="3"
-                      id="description"
-                      name="description"
-                      data-bind="kendoEditor: { value: instruction }">
-            </textarea>
+        <div class="form-group row">
+            <label for="description" class="col-form-label col-sm-2">Instruction</label>
+            <div class="col-sm-10">
+                <kendo-textarea rows="3"
+                                id="description"
+                                name="description"
+                                data-bind="kendoEditor: { value: instruction }">
+                </kendo-textarea>
+            </div>
         </div>
         <div class="d-flex justify-content-end align-items-center">
             <div class="mx-2">

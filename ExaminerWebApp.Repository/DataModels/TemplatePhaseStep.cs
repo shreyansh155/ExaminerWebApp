@@ -21,6 +21,8 @@ public partial class TemplatePhaseStep
 
     public bool? IsNotification { get; set; }
 
+    public string? Instruction { get; set; }
+
     public virtual Step Step { get; set; } = null!;
 
     public virtual ApplicationTypeTemplatePhase TemplatePhase { get; set; } = null!;

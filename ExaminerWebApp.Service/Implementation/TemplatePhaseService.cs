@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExaminerWebApp.Service.Implementation
 {
-    public class TemplatePhaseService : ITemplatePhaseService
+    public class TemplatePhaseService : BaseService, ITemplatePhaseService
     {
         private readonly IMapper _mapper;
         private readonly ITemplatePhaseRepository _templatePhaseRepository;
@@ -17,8 +17,6 @@ namespace ExaminerWebApp.Service.Implementation
         private readonly ITemplatePhaseStepAttachmentRepository _templatePhaseStepAttachment;
         private readonly ITemplatePhaseStepDocumentProofRepository _templatePhaseStepDocumentProofRepository;
         private readonly IWebHostEnvironment _environment;
-
-
 
         public TemplatePhaseService(ITemplatePhaseRepository templatePhaseRepository, IMapper mapper, IPhaseStepRepository phaseStepRepository, IStepRepository stepRepository, ITemplatePhaseStepAttachmentRepository templatePhaseStepAttachment, ITemplatePhaseStepDocumentProofRepository templatePhaseStepDocumentProofRepository, IWebHostEnvironment environment)
         {
@@ -66,10 +64,7 @@ namespace ExaminerWebApp.Service.Implementation
         {
             Repository.DataModels.TemplatePhaseStep phaseStep = _mapper.Map<Repository.DataModels.TemplatePhaseStep>(templatePhaseStep);
             await _phaseStepRepository.AddPhaseStep(phaseStep);
-            if (templatePhaseStep.Instruction != null)
-            {
-                await _stepRepository.UpdateInstruction(templatePhaseStep.StepId, templatePhaseStep.Instruction ?? "");
-            }
+
             return templatePhaseStep;
         }
 
@@ -77,10 +72,6 @@ namespace ExaminerWebApp.Service.Implementation
         {
             Repository.DataModels.TemplatePhaseStep phaseStep = _mapper.Map<Repository.DataModels.TemplatePhaseStep>(templatePhaseStep);
             await _phaseStepRepository.UpdatePhaseStep(phaseStep);
-            if (templatePhaseStep.Instruction != null)
-            {
-                await _stepRepository.UpdateInstruction(templatePhaseStep.StepId, templatePhaseStep.Instruction ?? "");
-            }
             return templatePhaseStep;
         }
 
@@ -108,7 +99,8 @@ namespace ExaminerWebApp.Service.Implementation
         public async Task<PaginationSet<TemplatePhaseStepAttachment>> GetAttachments(int? tpsId, PaginationSet<TemplatePhaseStepAttachment> pager)
         {
             IQueryable<Repository.DataModels.TemplatePhaseStepAttachment> list = _templatePhaseStepAttachment.GetAll(tpsId).Include(x => x.AttachmentType);
-            pager.Items = _mapper.ProjectTo<TemplatePhaseStepAttachment>(list);
+            var items = _mapper.ProjectTo<TemplatePhaseStepAttachment>(list);
+            pager.Items = await items.Skip(pager.Skip).Take(pager.Take).ToListAsync();
             pager.TotalCount = await list.CountAsync();
             return pager;
         }
@@ -116,7 +108,8 @@ namespace ExaminerWebApp.Service.Implementation
         public async Task<PaginationSet<TemplatePhaseStepDocumentProof>> GetDocumentProof(int? tpsId, PaginationSet<TemplatePhaseStepDocumentProof> pager)
         {
             IQueryable<Repository.DataModels.TemplatePhaseStepDocumentProof> list = _templatePhaseStepDocumentProofRepository.GetAll(tpsId).Include(x => x.DocumentFileTypeNavigation);
-            pager.Items = _mapper.ProjectTo<TemplatePhaseStepDocumentProof>(list);
+            var items = _mapper.ProjectTo<TemplatePhaseStepDocumentProof>(list);
+            pager.Items = await items.Skip(pager.Skip).Take(pager.Take).ToListAsync();
             pager.TotalCount = await list.CountAsync();
             return pager;
         }
